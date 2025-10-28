@@ -195,34 +195,92 @@
 						actions complexes en les décomposant selon le contexte.
 					</aside>
 				</section>
+
 				<section>
-					<h2>Node Agent en action</h2>
-					<img src="img/agent_node.png" alt="Node Agent n8n connecté à Ollama"
-						style="max-width: 80%; border: 2px solid #444;">
-					<p style="font-size: 0.8em; margin-top: 1em;">
-						<em>Configuration simple : Agent connecté à Ollama local, sans outils ni mémoire</em>
-					</p>
+					<h2>Configuration des Prompts</h2>
+					<div style="display: flex; justify-content: space-around; align-items: flex-start;">
+						<div style="flex: 1; margin-right: 2em;">
+							<h3>🎯 Prompt Système</h3>
+							<ul style="font-size: 0.7em;">
+								<li class="fragment">Définit le comportement</li>
+								<li class="fragment">Contexte permanent</li>
+								<li class="fragment">Rôle de l'assistant</li>
+								<li class="fragment">Contraintes globales</li>
+							</ul>
+						</div>
+						<div style="flex: 1;">
+							<h3>💬 Prompt Utilisateur</h3>
+							<ul style="font-size: 0.7em;">
+								<li class="fragment">Instructions spécifiques</li>
+								<li class="fragment">Données contextuelles</li>
+								<li class="fragment">Variables dynamiques</li>
+								<li class="fragment">Format de sortie</li>
+							</ul>
+						</div>
+					</div>
+					<div class="fragment" style="margin-top: 2em; padding: 1em; background: rgba(0,0,0,0.2); border-radius: 8px;">
+						<code style="font-size: 0.7em;">
+							System: "Tu es un expert technique qui répond de manière claire et précise."<br>
+							User: "Explique comment {{ $json.technology }} fonctionne en {{ $json.level }} phrases."
+						</code>
+					</div>
 					<aside class="notes">
-						Voici un exemple concret d'un node Agent dans n8n. Configuration minimaliste : juste le modèle
-						Ollama local, sans outils complexes ni mémoire. Parfait pour commencer et comprendre les bases.
+						Dans n8n, vous configurez deux types de prompts. Le prompt système définit le comportement général : 
+						le rôle, le ton, et les contraintes de l'IA. Le prompt utilisateur contient les instructions spécifiques 
+						et peut utiliser des variables dynamiques du workflow. Cette séparation permet une grande flexibilité 
+						et réutilisabilité.
 					</aside>
 				</section>
 
 				<section>
-					<h2>Model Selector</h2>
-					<img src="img/model_selector.png" alt="Sélecteur de modèle dynamique dans n8n"
-						style="max-width: 40%; border: 2px solid #444;">
-					<ul>
-						<li class="fragment">🎯 Adaptation contextuelle</li>
-						<li class="fragment">🔄 Basculement automatique</li>
-						<li class="fragment">💡 Optimisation coûts/perf</li>
-					</ul>
+					<h2>Intégrations Modèles SaaS</h2>
+					<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.3em; margin-top: 0.8em;">
+						<div class="fragment" style="text-align: center; padding: 1em; background: rgba(0,0,0,0.2); border-radius: 8px;">
+							<h3>🤖 OpenAI</h3>
+							<p style="font-size: 0.6em;">GPT-4, GPT-3.5<br>Streaming, Function calling</p>
+						</div>
+						<div class="fragment" style="text-align: center; padding: 1em; background: rgba(0,0,0,0.2); border-radius: 8px;">
+							<h3>🧠 Anthropic</h3>
+							<p style="font-size: 0.6em;">Claude 3, Claude 2<br>Analyse de documents</p>
+						</div>
+						<div class="fragment" style="text-align: center; padding: 1em; background: rgba(0,0,0,0.2); border-radius: 8px;">
+							<h3>🔥 Google</h3>
+							<p style="font-size: 0.6em;">Gemini Pro<br>Multimodal</p>
+						</div>
+						<div class="fragment" style="text-align: center; padding: 1em; background: rgba(0,0,0,0.2); border-radius: 8px;">
+							<h3>☁️ Azure</h3>
+							<p style="font-size: 0.6em;">OpenAI sur Azure<br>Conformité entreprise</p>
+						</div>
+					</div>
+					<div class="fragment" style="margin-top: 1em; text-align: center;">
+						<p style="font-size: 0.6em; color: var(--ces-green);">
+							✅ <strong>Configuration simple</strong> : API Key + quelques paramètres
+						</p>
+					</div>
 					<aside class="notes">
-						Cette fonctionnalité est très pratique : on peut changer de modèle dynamiquement selon des
-						variables, le type de tâche, ou implémenter des fallbacks si un modèle est indisponible. Parfait
-						pour optimiser coûts et performances selon le contexte.
+						n8n intègre nativement les principaux fournisseurs d'IA. OpenAI pour GPT avec streaming et function calling,
+						Anthropic pour Claude excellent sur l'analyse de documents, Google pour Gemini et ses capacités multimodales,
+						et Azure OpenAI pour les besoins d'entreprise. La configuration est simple : une clé API et quelques paramètres.
 					</aside>
 				</section>
+
+				<section>
+					<h2>Intégration Ollama</h2>
+					<div style="padding: 1em; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 1em;">
+						<h4>🎯 Configuration n8n</h4>
+						<code style="font-size: 0.8em;">
+							Base URL: http://ollama:11434 (local)<br>
+							Base URL: https://your-server.com:11434 (distant)<br>
+							Model: llama3.2, qwen2.5, mistral, codestral...
+						</code>
+					</div>
+					<aside class="notes">
+						Ollama est parfait pour l'IA locale. Installation simple, données privées, pas de coûts récurrents.
+						Vous pouvez aussi l'installer sur un serveur distant pour partager les ressources GPU avec votre équipe.
+						Dans n8n, il suffit de configurer l'URL de base et choisir le modèle.
+					</aside>
+				</section>
+
 				<section>
 					<h2>Ollama local vs distant</h2>
 					<div style="display: flex; justify-content: space-around;">
@@ -261,6 +319,34 @@
 					</p>
 				</section>
 
+				<section>
+					<h2>Node Agent en action</h2>
+					<img src="img/agent_node.png" alt="Node Agent n8n connecté à Ollama"
+						style="max-width: 80%; border: 2px solid #444;">
+					<p style="font-size: 0.8em; margin-top: 1em;">
+						<em>Configuration simple : Agent connecté à Ollama local, sans outils ni mémoire</em>
+					</p>
+					<aside class="notes">
+						Voici un exemple concret d'un node Agent dans n8n. Configuration minimaliste : juste le modèle
+						Ollama local, sans outils complexes ni mémoire. Parfait pour commencer et comprendre les bases.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Model Selector</h2>
+					<img src="img/model_selector.png" alt="Sélecteur de modèle dynamique dans n8n"
+						style="max-width: 40%; border: 2px solid #444;">
+					<ul>
+						<li class="fragment">🎯 Adaptation contextuelle</li>
+						<li class="fragment">🔄 Basculement automatique</li>
+						<li class="fragment">💡 Optimisation coûts/perf</li>
+					</ul>
+					<aside class="notes">
+						Cette fonctionnalité est très pratique : on peut changer de modèle dynamiquement selon des
+						variables, le type de tâche, ou implémenter des fallbacks si un modèle est indisponible. Parfait
+						pour optimiser coûts et performances selon le contexte.
+					</aside>
+				</section>
 
 				<section>
 					<h2>Mémoire</h2>
@@ -276,6 +362,7 @@
 						d'apprendre des interactions précédentes grâce à l'historique.
 					</aside>
 				</section>
+
 				<section>
 					<h2>Outils disponibles</h2>
 					<ul>
