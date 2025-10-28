@@ -1,0 +1,38 @@
+# Fichiers de configuration et secrets
+.env.local
+.env.production
+.env
+
+# Credentials avec des données réelles (gardez les exemples)
+credentials/*_real.json
+credentials/*_prod.json
+credentials/*_production.json
+
+# Logs
+*.log
+logs/
+
+# Volumes de données locaux (si vous utilisez des volumes bind)
+data/
+pgdata/
+ollama_data/
+
+# Sauvegardes
+*.sql
+backup/
+backups/
+
+# Fichiers temporaires
+.tmp/
+tmp/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers d'éditeur
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

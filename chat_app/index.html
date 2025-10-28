@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Assistant Chat Application</title>
+	<link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+	<style>
+		/* Reset et style de base */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		html, body, #n8n-chat {
+			width: 100%;
+			height: 100%;
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+		}
+
+		body {
+			background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+			position: relative;
+		}
+
+		/* Effet de particules/pattern subtil en arrière-plan */
+		body::before {
+			content: '';
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: 
+				radial-gradient(circle at 20% 80%, rgba(0, 122, 204, 0.1) 0%, transparent 50%),
+				radial-gradient(circle at 80% 20%, rgba(0, 122, 204, 0.1) 0%, transparent 50%),
+				radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+			pointer-events: none;
+			z-index: -1;
+		}
+
+		/* Personnalisation moderne - Variables CSS pour le chat n8n */
+		:root {
+			/* Couleurs principales modernes */
+			--chat--color--primary: #007acc;          /* Bleu moderne */
+			--chat--color--primary-shade-50: #0066b3;
+			--chat--color--primary--shade-100: #005299;
+			--chat--color--secondary: #2d2d2d;        /* Gris foncé moderne */
+			--chat--color-secondary-shade-50: #242424;
+			
+			/* Couleurs neutres */
+			--chat--color-white: #ffffff;
+			--chat--color-light: #f8f9fa;
+			--chat--color-light-shade-50: #e9ecef;
+			--chat--color-light-shade-100: #dee2e6;
+			--chat--color-medium: #adb5bd;
+			--chat--color-dark: #2d2d2d;
+			--chat--color-disabled: #6c757d;
+			--chat--color-typing: #495057;
+
+			/* Espacement et dimensions */
+			--chat--spacing: 1rem;
+			--chat--border-radius: 0.75rem;
+			--chat--transition-duration: 0.3s;
+
+			--chat--window--width: 100%;
+			--chat--window--height: 100%;
+
+			/* En-tête */
+			--chat--header-height: auto;
+			--chat--header--padding: 1.5rem var(--chat--spacing);
+			--chat--header--background: #2d2d2d;      /* Gris foncé moderne */
+			--chat--header--color: #ffffff;
+			--chat--header--border-top: none;
+			--chat--header--border-bottom: 2px solid #007acc;
+			--chat--heading--font-size: 1.75em;
+			--chat--subtitle--font-size: 0.95em;
+			--chat--subtitle--line-height: 1.6;
+			--chat--subtitle--font-weight: 500;
+
+			/* Zone de saisie */
+			--chat--textarea--height: 60px;
+			--chat--textarea--border-radius: 12px;
+			--chat--textarea--border: 2px solid #e9ecef;
+			--chat--textarea--focus-border: 2px solid #007acc;
+
+			/* Messages */
+			--chat--message--font-size: 1rem;
+			--chat--message--padding: 0.875rem 1rem;
+			--chat--message--border-radius: 1.25rem;
+			--chat--message-line-height: 1.6;
+			
+			/* Messages du bot */
+			--chat--message--bot--background: #ffffff;
+			--chat--message--bot--color: #2d2d2d;
+			--chat--message--bot--border: 1px solid #e9ecef;
+			--chat--message--bot--shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			
+			/* Messages de l'utilisateur */
+			--chat--message--user--background: #007acc;  /* Bleu moderne 
+			
+			*/
+			--chat--message--user--color: #ffffff;
+			--chat--message--user--border: none;
+			
+			--chat--message--pre--background: rgba(45, 45, 45, 0.08);
+
+			/* Bouton toggle (si mode window) */
+			--chat--toggle--background: #007acc;
+			--chat--toggle--hover--background: #0066b3;
+			--chat--toggle--active--background: #005299;
+			--chat--toggle--color: #ffffff;
+			--chat--toggle--size: 64px;
+		}
+
+		/* Styles additionnels pour améliorer l'apparence */
+		#n8n-chat {
+			box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+			border-radius: 0;
+		}
+
+		/* Spinner personnalisé moderne */
+		@keyframes modernSpin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+
+		@keyframes pulse {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0.5; }
+		}
+
+		/* Override du spinner n8n par défaut */
+		.n8n-chat .n8n-loading {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.n8n-chat .n8n-loading::after {
+			content: '';
+			width: 24px;
+			height: 24px;
+			border: 3px solid #e3e3e3;
+			border-top: 3px solid #007acc;
+			border-radius: 50%;
+			animation: modernSpin 1s linear infinite;
+		}
+
+		/* Animation des messages */
+		.n8n-chat .n8n-message {
+			animation: slideInUp 0.3s ease-out;
+		}
+
+		@keyframes slideInUp {
+			from {
+				opacity: 0;
+				transform: translateY(20px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		/* Amélioration de l'interface avec des transitions fluides */
+		.n8n-chat input,
+		.n8n-chat textarea,
+		.n8n-chat button {
+			transition: all 0.3s ease;
+		}
+
+		.n8n-chat button:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 4px 12px rgba(0, 122, 204, 0.3);
+		}
+
+		.n8n-chat button:active {
+			transform: translateY(0);
+		}
+
+		/* Styles pour les liens */
+		.n8n-chat a {
+			color: #007acc;
+			text-decoration: none;
+			border-bottom: 1px solid transparent;
+			transition: border-color 0.2s ease;
+		}
+
+		.n8n-chat a:hover {
+			border-bottom-color: #007acc;
+		}
+
+		/* Amélioration de la scrollbar */
+		.n8n-chat ::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		.n8n-chat ::-webkit-scrollbar-track {
+			background: rgba(0, 0, 0, 0.1);
+		}
+
+		.n8n-chat ::-webkit-scrollbar-thumb {
+			background: #007acc;
+			border-radius: 3px;
+		}
+
+		.n8n-chat ::-webkit-scrollbar-thumb:hover {
+			background: #0066b3;
+		}
+
+		/* ============================================
+		   Menu d'administration
+		   ============================================ */
+		
+		.admin-menu {
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			z-index: 10000;
+		}
+
+		.menu-toggle {
+			background: #007acc;
+			color: white;
+			border: none;
+			width: 56px;
+			height: 56px;
+			border-radius: 50%;
+			cursor: pointer;
+			font-size: 24px;
+			box-shadow: 0 4px 12px rgba(0, 122, 204, 0.4);
+			transition: all 0.3s ease;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.menu-toggle:hover {
+			background: #0066b3;
+			transform: scale(1.1);
+		}
+
+		.menu-toggle:active {
+			transform: scale(0.95);
+		}
+
+		.menu-content {
+			position: absolute;
+			top: 70px;
+			right: 0;
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+			padding: 12px;
+			min-width: 280px;
+			opacity: 0;
+			visibility: hidden;
+			transform: translateY(-10px);
+			transition: all 0.3s ease;
+		}
+
+		.menu-content.active {
+			opacity: 1;
+			visibility: visible;
+			transform: translateY(0);
+		}
+
+		.menu-header {
+			padding: 12px 16px;
+			border-bottom: 2px solid #007acc;
+			margin-bottom: 8px;
+		}
+
+		.menu-header h3 {
+			color: #2d2d2d;
+			font-size: 16px;
+			font-weight: 600;
+			margin: 0;
+		}
+
+		.menu-section {
+			margin-bottom: 8px;
+		}
+
+		.menu-section-title {
+			color: #6c757d;
+			font-size: 11px;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			padding: 8px 16px 4px;
+			margin: 0;
+		}
+
+		.menu-item {
+			display: block;
+			padding: 12px 16px;
+			color: #2d2d2d;
+			text-decoration: none;
+			border-radius: 8px;
+			transition: all 0.2s ease;
+			font-size: 14px;
+			border: 1px solid transparent;
+			margin: 4px 0;
+		}
+
+		.menu-item:hover {
+			background: #f8f9fa;
+			border-color: #007acc;
+			color: #007acc;
+			transform: translateX(4px);
+		}
+
+		.menu-item::before {
+			content: "→";
+			margin-right: 8px;
+			opacity: 0;
+			transition: opacity 0.2s ease;
+		}
+
+		.menu-item:hover::before {
+			opacity: 1;
+		}
+
+		.menu-item.primary {
+			background: #007acc;
+			color: white;
+			font-weight: 600;
+			border: none;
+		}
+
+		.menu-item.primary:hover {
+			background: #0066b3;
+			transform: translateX(0) scale(1.02);
+		}
+
+		.menu-item.primary::before {
+			content: "📝";
+			opacity: 1;
+		}
+
+		.menu-footer {
+			padding: 12px 16px 8px;
+			border-top: 1px solid #e9ecef;
+			margin-top: 8px;
+			text-align: center;
+		}
+
+		.menu-footer a {
+			color: #6c757d;
+			font-size: 12px;
+			text-decoration: none;
+			transition: color 0.2s ease;
+		}
+
+		.menu-footer a:hover {
+			color: #007acc;
+		}
+
+		/* Badge pour compter les sections */
+		.menu-badge {
+			display: inline-block;
+			background: #007acc;
+			color: white;
+			font-size: 10px;
+			padding: 2px 6px;
+			border-radius: 10px;
+			margin-left: 6px;
+			font-weight: 600;
+		}
+
+		/* Animation d'ouverture */
+		@keyframes slideIn {
+			from {
+				opacity: 0;
+				transform: translateY(-10px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.menu-content.active {
+			animation: slideIn 0.3s ease;
+		}
+
+		/* Responsive */
+		@media (max-width: 768px) {
+			.admin-menu {
+				top: 10px;
+				right: 10px;
+			}
+
+			.menu-toggle {
+				width: 48px;
+				height: 48px;
+				font-size: 20px;
+			}
+
+			.menu-content {
+				right: -10px;
+				min-width: 260px;
+			}
+		}
+	</style>
+	<script type="module">
+		import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+		/**
+		 * Extrait les paramètres de l'URL
+		 * @param {string} paramName - Nom du paramètre à extraire
+		 * @returns {string|null} - Valeur du paramètre ou null
+		 */
+		function getQueryParam(paramName) {
+			const urlParams = new URLSearchParams(window.location.search);
+			return urlParams.get(paramName);
+		}
+
+		/**
+		 * Génère un ID de session unique si non fourni
+		 * @returns {string} - ID de session
+		 */
+		function generateSessionId() {
+			const timestamp = Date.now();
+			const random = Math.floor(Math.random() * 10000);
+			return `sess_${timestamp}_${random}`;
+		}
+
+		/**
+		 * Détermine le modèle à utiliser
+		 * @returns {string} - Nom du modèle
+		 */
+		function getLlmModel() {
+			const modelParam = getQueryParam('model');
+			return modelParam || 'local'; // Par défaut: modèle local
+		}
+
+		/**
+		 * Génère le message de subtitle en fonction du modèle
+		 * @param {string} model - Nom du modèle
+		 * @returns {string} - Message pour la bannière
+		 */
+		function getSubtitleMessage(model) {
+			const isOpenAI = model.toLowerCase().includes('openai') || model.toLowerCase().includes('gpt');
+			const modelDisplay = model === 'local' ? 'Modèle local' : `Modèle: ${model}`;
+			
+			if (isOpenAI) {
+				return `${modelDisplay} ⚠️ Attention: données envoyées à OpenAI`;
+			}
+			return `${modelDisplay} • Traitement sécurisé et confidentiel`;
+		}
+
+		// Récupération des paramètres depuis l'URL
+		const sessionId = getQueryParam('sessionId') || generateSessionId();
+		const llmModel = getLlmModel();
+
+		// Configuration et initialisation du chat
+		createChat({
+
+			webhookUrl: window.location.origin + '/webhook/webhook/665869c3-d79b-49e2-82b0-ef445d02126b/chat',
+			mode: 'fullscreen',
+			
+			// Métadonnées dynamiques extraites de l'URL
+			metadata: {
+				sessionId: sessionId,
+				llmModel: llmModel,
+				userAgent: navigator.userAgent,
+				timestamp: new Date().toISOString()
+			},
+			
+			// Configuration de la session
+			chatSessionKey: 'sessionId',
+			loadPreviousSession: true,
+			
+			enableStreaming: true,
+
+			// Messages initiaux
+			initialMessages: [
+				'Bienvenue dans l\'assistant intelligent !',
+				'Je suis là pour vous aider à répondre à vos questions et vous accompagner dans vos recherches.'
+			],
+			
+			// Internationalisation
+			defaultLanguage: 'fr',
+			i18n: {
+				fr: {
+					title: 'Assistant IA',
+					subtitle: getSubtitleMessage(llmModel),
+					footer: 'Propulsé par n8n',
+					getStarted: 'Nouvelle conversation',
+					inputPlaceholder: 'Posez votre question...',
+				}
+			},
+			
+			// Configuration du webhook
+			webhookConfig: {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}
+		});
+
+		// Log des paramètres pour le débogage (à retirer en production)
+		console.log('🔧 Configuration du chat:', {
+			sessionId,
+			llmModel,
+			url: window.location.href
+		});
+
+		// Gestion du menu d'administration
+		document.addEventListener('DOMContentLoaded', () => {
+			const menuToggle = document.querySelector('.menu-toggle');
+			const menuContent = document.querySelector('.menu-content');
+
+			if (menuToggle && menuContent) {
+				menuToggle.addEventListener('click', (e) => {
+					e.stopPropagation();
+					menuContent.classList.toggle('active');
+				});
+
+				// Fermer le menu en cliquant à l'extérieur
+				document.addEventListener('click', (e) => {
+					if (!menuContent.contains(e.target) && e.target !== menuToggle) {
+						menuContent.classList.remove('active');
+					}
+				});
+
+				// Empêcher la fermeture lors du clic dans le menu
+				menuContent.addEventListener('click', (e) => {
+					e.stopPropagation();
+				});
+			}
+		});
+	</script>
+</head>
+<body>
+	<!-- Menu d'administration RAG -->
+	<div class="admin-menu">
+		<button class="menu-toggle" aria-label="Menu administration" title="Menu administration">
+			⚙️
+		</button>
+		<div class="menu-content">
+			<div class="menu-header">
+				<h3>Administration</h3>
+			</div>
+
+			<!-- Section RAG -->
+			<div class="menu-section">
+				<p class="menu-section-title">Gestion RAG <span class="menu-badge">3</span></p>
+				<a href="/rag/upload-documents" class="menu-item primary" target="_blank">
+					Uploader des documents
+				</a>
+				<a href="/rag/web-scraping" class="menu-item" target="_blank">
+					Scraper un site web
+				</a>
+				<a href="/qdrant-collections" class="menu-item" target="_blank">
+					🗄️ Collections Qdrant
+				</a>
+			</div>
+
+			<!-- Footer -->
+			<div class="menu-footer">
+				<a href="http://localhost:5678/" target="_blank">Interface n8n local →</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- Le chat sera injecté ici automatiquement -->
+</body>
+</html>

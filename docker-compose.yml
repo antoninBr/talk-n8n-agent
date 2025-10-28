@@ -1,0 +1,253 @@
+services:
+  postgres:
+    image: docker.io/postgres:15
+    restart: always
+    networks:
+      - n8n-network
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_NON_ROOT_USER: ${POSTGRES_NON_ROOT_USER}
+      POSTGRES_NON_ROOT_PASSWORD: ${POSTGRES_NON_ROOT_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_storage:/var/lib/postgresql/data
+      - ./init-data.sh:/docker-entrypoint-initdb.d/init-data.sh
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  n8n:
+    build:
+      dockerfile_inline: |
+        FROM docker.n8n.io/n8nio/n8n
+        USER root
+        RUN npm install -g n8n-nodes-imap-ai@2.3.9 n8n-nodes-mcp@latest
+        USER node
+    restart: always
+    networks:
+      - n8n-network
+    environment:
+      # Configuration de la base de données
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_DATABASE: ${POSTGRES_DB}
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_USER: ${POSTGRES_NON_ROOT_USER}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_NON_ROOT_PASSWORD}
+      DB_POSTGRESDB_SCHEMA: public
+      
+      # Configuration générale
+      N8N_BASIC_AUTH_ACTIVE: true
+      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD}
+      N8N_RUNNERS_ENABLED: true
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
+
+      # Configuration pour reverse proxy nginx
+      N8N_HOST: 0.0.0.0
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      
+      # URL de base pour les webhooks (via nginx)
+      WEBHOOK_URL: http://localhost:8443/webhook/
+
+      # Configuration du fuseau horaire
+      GENERIC_TIMEZONE: ${GENERIC_TIMEZONE}
+      TZ: ${GENERIC_TIMEZONE}
+      
+      # Configuration de sécurité
+      N8N_SECURE_COOKIE: false
+      
+      # Clé de chiffrement (important pour les credentials)
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+    ports:
+      - 5678:5678
+    volumes:
+      - n8n_storage:/home/node/.n8n
+      - ./workflows:/import/workflows:ro
+      - ./credentials:/import/credentials:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  ollama:
+    image: docker.io/ollama/ollama:latest
+    restart: always
+    networks:
+      - n8n-network
+    ports:
+      - "11435:11434" #On expose sur un port différent pour éviter les conflits locaux
+    volumes:
+      - ollama_storage:/root/.ollama
+    environment:
+      # Configuration Ollama
+      OLLAMA_HOST: 0.0.0.0
+      OLLAMA_ORIGINS: "*"
+      OLLAMA_PORT: "11434"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        reservations:
+          # Réserver au minimum 2GB de RAM pour Ollama
+          memory: 2G
+
+  qdrant:
+    image: docker.io/qdrant/qdrant:latest
+    restart: always
+    networks:
+      - n8n-network
+    ports:
+      - "6333:6333"
+      - "6334:6334"  # gRPC port
+    volumes:
+      - qdrant_storage:/qdrant/storage
+      - ./vector-store-qdrant/qdrant-config.yaml:/qdrant/config/production.yaml:ro
+    environment:
+      QDRANT__SERVICE__HTTP_PORT: 6333
+      QDRANT__SERVICE__GRPC_PORT: 6334
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  nginx:
+    build:
+      dockerfile_inline: |
+        FROM docker.io/nginx:alpine
+        # Image Nginx avec support HTTPS pour le frontend
+        # Installation d'openssl pour SSL
+        RUN apk add --no-cache openssl
+        EXPOSE 8080 8443
+    restart: always
+    networks:
+      - n8n-network
+    ports:
+      - "8080:8080"      # HTTP (redirection vers HTTPS)
+      - "8443:8443"    # HTTPS
+    volumes:
+      - ./chat_app:/usr/share/nginx/html:ro
+      - ./chat_app/nginx-https.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./chat_app/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - n8n
+
+  playwright-mcp:
+    build:
+      dockerfile_inline: |
+        FROM mcr.microsoft.com/playwright:v1.50.0-noble
+        
+        # Install Node.js and npm
+        RUN apt-get update && apt-get install -y \
+            curl \
+            patch \
+            && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+            && apt-get install -y nodejs \
+            && apt-get clean \
+            && rm -rf /var/lib/apt/lists/*
+        
+        # Create app directory
+        WORKDIR /app
+        
+        # Install pnpm globally and set up global directories
+        # This is necessary to ensure pnpm can be used globally and to manage dependencies effectively
+        RUN mkdir -p /usr/lib/pnpm-global && \
+            npm install -g pnpm && \
+            pnpm config set global-bin-dir /usr/bin && \
+            pnpm config set global-dir /usr/lib/pnpm-global
+
+        # Create pnpmfile.js for dependency overrides (Automation principle)
+        RUN echo 'module.exports = { \
+          hooks: { \
+            readPackage(pkg) { \
+              console.log("Processing package:", pkg.name); \
+              if (pkg.dependencies) { \
+                if (pkg.dependencies["playwright-core"]) { \
+                  console.log("Forcing playwright-core to 1.52.0"); \
+                  pkg.dependencies["playwright-core"] = "1.52.0"; \
+                } \
+                if (pkg.dependencies["playwright"]) { \
+                  console.log("Forcing playwright to 1.52.0"); \
+                  pkg.dependencies["playwright"] = "1.52.0"; \
+                } \
+              } \
+              if (pkg.devDependencies) { \
+                if (pkg.devDependencies["playwright-core"]) { \
+                  console.log("Forcing dev playwright-core to 1.52.0"); \
+                  pkg.devDependencies["playwright-core"] = "1.52.0"; \
+                } \
+                if (pkg.devDependencies["playwright"]) { \
+                  console.log("Forcing dev playwright to 1.52.0"); \
+                  pkg.devDependencies["playwright"] = "1.52.0"; \
+                } \
+              } \
+              return pkg; \
+            } \
+          } \
+        }' > pnpmfile.js
+
+        # Configure pnpm to use the override file globally (Measurement principle)
+        RUN echo "Configuring pnpm to use override file globally..." && \
+            cp pnpmfile.js /usr/lib/pnpm-global/pnpmfile.js && \
+            pnpm config set global-pnpmfile /usr/lib/pnpm-global/pnpmfile.js
+
+        # Install Playwright MCP server
+        RUN pnpm install -g @playwright/mcp@0.0.32 --verbose
+
+        # Apply rebrowser patches to playwright-core
+        # This is necessary to ensure compatibility with the MCP server
+        # The path may vary based on the pnpm global directory structure
+        RUN npx rebrowser-patches@latest patch --packagePath /usr/lib/pnpm-global/5/.pnpm/@playwright+mcp@0.0.32_zod@3.25.76/node_modules/playwright-core   
+
+        # Create a simple startup script
+        RUN echo '#!/bin/bash\nnpx @playwright/mcp --no-sandbox --isolated --port 3000 --headless' > /app/start.sh \
+            && chmod +x /app/start.sh
+        
+        # Install browsers (Chrome is already included in the base image)
+        RUN npx playwright install chrome --with-deps
+        
+        EXPOSE 3000
+        
+        CMD ["/app/start.sh"]
+    restart: always
+    networks:
+      - n8n-network
+    ports:
+      - "3000:3000"
+    environment:
+      # Playwright configuration
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      # Disable display and GPU acceleration for headless mode
+      DISPLAY: ""
+      CHROME_DBUS_URL: ""
+      # Chrome/Chromium arguments for headless Docker environment
+      PLAYWRIGHT_CHROMIUM_ARGS: "--no-sandbox --disable-dev-shm-usage --disable-gpu --disable-software-rasterizer --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-renderer-backgrounding --disable-features=TranslateUI --disable-ipc-flooding-protection --headless=new"
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "@playwright/mcp"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+volumes:
+  db_storage:
+  n8n_storage:
+  ollama_storage:
+  qdrant_storage:
+
+networks:
+  n8n-network:
+    driver: bridge

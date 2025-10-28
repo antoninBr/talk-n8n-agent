@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Gestion Collections Qdrant</title>
+	<style>
+		/* Reset et style de base */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+			background: linear-gradient(135deg, #244D52 0%, #1a3739 100%);
+			min-height: 100vh;
+			padding: 2rem;
+		}
+
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+
+		/* Header */
+		.header {
+			background: white;
+			border-radius: 12px;
+			padding: 2rem;
+			margin-bottom: 2rem;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		}
+
+		.header h1 {
+			color: #244D52;
+			font-size: 2rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.header p {
+			color: #6c757d;
+			font-size: 1rem;
+		}
+
+		/* Stats globales */
+		.stats {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+			gap: 1rem;
+			margin-bottom: 2rem;
+		}
+
+		.stat-card {
+			background: white;
+			border-radius: 12px;
+			padding: 1.5rem;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		}
+
+		.stat-card .label {
+			color: #6c757d;
+			font-size: 0.875rem;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin-bottom: 0.5rem;
+		}
+
+		.stat-card .value {
+			color: #244D52;
+			font-size: 2rem;
+			font-weight: 600;
+		}
+
+		/* Collections Table */
+		.collections-section {
+			background: white;
+			border-radius: 12px;
+			padding: 2rem;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		}
+
+		.collections-section h2 {
+			color: #244D52;
+			font-size: 1.5rem;
+			margin-bottom: 1.5rem;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.refresh-btn {
+			background: #244D52;
+			color: white;
+			border: none;
+			padding: 0.75rem 1.5rem;
+			border-radius: 8px;
+			cursor: pointer;
+			font-size: 0.875rem;
+			font-weight: 600;
+			transition: all 0.2s ease;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		.refresh-btn:hover {
+			background: #1a3739;
+			transform: translateY(-2px);
+		}
+
+		.refresh-btn:disabled {
+			background: #adb5bd;
+			cursor: not-allowed;
+			transform: none;
+		}
+
+		.table-container {
+			overflow-x: auto;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		thead {
+			background: #f8f9fa;
+		}
+
+		th {
+			padding: 1rem;
+			text-align: left;
+			color: #244D52;
+			font-weight: 600;
+			font-size: 0.875rem;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			border-bottom: 2px solid #e9ecef;
+		}
+
+		td {
+			padding: 1rem;
+			border-bottom: 1px solid #e9ecef;
+		}
+
+		tbody tr:hover {
+			background: #f8f9fa;
+		}
+
+		.collection-name {
+			font-weight: 600;
+			color: #244D52;
+		}
+
+		.status-badge {
+			display: inline-block;
+			padding: 0.25rem 0.75rem;
+			border-radius: 12px;
+			font-size: 0.75rem;
+			font-weight: 600;
+		}
+
+		.status-active {
+			background: #d4edda;
+			color: #155724;
+		}
+
+		.status-inactive {
+			background: #f8d7da;
+			color: #721c24;
+		}
+
+		.action-buttons {
+			display: flex;
+			gap: 0.5rem;
+		}
+
+		.btn {
+			padding: 0.5rem 1rem;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+			font-size: 0.875rem;
+			font-weight: 600;
+			transition: all 0.2s ease;
+		}
+
+		.btn-create {
+			background: #51cf66;
+			color: white;
+		}
+
+		.btn-create:hover {
+			background: #2f9e44;
+		}
+
+		.btn-recreate {
+			background: #E63559;
+			color: white;
+		}
+
+		.btn-recreate:hover {
+			background: #c22949;
+		}
+
+		.btn-delete {
+			background: #dc3545;
+			color: white;
+		}
+
+		.btn-delete:hover {
+			background: #bd2130;
+		}
+
+		.btn:disabled {
+			background: #adb5bd;
+			cursor: not-allowed;
+		}
+
+		/* Loading spinner */
+		.spinner {
+			display: inline-block;
+			width: 16px;
+			height: 16px;
+			border: 2px solid #f3f3f3;
+			border-top: 2px solid #244D52;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+		}
+
+		@keyframes spin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+
+		/* Messages */
+		.message {
+			padding: 1rem 1.5rem;
+			border-radius: 8px;
+			margin-bottom: 1rem;
+			display: none;
+		}
+
+		.message.show {
+			display: block;
+		}
+
+		.message-success {
+			background: #d4edda;
+			color: #155724;
+			border: 1px solid #c3e6cb;
+		}
+
+		.message-error {
+			background: #f8d7da;
+			color: #721c24;
+			border: 1px solid #f5c6cb;
+		}
+
+		.message-info {
+			background: #d1ecf1;
+			color: #0c5460;
+			border: 1px solid #bee5eb;
+		}
+
+		/* Empty state */
+		.empty-state {
+			text-align: center;
+			padding: 3rem;
+			color: #6c757d;
+		}
+
+		.empty-state svg {
+			width: 64px;
+			height: 64px;
+			margin-bottom: 1rem;
+			opacity: 0.5;
+		}
+
+		/* Back button */
+		.back-link {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			color: white;
+			text-decoration: none;
+			font-weight: 600;
+			margin-bottom: 1rem;
+			padding: 0.5rem 1rem;
+			background: rgba(255, 255, 255, 0.1);
+			border-radius: 8px;
+			transition: all 0.2s ease;
+		}
+
+		.back-link:hover {
+			background: rgba(255, 255, 255, 0.2);
+			transform: translateX(-4px);
+		}
+
+		/* Modal d'exploration */
+		.modal {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.7);
+			z-index: 1000;
+			justify-content: center;
+			align-items: center;
+			padding: 2rem;
+		}
+
+		.modal.show {
+			display: flex;
+		}
+
+		.modal-content {
+			background: white;
+			border-radius: 12px;
+			max-width: 900px;
+			width: 100%;
+			max-height: 90vh;
+			overflow-y: auto;
+			box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+		}
+
+		.modal-header {
+			padding: 1.5rem 2rem;
+			border-bottom: 2px solid #E63559;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			position: sticky;
+			top: 0;
+			background: white;
+			z-index: 10;
+		}
+
+		.modal-header h3 {
+			color: #244D52;
+			font-size: 1.5rem;
+			margin: 0;
+		}
+
+		.modal-close {
+			background: none;
+			border: none;
+			font-size: 1.5rem;
+			cursor: pointer;
+			color: #6c757d;
+			padding: 0.5rem;
+			line-height: 1;
+			transition: color 0.2s ease;
+		}
+
+		.modal-close:hover {
+			color: #E63559;
+		}
+
+		.modal-body {
+			padding: 2rem;
+		}
+
+		.metadata-section {
+			margin-bottom: 2rem;
+		}
+
+		.metadata-section h4 {
+			color: #244D52;
+			font-size: 1.1rem;
+			margin-bottom: 1rem;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		.metadata-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+			gap: 1rem;
+		}
+
+		.metadata-item {
+			background: #f8f9fa;
+			border-radius: 8px;
+			padding: 1rem;
+			border-left: 3px solid #E63559;
+		}
+
+		.metadata-item .key {
+			color: #6c757d;
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin-bottom: 0.25rem;
+		}
+
+		.metadata-item .value {
+			color: #244D52;
+			font-weight: 600;
+			word-break: break-word;
+		}
+
+		.metadata-item .count {
+			color: #6c757d;
+			font-size: 0.75rem;
+			margin-top: 0.25rem;
+		}
+
+		.points-preview {
+			margin-top: 1rem;
+		}
+
+		.point-card {
+			background: #f8f9fa;
+			border-radius: 8px;
+			padding: 1rem;
+			margin-bottom: 1rem;
+			border: 1px solid #dee2e6;
+		}
+
+		.point-card .point-id {
+			color: #6c757d;
+			font-size: 0.75rem;
+			margin-bottom: 0.5rem;
+			font-family: monospace;
+		}
+
+		.point-card .point-payload {
+			font-size: 0.875rem;
+			color: #495057;
+			line-height: 1.5;
+		}
+
+		.point-card .point-payload-key {
+			color: #E63559;
+			font-weight: 600;
+			margin-right: 0.5rem;
+		}
+
+		.empty-metadata {
+			text-align: center;
+			padding: 2rem;
+			color: #6c757d;
+		}
+
+		.btn-explore {
+			background: #244D52;
+			color: white;
+		}
+
+		.btn-explore:hover {
+			background: #1a3739;
+		}
+
+		/* Responsive */
+		@media (max-width: 768px) {
+			body {
+				padding: 1rem;
+			}
+
+			.header h1 {
+				font-size: 1.5rem;
+			}
+
+			.stats {
+				grid-template-columns: 1fr;
+			}
+
+			.table-container {
+				overflow-x: scroll;
+			}
+
+			.action-buttons {
+				flex-direction: column;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<a href="/" class="back-link">
+			← Retour à l'accueil
+		</a>
+
+		<div class="header">
+			<h1>🗄️ Gestion des Collections Qdrant</h1>
+			<p>Visualisez et gérez les collections de la base vectorielle</p>
+		</div>
+
+		<div id="message" class="message"></div>
+
+		<div class="stats" id="stats">
+			<div class="stat-card">
+				<div class="label">Collections totales</div>
+				<div class="value" id="total-collections">-</div>
+			</div>
+			<div class="stat-card">
+				<div class="label">Points totaux</div>
+				<div class="value" id="total-points">-</div>
+			</div>
+			<div class="stat-card">
+				<div class="label">Taille totale</div>
+				<div class="value" id="total-size">-</div>
+			</div>
+			<div class="stat-card">
+				<div class="label">Statut Qdrant</div>
+				<div class="value" id="qdrant-status">-</div>
+			</div>
+		</div>
+
+		<div class="collections-section">
+			<h2>
+				Collections
+				<button class="refresh-btn" id="refresh-btn" onclick="loadCollections()">
+					<span id="refresh-icon">🔄</span>
+					Actualiser
+				</button>
+			</h2>
+
+			<div class="table-container">
+				<table id="collections-table">
+					<thead>
+						<tr>
+							<th>Nom de la collection</th>
+							<th>Nombre de points</th>
+							<th>Taille</th>
+							<th>Dimensions</th>
+							<th>Distance</th>
+							<th>Statut</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody id="collections-body">
+						<tr>
+							<td colspan="7" style="text-align: center; padding: 2rem;">
+								<div class="spinner"></div>
+								<p style="margin-top: 1rem; color: #6c757d;">Chargement des collections...</p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal d'exploration -->
+	<div id="explore-modal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>🔍 Exploration: <span id="modal-collection-name"></span></h3>
+				<button class="modal-close" onclick="closeExploreModal()">✕</button>
+			</div>
+			<div class="modal-body" id="modal-body">
+				<div style="text-align: center; padding: 2rem;">
+					<div class="spinner"></div>
+					<p style="margin-top: 1rem; color: #6c757d;">Chargement des données...</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// Configuration de base
+		const QDRANT_URL = window.location.origin + '/qdrant';
+
+		// Formater la taille en bytes vers une unité lisible
+		function formatBytes(bytes) {
+			if (bytes === 0 || bytes === undefined || bytes === null) return '0 B';
+			
+			const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+			const k = 1024;
+			const i = Math.floor(Math.log(bytes) / Math.log(k));
+			const value = bytes / Math.pow(k, i);
+			
+			// Afficher 2 décimales pour MB et plus, sinon nombre entier
+			const formatted = i >= 2 ? value.toFixed(2) : Math.round(value);
+			
+			return `${formatted} ${units[i]}`;
+		}
+
+		// Afficher un message
+		function showMessage(text, type = 'info') {
+			const messageEl = document.getElementById('message');
+			messageEl.textContent = text;
+			messageEl.className = `message message-${type} show`;
+			setTimeout(() => {
+				messageEl.classList.remove('show');
+			}, 5000);
+		}
+
+		// Charger les collections depuis Qdrant
+		async function loadCollections() {
+			const refreshBtn = document.getElementById('refresh-btn');
+			const refreshIcon = document.getElementById('refresh-icon');
+			refreshBtn.disabled = true;
+			refreshIcon.innerHTML = '<span class="spinner"></span>';
+
+			try {
+				// Récupérer la liste des collections
+				const response = await fetch(`${QDRANT_URL}/collections`);
+				
+				if (!response.ok) {
+					throw new Error(`Erreur HTTP: ${response.status}`);
+				}
+
+				const data = await response.json();
+				const collections = data.result?.collections || [];
+
+				// Mettre à jour les statistiques
+				const totalCollections = collections.length;
+				let totalPoints = 0;
+
+				// Récupérer les détails de chaque collection
+				let totalSize = 0;
+				const collectionsDetails = await Promise.all(
+					collections.map(async (col) => {
+						try {
+							const detailResponse = await fetch(`${QDRANT_URL}/collections/${col.name}`);
+							const detailData = await detailResponse.json();
+							const points = detailData.result?.points_count || 0;
+							const config = detailData.result?.config || {};
+							const vectorSize = config.params?.vectors?.size || 0;
+							
+							// Estimer la taille sur disque
+							// Formule: points × vector_dimension × 4 bytes (float32) + overhead ~30%
+							const vectorDataSize = points * vectorSize * 4;
+							const estimatedSize = Math.round(vectorDataSize * 1.3); // +30% overhead (metadata, index, etc.)
+							
+							totalPoints += points;
+							totalSize += estimatedSize;
+							return {
+								name: col.name,
+								points: points,
+								size: estimatedSize,
+								vectors_count: detailData.result?.vectors_count || 0,
+								config: config,
+								status: detailData.result?.status || 'unknown'
+							};
+						} catch (err) {
+							console.error(`Erreur pour ${col.name}:`, err);
+							return {
+								name: col.name,
+								points: 0,
+								size: 0,
+								vectors_count: 0,
+								config: {},
+								status: 'error'
+							};
+						}
+					})
+				);
+
+				// Mettre à jour les stats
+				document.getElementById('total-collections').textContent = totalCollections;
+				document.getElementById('total-points').textContent = totalPoints.toLocaleString('fr-FR');
+				document.getElementById('total-size').textContent = formatBytes(totalSize);
+				document.getElementById('qdrant-status').textContent = '🟢 En ligne';
+
+				// Afficher les collections
+				displayCollections(collectionsDetails);
+
+			} catch (error) {
+				console.error('Erreur lors du chargement des collections:', error);
+				showMessage(`Erreur: ${error.message}`, 'error');
+				document.getElementById('qdrant-status').textContent = '🔴 Hors ligne';
+				
+				// Afficher l'état vide
+				document.getElementById('collections-body').innerHTML = `
+					<tr>
+						<td colspan="6">
+							<div class="empty-state">
+								<p>❌ Impossible de se connecter à Qdrant</p>
+								<p style="font-size: 0.875rem; margin-top: 0.5rem;">${error.message}</p>
+							</div>
+						</td>
+					</tr>
+				`;
+			} finally {
+				refreshBtn.disabled = false;
+				refreshIcon.textContent = '🔄';
+			}
+		}
+
+		// Afficher les collections dans le tableau
+		function displayCollections(collections) {
+			const tbody = document.getElementById('collections-body');
+
+			if (collections.length === 0) {
+				tbody.innerHTML = `
+					<tr>
+						<td colspan="7">
+							<div class="empty-state">
+								<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+								</svg>
+								<p>Aucune collection trouvée</p>
+								<p style="font-size: 0.875rem; margin-top: 0.5rem;">Les collections sont créées automatiquement par les workflows n8n</p>
+							</div>
+						</td>
+					</tr>
+				`;
+				return;
+			}
+
+			tbody.innerHTML = collections.map(col => {
+				const config = col.config?.params?.vectors || {};
+				const vectorSize = config.size || '-';
+				const distance = config.distance || '-';
+				const statusClass = col.status === 'green' ? 'status-active' : 'status-inactive';
+				const statusText = col.status === 'green' ? '✓ Active' : '⚠ Inactive';
+				const sizeFormatted = formatBytes(col.size || 0);
+
+				return `
+					<tr>
+						<td class="collection-name">${col.name}</td>
+						<td>${col.points.toLocaleString('fr-FR')}</td>
+						<td>${sizeFormatted}</td>
+						<td>${vectorSize}</td>
+						<td>${distance}</td>
+						<td><span class="status-badge ${statusClass}">${statusText}</span></td>
+						<td>
+							<div class="action-buttons">
+								<button class="btn btn-explore" onclick="exploreCollection('${col.name}')">
+									🔍 Explorer
+								</button>
+								<button class="btn btn-recreate" onclick="clearCollection('${col.name}')">
+									🧹 Vider
+								</button>
+							</div>
+						</td>
+					</tr>
+				`;
+			}).join('');
+		}
+
+		// Créer une collection
+		async function createCollection(name, vectorSize, distance) {
+			if (!confirm(`Créer la collection "${name}" ?`)) return;
+
+			try {
+				const response = await fetch(`${QDRANT_URL}/collections/${name}`, {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						vectors: {
+							size: vectorSize,
+							distance: distance
+						}
+					})
+				});
+
+				if (!response.ok) {
+					throw new Error(`Erreur HTTP: ${response.status}`);
+				}
+
+				showMessage(`Collection "${name}" créée avec succès!`, 'success');
+				loadCollections();
+			} catch (error) {
+				console.error('Erreur lors de la création:', error);
+				showMessage(`Erreur: ${error.message}`, 'error');
+			}
+		}
+
+		// Recréer une collection (supprimer puis créer)
+		async function recreateCollection(name) {
+			if (!confirm(`⚠️ ATTENTION: Cette action va supprimer toutes les données de "${name}" et recréer la collection.\n\nÊtes-vous sûr de vouloir continuer ?`)) return;
+
+			try {
+				// Supprimer
+				await fetch(`${QDRANT_URL}/collections/${name}`, {
+					method: 'DELETE'
+				});
+
+				// Récupérer la config
+				const config = COLLECTIONS_CONFIG.find(c => c.name === name);
+				if (!config) {
+					throw new Error('Configuration non trouvée');
+				}
+
+				// Recréer
+				const response = await fetch(`${QDRANT_URL}/collections/${name}`, {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						vectors: {
+							size: config.vector_size,
+							distance: config.distance
+						}
+					})
+				});
+
+				if (!response.ok) {
+					throw new Error(`Erreur HTTP: ${response.status}`);
+				}
+
+				showMessage(`Collection "${name}" recréée avec succès!`, 'success');
+				loadCollections();
+			} catch (error) {
+				console.error('Erreur lors de la recréation:', error);
+				showMessage(`Erreur: ${error.message}`, 'error');
+			}
+		}
+
+		// Vider une collection (supprimer tous les points)
+		async function clearCollection(name) {
+			if (!confirm(`⚠️ Vider la collection "${name}" ?\n\nTous les points seront supprimés, mais la collection sera conservée.`)) return;
+
+			try {
+				// Méthode 1: Récupérer tous les points par batch et les supprimer
+				let deletedCount = 0;
+				let hasMore = true;
+				
+				while (hasMore) {
+					// Récupérer un batch de points
+					const scrollResponse = await fetch(`${QDRANT_URL}/collections/${name}/points/scroll`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ 
+							limit: 1000,
+							with_payload: false,
+							with_vector: false
+						})
+					});
+
+					if (!scrollResponse.ok) {
+						throw new Error(`Erreur lors de la récupération des points: ${scrollResponse.status}`);
+					}
+
+					const scrollData = await scrollResponse.json();
+					const points = scrollData.result.points;
+					
+					if (points.length === 0) {
+						hasMore = false;
+						break;
+					}
+
+					// Extraire les IDs
+					const pointIds = points.map(p => p.id);
+
+					// Supprimer ce batch
+					const deleteResponse = await fetch(`${QDRANT_URL}/collections/${name}/points/delete`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ points: pointIds })
+					});
+
+					if (!deleteResponse.ok) {
+						throw new Error(`Erreur lors de la suppression: ${deleteResponse.status}`);
+					}
+
+					deletedCount += pointIds.length;
+					
+					// Si on a récupéré moins que la limite, c'est qu'il n'y en a plus
+					if (points.length < 1000) {
+						hasMore = false;
+					}
+				}
+
+				showMessage(`Collection "${name}" vidée avec succès! ${deletedCount} points supprimés.`, 'success');
+				loadCollections();
+			} catch (error) {
+				console.error('Erreur lors du vidage:', error);
+				showMessage(`Erreur: ${error.message}`, 'error');
+			}
+		}
+
+		// Explorer une collection
+		async function exploreCollection(collectionName) {
+			const modal = document.getElementById('explore-modal');
+			const modalBody = document.getElementById('modal-body');
+			const modalTitle = document.getElementById('modal-collection-name');
+			
+			modalTitle.textContent = collectionName;
+			modal.classList.add('show');
+			
+			modalBody.innerHTML = `
+				<div style="text-align: center; padding: 2rem;">
+					<div class="spinner"></div>
+					<p style="margin-top: 1rem; color: #6c757d;">Chargement des données...</p>
+				</div>
+			`;
+
+			try {
+				// Récupérer quelques points de la collection
+				const scrollResponse = await fetch(`${QDRANT_URL}/collections/${collectionName}/points/scroll`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						limit: 10,
+						with_payload: true,
+						with_vector: false
+					})
+				});
+
+				if (!scrollResponse.ok) {
+					throw new Error(`Erreur HTTP: ${scrollResponse.status}`);
+				}
+
+				const scrollData = await scrollResponse.json();
+				const points = scrollData.result.points;
+
+				if (points.length === 0) {
+					modalBody.innerHTML = `
+						<div class="empty-metadata">
+							<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 64px; height: 64px; margin-bottom: 1rem; opacity: 0.5;">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+							</svg>
+							<p>Cette collection est vide</p>
+							<p style="font-size: 0.875rem; margin-top: 0.5rem;">Aucun point à afficher</p>
+						</div>
+					`;
+					return;
+				}
+
+				// Analyser les métadonnées
+				const metadataKeys = new Map();
+				points.forEach(point => {
+					if (point.payload) {
+						Object.keys(point.payload).forEach(key => {
+							if (!metadataKeys.has(key)) {
+								metadataKeys.set(key, { values: new Set(), count: 0 });
+							}
+							const meta = metadataKeys.get(key);
+							meta.count++;
+							const value = point.payload[key];
+							// Ne garder que quelques valeurs exemples (non vides)
+							if (value !== null && value !== undefined && value !== '' && meta.values.size < 3) {
+								const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+								if (stringValue.trim() !== '' && stringValue !== '{}' && stringValue !== '[]') {
+									meta.values.add(stringValue);
+								}
+							}
+						});
+					}
+				});
+
+				// Construire l'affichage
+				let html = '<div class="metadata-section">';
+				
+				if (metadataKeys.size > 0) {
+					html += '<h4>📊 Clés de métadonnées détectées</h4>';
+					html += '<div class="metadata-grid">';
+					
+					for (const [key, data] of metadataKeys) {
+						const exampleValues = Array.from(data.values).slice(0, 3);
+						const hasValues = exampleValues.length > 0;
+						
+						html += `
+							<div class="metadata-item">
+								<div class="key">${key}</div>
+								<div class="value">${hasValues ? exampleValues[0] : '<vide>'}</div>
+								<div class="count">
+									${data.count}/${points.length} points
+									${exampleValues.length > 1 ? ` • +${exampleValues.length - 1} valeur(s)` : ''}
+								</div>
+							</div>
+						`;
+					}
+					
+					html += '</div>';
+				} else {
+					html += `
+						<div class="empty-metadata">
+							<p>Aucune métadonnée détectée</p>
+							<p style="font-size: 0.875rem; margin-top: 0.5rem;">Les points n'ont pas de payload</p>
+						</div>
+					`;
+				}
+				
+				html += '</div>';
+
+				// Afficher quelques points exemples
+				html += '<div class="metadata-section">';
+				html += `<h4>📝 Aperçu des points (${Math.min(5, points.length)} sur ${points.length})</h4>`;
+				html += '<div class="points-preview">';
+				
+				points.slice(0, 5).forEach(point => {
+					html += `
+						<div class="point-card">
+							<div class="point-id">ID: ${point.id}</div>
+							<div class="point-payload">
+					`;
+					
+					if (point.payload && Object.keys(point.payload).length > 0) {
+						for (const [key, value] of Object.entries(point.payload)) {
+							let displayValue = value;
+							if (value === null || value === undefined) {
+								displayValue = '<span style="color: #adb5bd; font-style: italic;">null</span>';
+							} else if (value === '') {
+								displayValue = '<span style="color: #adb5bd; font-style: italic;">vide</span>';
+							} else if (typeof value === 'object') {
+								const jsonStr = JSON.stringify(value);
+								if (jsonStr === '{}' || jsonStr === '[]') {
+									displayValue = '<span style="color: #adb5bd; font-style: italic;">vide</span>';
+								} else {
+									displayValue = jsonStr.length > 100 ? jsonStr.substring(0, 100) + '...' : jsonStr;
+								}
+							} else if (typeof value === 'string' && value.length > 200) {
+								displayValue = value.substring(0, 200) + '...';
+							}
+							
+							html += `
+								<div>
+									<span class="point-payload-key">${key}:</span>
+									${displayValue}
+								</div>
+							`;
+						}
+					} else {
+						html += '<span style="color: #adb5bd; font-style: italic;">Pas de métadonnées</span>';
+					}
+					
+					html += `
+							</div>
+						</div>
+					`;
+				});
+				
+				html += '</div>';
+				html += '</div>';
+
+				modalBody.innerHTML = html;
+			} catch (error) {
+				console.error('Erreur lors de l\'exploration:', error);
+				modalBody.innerHTML = `
+					<div class="empty-metadata" style="color: #dc3545;">
+						<p>❌ Erreur lors du chargement</p>
+						<p style="font-size: 0.875rem; margin-top: 0.5rem;">${error.message}</p>
+					</div>
+				`;
+			}
+		}
+
+		// Fermer le modal d'exploration
+		function closeExploreModal() {
+			const modal = document.getElementById('explore-modal');
+			modal.classList.remove('show');
+		}
+
+		// Fermer le modal en cliquant à l'extérieur
+		document.getElementById('explore-modal').addEventListener('click', (e) => {
+			if (e.target.id === 'explore-modal') {
+				closeExploreModal();
+			}
+		});
+
+		// Charger les collections au démarrage
+		document.addEventListener('DOMContentLoaded', () => {
+			loadCollections();
+		});
+	</script>
+</body>
+</html>

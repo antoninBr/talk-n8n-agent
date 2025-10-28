@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+
+	<meta name="description" content="IA locales ou distantes, outils, et un chef d'orchestre nommé n8n">
+	<meta name="author" content="Antonin Brugnot">
+
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>IA locales ou distantes, outils, et un chef d'orchestre nommé n8n</title>
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/codeurs-en-seine.css" id="theme">
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<!-- Slide d'introduction -->
+			<section>
+				<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2em; padding: 0 2em;">
+					<img src="img/codeurs-en-seine-avatar.svg" alt="Codeurs en Seine" 
+						style="max-width: 75px; height: auto; padding: 5px; border-radius: 4px;">
+					<img src="img/onepoint-logo.svg" alt="Onepoint" 
+						style="max-width: 75px; height: auto; background: white; padding: 5px; border-radius: 4px;">
+				</div>
+				<div style="text-align: center;">
+					<img src="img/title.jpg" alt="Logo"
+						style="max-width: 150px; width: 20vw; min-width: 100px; margin-bottom: 1em;">
+				</div>
+				<h3>IA locales ou distantes, outils, et un chef d'orchestre nommé n8n</h3>
+				<p>
+					<small>Antonin Brugnot - Onepoint</small>
+				</p>
+				<p style="margin-top: 2em; font-size: 0.8em; color: var(--ces-green);">
+					<strong>📅 20 Novembre 2025 - Kindarena, Rouen</strong>
+				</p>
+				<aside class="notes">
+					Bonjour ! Aujourd'hui on va explorer comment orchestrer des agents IA avec n8n, une plateforme
+					d'automatisation simple et visuelle. On va connecter des modèles IA locaux avec Ollama ou distants,
+					et des outils grâce au protocole MCP. Une approche concrète pour créer des assistants IA vraiment
+					utiles… et maîtrisés.
+				</aside>
+			</section>
+
+			<!-- Section 1: Présentation de n8n -->
+			<section>
+				<section>
+					<h1>🔧 Présentation de n8n</h1>
+				</section>
+
+				<section>
+					<h2>Pourquoi n8n ?</h2>
+					<ul>
+						<li class="fragment">🔗 Connecter vos outils du quotidien</li>
+						<li class="fragment">🎨 Interface visuelle intuitive</li>
+						<li class="fragment">🚀 No-code/Low-code</li>
+						<li class="fragment">🔐 Contrôle de vos données</li>
+						<li class="fragment">💰 Open Source</li>
+					</ul>
+					<aside class="notes">
+						n8n permet de connecter facilement tous vos outils : API, bases de données, services cloud.
+						L'interface visuelle rend l'automatisation accessible même aux non-développeurs. Et
+						contrairement à Zapier, vous gardez le contrôle de vos données.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Selfhosted ou Cloud ?</h2>
+					<div style="display: flex; justify-content: space-around;">
+						<div style="flex: 1;">
+							<h3>🏠 Self-hosted</h3>
+							<ul>
+								<li>Contrôle total</li>
+								<li>Données privées</li>
+								<li>Personnalisation</li>
+								<li>Docker/K8s</li>
+							</ul>
+						</div>
+						<div style="flex: 1;">
+							<h3>☁️ Cloud</h3>
+							<ul>
+								<li>Simplicité</li>
+								<li>Maintenance incluse</li>
+								<li>Scalabilité</li>
+								<li>Support officiel</li>
+							</ul>
+						</div>
+					</div>
+					<aside class="notes">
+						Deux options : self-hosted pour garder le contrôle total, ou cloud pour la simplicité.
+						Aujourd'hui on se concentre sur le self-hosted avec Docker.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Cas d'usage classiques</h2>
+					<ul>
+						<li class="fragment">📧 Automatisation email</li>
+						<li class="fragment">🔄 Synchronisation de données</li>
+						<li class="fragment">📊 Rapports automatiques</li>
+						<li class="fragment">🔔 Notifications intelligentes</li>
+						<li class="fragment">🛠️ Outils internes</li>
+					</ul>
+					<aside class="notes">
+						Les cas d'usage vont de la simple automatisation d'emails à la création d'outils internes
+						complexes. Avec l'IA, on peut maintenant créer des workflows vraiment intelligents.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Fonctionnalités clés</h2>
+					<ul>
+						<li class="fragment">⚡ Triggers multiples</li>
+						<li class="fragment">📝 Variables entre étapes</li>
+						<li class="fragment">🧩 +400 intégrations</li>
+						<li class="fragment">🚨 Gestion d'erreurs</li>
+						<li class="fragment">🔒 Credentials sécurisés</li>
+					</ul>
+					<aside class="notes">
+						Les triggers déclenchent vos workflows : Webhook, Schedule, Email. Les variables permettent de
+						passer des données entre étapes. Plus de 400 nodes disponibles pour connecter tous vos outils.
+						Gestion d'erreurs robuste avec retry et fallback. Et stockage sécurisé des credentials.
+					</aside>
+				</section>
+
+				<section>
+					<div style="text-align: center;">
+						<img src="img/struggle.jpg" alt="Struggle meme" style="max-width: 80%; margin-bottom: 1em;">
+					</div>
+				</section>
+
+			</section>
+
+			<!-- Section 2: Avec les agents IA -->
+			<section>
+				<section>
+					<h1>🤖 Avec les agents IA</h1>
+				</section>
+
+				<section>
+					<h2>Qu'est-ce qu'un agent IA ?</h2>
+					<div style="display: flex; align-items: center; justify-content: space-between; gap: 2em;">
+						<div style="flex: 2;">
+							<ul>
+								<li class="fragment" data-fragment-index="1">🧠 <strong>Modèle IA</strong> : Le cerveau
+									(Krang)</li>
+								<li class="fragment" data-fragment-index="2">🤖 <strong>Agent</strong> : Le corps cyborg
+									qui agit</li>
+								<li class="fragment" data-fragment-index="3">📝 <strong>Prompt système</strong> : Les
+									instructions de base</li>
+								<li class="fragment" data-fragment-index="4">🛠️ <strong>Outils</strong> : Les complices
+									(Shredder, Bebop, Rocksteady)</li>
+							</ul>
+							<p class="fragment" data-fragment-index="5"
+								style="font-style: italic; font-size: 0.8em; margin-top: 2em;">
+								Agent = Modèle + Prompt + Outils
+							</p>
+						</div>
+						<div style="flex: 1;" class="fragment" data-fragment-index="1">
+							<img src="img/teenage-mutant-ninja-turtles-cartoon.gif" alt="Krang - Le cerveau maléfique"
+								style="max-width: 100%; border-radius: 10px; box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);">
+							<p style="font-size: 0.6em; font-style: italic; margin-top: 0.5em;">Le cerveau qui orchestre
+								tout ! 🧠</p>
+						</div>
+					</div>
+					<aside class="notes">
+						Un agent IA, c'est comme dans les Tortues Ninja : Krang est le cerveau (le modèle IA), le corps
+						cyborg c'est l'agent qui peut agir, et ses outils ce sont ses complices Shredder, Bebop et
+						Rocksteady qui l'aident à accomplir ses missions !
+					</aside>
+				</section>
+
+				<section>
+					<h2>AI Agent Node</h2>
+					<ul>
+						<li class="fragment">🧠 Cerveau décisionnel</li>
+						<li class="fragment">💭 Prompts système</li>
+						<li class="fragment">🔗 Intégration native</li>
+						<li class="fragment">📋 Planning de tâches</li>
+					</ul>
+					<aside class="notes">
+						L'AI Agent Node est le cerveau de votre workflow. Il peut prendre des décisions, définir son
+						comportement via prompts système, s'intégrer nativement aux workflows n8n, et planifier des
+						actions complexes en les décomposant selon le contexte.
+					</aside>
+				</section>
+				<section>
+					<h2>Node Agent en action</h2>
+					<img src="img/agent_node.png" alt="Node Agent n8n connecté à Ollama"
+						style="max-width: 80%; border: 2px solid #444;">
+					<p style="font-size: 0.8em; margin-top: 1em;">
+						<em>Configuration simple : Agent connecté à Ollama local, sans outils ni mémoire</em>
+					</p>
+					<aside class="notes">
+						Voici un exemple concret d'un node Agent dans n8n. Configuration minimaliste : juste le modèle
+						Ollama local, sans outils complexes ni mémoire. Parfait pour commencer et comprendre les bases.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Model Selector</h2>
+					<img src="img/model_selector.png" alt="Sélecteur de modèle dynamique dans n8n"
+						style="max-width: 40%; border: 2px solid #444;">
+					<ul>
+						<li class="fragment">🎯 Adaptation contextuelle</li>
+						<li class="fragment">🔄 Basculement automatique</li>
+						<li class="fragment">💡 Optimisation coûts/perf</li>
+					</ul>
+					<aside class="notes">
+						Cette fonctionnalité est très pratique : on peut changer de modèle dynamiquement selon des
+						variables, le type de tâche, ou implémenter des fallbacks si un modèle est indisponible. Parfait
+						pour optimiser coûts et performances selon le contexte.
+					</aside>
+				</section>
+				<section>
+					<h2>Ollama local vs distant</h2>
+					<div style="display: flex; justify-content: space-around;">
+						<div style="flex: 1;">
+							<h3>🏠 Ollama Local</h3>
+							<ul>
+								<li>🔒 Données privées</li>
+								<li>⚡ Pas de latence réseau</li>
+								<li>💰 Pas de coût API</li>
+								<li>🖥️ GPU/CPU local</li>
+							</ul>
+						</div>
+						<div style="flex: 1;">
+							<h3>☁️ Modèles distants</h3>
+							<ul>
+								<li>🚀 Performance optimale</li>
+								<li>🔄 Toujours à jour</li>
+								<li>📈 Scalabilité</li>
+								<li>💳 Pay-per-use</li>
+							</ul>
+						</div>
+					</div>
+					<aside class="notes">
+						Ollama permet d'utiliser des modèles comme Llama, Qwen, ou Mistral en local. Les modèles
+						distants offrent plus de puissance mais moins de contrôle.
+					</aside>
+				</section>
+
+				<section>
+					<div style="text-align: center;">
+						<img src="img/girlfriend-meme.jpg" alt="Girlfriend meme about AI models"
+							style="max-width: 80%; margin-bottom: 1em;">
+					</div>
+					<p style="font-size: 0.8em; font-style: italic;">
+						"Tu vas encore passer la soirée avec tes modèles IA locaux ?"
+					</p>
+				</section>
+
+
+				<section>
+					<h2>Mémoire</h2>
+					<ul>
+						<li class="fragment">🧠 Conversation multi-tours</li>
+						<li class="fragment">📚 Vector Store (RAG)</li>
+						<li class="fragment">💾 Variables persistantes</li>
+						<li class="fragment">🔄 Historique & apprentissage</li>
+					</ul>
+					<aside class="notes">
+						La mémoire permet aux agents de maintenir le contexte dans les conversations, d'accéder à une
+						base de connaissances via Vector Store pour le RAG, de persister l'état entre workflows, et
+						d'apprendre des interactions précédentes grâce à l'historique.
+					</aside>
+				</section>
+				<section>
+					<h2>Outils disponibles</h2>
+					<ul>
+						<li class="fragment">🌐 Web & APIs</li>
+						<li class="fragment">🗂️ Fichiers & Bases de données</li>
+						<li class="fragment">📧 Communications</li>
+						<li class="fragment">🤖 Autres agents IA</li>
+					</ul>
+					<p class="fragment" style="margin-top: 2em; font-size: 0.8em;">
+						💡 <em>Via MCP ou intégrations natives n8n</em>
+					</p>
+					<aside class="notes">
+						Le protocole MCP (Model Context Protocol) permet aux agents d'utiliser des outils externes :
+						navigateur web avec Playwright, fichiers, bases de données SQL/NoSQL/Vectorielles,
+						communications Email/Slack/Teams, APIs diverses CRM/ERP/Cloud... et même d'autres agents IA
+						spécialisés. J'ai une conférence complète sur MCP pour approfondir :
+						github.com/antoninBr/talk-mcp
+					</aside>
+				</section>
+
+				<section>
+					<h2>🤖➡️🤖</h2>
+					<ul>
+						<li class="fragment">🎯 Spécialisation par domaine</li>
+						<li class="fragment">📞 Délégation intelligente</li>
+						<li class="fragment">⚖️ Équilibrage de charge</li>
+						<li class="fragment">🔄 Résilience & fallback</li>
+					</ul>
+					<aside class="notes">
+						Un agent peut appeler d'autres agents comme outils : un agent généraliste qui délègue à des
+						spécialistes (code, rédaction, analyse). Cela permet une architecture modulaire et résiliente en
+						microservices, avec équilibrage de charge et spécialisation par domaine.
+					</aside>
+				</section>
+				<section>
+					<h2>Exemple d'outils</h2>
+					<img src="img/tools.png"
+						alt="Node Agent avec différents outils : MCP, Call Workflow n8n, Qdrant Vector Store"
+						style="max-width: 80%; border: 2px solid #444;">
+					<aside class="notes">
+						Voici un exemple concret des outils disponibles pour un agent n8n : MCP pour connecter des
+						outils externes, Call Workflow pour orchestrer d'autres workflows, et Qdrant Vector Store pour
+						la recherche sémantique. Une palette complète pour créer des agents polyvalents.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Interface Chat : Embedded vs Hosted</h2>
+					<img src="img/chat_trigger.png" alt="Trigger Chat : modes embedded et hosted"
+						style="max-width: 80%; border: 2px solid #444;">
+					<div style="display: flex; justify-content: space-around; margin-top: 1em;">
+						<div style="flex: 1;">
+							<h4>🏠 Embedded</h4>
+							<ul style="font-size: 0.8em;">
+								<li>Widget intégré</li>
+								<li>Votre design</li>
+								<li>Contrôle total</li>
+							</ul>
+						</div>
+						<div style="flex: 1;">
+							<h4>☁️ Hosted</h4>
+							<ul style="font-size: 0.8em;">
+								<li>Page dédiée</li>
+								<li>Prêt à l'emploi</li>
+								<li>Déploiement rapide</li>
+							</ul>
+						</div>
+					</div>
+					<aside class="notes">
+						n8n propose deux modes d'interaction avec vos agents : embedded pour intégrer le chat dans vos
+						applications existantes avec votre propre design, ou hosted pour une page de chat dédiée et
+						prête à l'emploi. Parfait pour tester rapidement ou déployer un chatbot interne.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Architecture complète</h2>
+					<div class="mermaid"><pre>
+						graph TB
+							User[👤 Utilisateur] --> Chat[💬 Interface Chat]
+							Chat --> N8N[🔧 n8n]
+							N8N --> PG[(🗄️ PostgreSQL)]
+							N8N --> Agent[🤖 AI Agent]
+							Agent --> Ollama[🧠 Ollama LLMs locaux]
+							Agent --> Qdrant[🔍 Qdrant Vector DB]
+							Agent --> MCP[🎭 Playwright MCP]
+							Agent --> API[🧠 OpenAI LLMs]
+
+							subgraph "🐳 Docker Compose Stack"
+								Chat
+								N8N
+								PG
+								Ollama
+								Qdrant
+								MCP
+								Agent
+							end
+							
+							style User fill:#e1f5fe
+							style Chat fill:#f3e5f5
+							style N8N fill:#e8f5e8
+							style Agent fill:#fff3e0
+							style Ollama fill:#fce4ec
+							style API fill:#fce4ec
+							style MCP fill:#fce4ec
+							style Qdrant fill:#f1f8e9
+							style PG fill:#e3f2fd
+					</pre>
+					</div>
+					<aside class="notes">
+						Architecture locale complète avec Docker Compose : interface chat, n8n comme orchestrateur, 
+						agent IA connecté à Ollama pour les LLMs et Qdrant pour la recherche vectorielle, 
+						le tout persisté en PostgreSQL.
+					</aside>
+				</section>
+			</section>
+			<!-- Section 3: Démo live -->
+			<section>
+				<section>
+					<h1>🚀 Démo live : n8n sandbox</h1>
+				</section>
+
+				<section>
+					<h2>Docker compose : stack complet</h2>
+					<pre><code class="hljs yaml" data-trim data-line-numbers="|1-43|2-11|13-30|32-39|41-43">
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: n8n
+      POSTGRES_USER: n8n
+      POSTGRES_PASSWORD: n8n
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  n8n:
+    build: ./n8n
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD=n8n
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      - postgres
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11435:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+
+volumes:
+  postgres_data:
+  n8n_data:
+  ollama_data:
+					</code></pre>
+					<aside class="notes">
+						Stack complet avec PostgreSQL pour la persistence, n8n comme chef d'orchestre, et Ollama pour
+						l'IA locale. Utilisez les flèches pour naviguer et voir chaque service mis en focus.
+					</aside>
+				</section>
+
+				<section>
+					<h2>🐳 Docker Model Runner</h2>
+					<pre><code class="hljs yaml" data-trim data-line-numbers="|1-19|2-8|10-19">
+# Version avec Docker Model Runner (Docker Compose)
+services:
+  n8n:
+    build: ./n8n
+    ports:
+      - "5678:5678"
+    models:
+      - llm
+
+models:
+  llm:
+    model: ollama/llama3.2:3b
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+    ports:
+      - "11435:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    runtime: ollama
+				</code></pre>
+					<aside class="notes">
+						Docker Model Runner simplifie la syntaxe pour déployer des modèles IA avec Docker Compose. Plus
+						lisible et automatisé, mais encore limité à Docker Compose. Utilisez les flèches pour naviguer :
+						vue d'ensemble, service n8n, puis section models. Pour la compatibilité Podman, on reste sur les
+						services classiques.
+					</aside>
+				</section>
+
+				<section>
+					<h2>✨ Avantages</h2>
+					<ul>
+						<li class="fragment">🎯 Syntaxe simplifiée</li>
+						<li class="fragment">🔗 Liaison automatique n8n ↔ modèle</li>
+						<li class="fragment">⚙️ Configuration centralisée</li>
+						<li class="fragment">🚀 Déploiement unifié</li>
+					</ul>
+					<aside class="notes">
+						Les avantages du Docker Model Runner : syntaxe plus claire, liaison automatique entre n8n et les
+						modèles, toute la config au même endroit, et déploiement en une seule commande.
+					</aside>
+				</section>
+
+				<section>
+					<h2>⚠️ Limitations</h2>
+					<ul>
+						<li class="fragment">🐋 Docker Compose uniquement</li>
+						<li class="fragment">🆕 Fonctionnalité récente</li>
+						<li class="fragment">📚 Documentation limitée</li>
+						<li class="fragment">🔧 Fallback classique recommandé</li>
+					</ul>
+					<aside class="notes">
+						Attention aux limitations : pas encore compatible Podman, fonctionnalité récente donc
+						potentiellement instable, peu de documentation disponible. Pour la production, préférez la
+						configuration classique avec services séparés.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Les workflows</h2>
+					<ul>
+						<li class="fragment">📧 <strong>Mail.json</strong> : Assistant email intelligent</li>
+						<li class="fragment">🗂️ <strong>Indexation.json</strong> : Traitement de documents</li>
+						<li class="fragment">💬 <strong>Chat.json</strong> : Chatbot</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Demo time! 🎬</h2>
+					<h3>Démarrage du stack</h3>
+					<pre><code class="hljs bash" data-trim>
+						# Lancement des services
+						./start.sh
+
+						# Configuration d'Ollama local
+						./setup-ollama.sh
+
+						# Import des workflows
+						./import-n8n-data.sh
+						</code></pre>
+					<aside class="notes">
+						Maintenant, place à la démo ! On va démarrer le stack, configurer Ollama avec des modèles
+						locaux, et importer nos workflows.
+					</aside>
+				</section>
+
+				<section data-background="lightblue">
+					<h1>🎯 Démo en direct</h1>
+					<p>http://localhost:5678</p>
+					<aside class="notes">
+						[Ici, faire la démonstration live des workflows]
+					</aside>
+				</section>
+			</section>
+
+			<!-- Section Sponsors -->
+			<section>
+				<section>
+					<h1>🙏 Merci à nos sponsors</h1>
+					<p style="font-size: 0.8em;">Codeurs en Seine 2025 ne pourrait exister sans le soutien de nos partenaires</p>
+				</section>
+
+				<section>
+					<h2>Sponsors Platine & Or</h2>
+					<div class="sponsors-grid">
+						<div class="sponsor-logo">
+							<img src="img/sponsors/attineos.png" alt="Attineos">
+						</div>
+						<div class="sponsor-logo">
+							<img src="img/sponsors/bluesoft.png" alt="BlueSoft">
+						</div>
+						<div class="sponsor-logo">
+							<img src="img/sponsors/digit.png" alt="Digit">
+						</div>
+						<div class="sponsor-logo">
+							<img src="img/sponsors/leboncoin.png" alt="Le Bon Coin">
+						</div>
+						<div class="sponsor-logo">
+							<img src="img/sponsors/matmut.png" alt="Matmut">
+						</div>
+						<div class="sponsor-logo">
+							<img src="img/sponsors/sqli.png" alt="SQLI">
+						</div>
+					</div>
+					<aside class="notes">
+						Un grand merci à nos sponsors principaux qui rendent cet événement possible : Attineos, BlueSoft, Digit, Le Bon Coin, Matmut et SQLI.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Sponsors Argent & Bronze</h2>
+					<div class="sponsors-grid">
+						<div class="sponsor-logo">
+							<img src="img/sponsors/imagile.png" alt="Imagile">
+						</div>
+						<div class="sponsor-logo">
+							<img src="img/sponsors/limops.png" alt="LimOps">
+						</div>
+						<div class="sponsor-logo">
+							<img src="img/sponsors/magnolia.png" alt="Magnolia">
+						</div>
+						<div class="sponsor-logo">
+							<img src="img/sponsors/proxiad.png" alt="Proxiad">
+						</div>
+						<div class="sponsor-logo">
+							<img src="img/sponsors/redlab.png" alt="REDLab">
+						</div>
+						<div class="sponsor-logo">
+							<img src="img/sponsors/wixiweb.png" alt="Wixiweb">
+						</div>
+					</div>
+					<aside class="notes">
+						Merci également à nos autres sponsors : Imagile, LimOps, Magnolia, Proxiad, REDLab et Wixiweb.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Partenaires Institutionnels & Éducatifs</h2>
+					<div class="sponsors-grid">
+						<div class="sponsor-logo">
+							<img src="img/sponsors/metropole-rouen-normandie.png" alt="Métropole Rouen Normandie">
+						</div>
+						<div class="sponsor-logo">
+							<img src="img/sponsors/cesi.png" alt="CESI">
+						</div>
+						<div class="sponsor-logo">
+							<img src="img/sponsors/nfs.png" alt="Need For School">
+						</div>
+					</div>
+					<aside class="notes">
+						Enfin, merci à nos partenaires institutionnels et éducatifs : la Métropole Rouen Normandie, le CESI et Need For School. Rendez-vous le 20 novembre 2025 !
+					</aside>
+				</section>
+			</section>
+
+			<!-- Section 4: Conclusion et questions -->
+			<section>
+				<section>
+					<h1>❓ Conclusion et questions</h1>
+				</section>
+
+				<section>
+					<h2>Ce qu'on a vu</h2>
+					<ul>
+						<li class="fragment">✅ n8n comme chef d'orchestre</li>
+						<li class="fragment">✅ Intégration IA locale (Ollama) et distante</li>
+						<li class="fragment">✅ Agents avec mémoire et outils</li>
+						<li class="fragment">✅ Protocole MCP pour étendre les capacités</li>
+						<li class="fragment">✅ Démo concrète avec workflows</li>
+					</ul>
+					<aside class="notes">
+						Récap de ce qu'on a couvert : n8n comme plateforme centrale, IA locale et distante, agents
+						intelligents avec mémoire et outils, et une démo pratique.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Pour aller plus loin</h2>
+					<ul>
+						<li class="fragment">🔗 <strong>Sources</strong> : GitHub avec docker-compose</li>
+						<li class="fragment">📚 <strong>Documentation</strong> : n8n.io et ollama.ai</li>
+						<li class="fragment">🌐 <strong>Communauté</strong> : Discord n8n et forums</li>
+						<li class="fragment">🚀 <strong>Évolutions</strong> : Nouveaux nodes IA en permanence</li>
+					</ul>
+					<aside class="notes">
+						Pour continuer : toutes les sources sont disponibles, la doc officielle est excellente, et la
+						communauté très active.
+					</aside>
+				</section>
+
+				<section>
+					<h2 class="r-fit-text">Questions ? 🤔</h2>
+					<p class="fragment">Merci pour votre attention !</p>
+				</section>
+
+				<section data-auto-animate>
+					<h2 data-id="code-title">bio.yaml</h2>
+					<pre data-id="code-animation"><code class="hljs yaml" data-trim data-line-numbers><script type="text/template">
+							first_name: "Antonin"
+							family_name: "Brugnot"
+							company: "Onepoint"
+							twitter: null
+							personal_info:
+							  email: "a.brugnot@groupeonepoint.com"
+							  birth: "21st July, 1987"
+							  photo: "tronche_joviale.png"
+							  location: "Nantes"
+							summary: "Lead Tech, DevOps, FullStack, Cloud, IA"
+						</script></code></pre>
+				</section>
+
+				<section>
+					<h2>Contact & Sources</h2>
+					<p>📧 a.brugnot@groupeonepoint.com</p>
+					<p>🔗 GitHub : antoninBr/talk-n8n-agent</p>
+					<p>🏢 Onepoint - Nantes</p>
+				</section>
+			</section>
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/mermaid/mermaid.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			center: true,
+			hash: true,
+			slideNumber: true,
+			// mermaid initialize config
+			mermaid: {
+				// flowchart: {
+				//   curve: 'linear',
+				// },
+			},
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealNotes, RevealMarkdown, RevealHighlight, RevealMermaid]
+		});
+	</script>
+</body>
+
+</html>
