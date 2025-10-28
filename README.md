@@ -60,10 +60,11 @@ docker compose up -d
 
 ### 3. Accéder aux services
 
-- **🎨 Chat Assistant** : http://localhost:8443 ou http://localhost:8080
+- **🎨 Chat Assistant** : https://localhost:8443 ou http://localhost:8080
 - **⚙️ Interface n8n** : http://localhost:5678
 - **📊 Qdrant** : http://localhost:6333
-- **📊 Ollama** : http://localhost:11435
+- **🦙 Ollama** : http://localhost:11435
+- **🎭 Playwright MCP** : http://localhost:3000
 
 ### 4. Import des workflows (optionnel)
 
