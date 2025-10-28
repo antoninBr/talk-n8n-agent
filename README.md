@@ -115,6 +115,9 @@ Les slides sont disponibles dans le dossier `/docs` et utilisent Reveal.js.
 - Démonstration live du système RAG
 - Bonnes pratiques et retours d'expérience
 
+### Lien des slides live
+https://antoninbr.github.io/talk-n8n-agent/
+
 ## ⚙️ Configuration avancée
 
 ### Variables d'environnement
