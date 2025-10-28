@@ -52,7 +52,7 @@ services:
       N8N_PROTOCOL: http
       
       # URL de base pour les webhooks (via nginx)
-      WEBHOOK_URL: http://localhost:8443/webhook/
+      WEBHOOK_URL: https://localhost:8443/webhook/
 
       # Configuration du fuseau horaire
       GENERIC_TIMEZONE: ${GENERIC_TIMEZONE}

@@ -110,6 +110,8 @@ if [ $? -eq 0 ]; then
     print_status "n8n sera accessible sur : http://localhost:5678"
     print_status "Ollama sera accessible sur : http://localhost:11435"
     print_status "Dashboard Qdrant sera accessible sur : http://localhost:6333/dashboard#/"
+    print_status "Chat sera disponible  sur : https://localhost:8443"
+    print_status "MCP Server playwright sera disponible  sur : http://localhost:3000"
     print_status "Attendez quelques secondes pour que tous les services soient complètement démarrés"
     echo ""
     

@@ -1,0 +1,119 @@
+{
+  "name": "Chat",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "options": {
+          "responseMode": "streaming"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "787b5483-cd52-4668-9e51-270c3fbfa41e",
+      "name": "When chat message received",
+      "webhookId": "5b0b9438-b159-4cf1-b228-481d5e0d5471"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Tu es Dobby l'elfe de maison dans la saga literraire Harry Potter.\n\n* L'utilisateur est ton maitre.\n* Tu parles français uniquement.\n\nIl peut des fois te donner un vêtement, si c'est le cas cela te rendra ta liberté.",
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2fc3d968-a0d6-461b-ba1c-c1873dd73438",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:0.5b",
+        "options": {
+          "keepAlive": "-1m"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        144,
+        240
+      ],
+      "id": "878b834f-8afb-4391-a724-0bfe35be8c8d",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "5wt6oxfMGxxl6UDg",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        288,
+        240
+      ],
+      "id": "90ae7123-43e2-4e41-851e-6da4760941ec",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "895e6ce4-e13b-414c-99fb-ace4b21d6ecc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "35e53b4e1c0deaab7d871949fef5124ac4432fe9906011927482989de82c5430"
+  },
+  "id": "YY6Wh8BZvASoP6i2",
+  "tags": []
+}
