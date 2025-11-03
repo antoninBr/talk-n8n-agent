@@ -20,19 +20,19 @@ Page web minimaliste et autoportée pour l'assistant IA via n8n, servie par Ngin
 docker compose up -d
 
 # Attendre quelques secondes puis ouvrir :
-firefox http://localhost:8080
+firefox https://localhost:8443
 ```
 
-Le chat est maintenant accessible sur **http://localhost:8080** (port 8080).
+Le chat est maintenant accessible sur **https://localhost:8443** (port 8443).
 
 ### Utilisation de base
 
 Ouvrez simplement dans votre navigateur :
 
 ```bash
-firefox http://localhost:8080
+firefox https://localhost:8443
 # ou
-google-chrome http://localhost:8080
+google-chrome https://localhost:8443
 ```
 
 ### Avec paramètres personnalisés
@@ -40,19 +40,19 @@ google-chrome http://localhost:8080
 #### Session ID personnalisée
 
 ```
-http://localhost:8080?sessionId=ma_session_123
+https://localhost:8443?sessionId=ma_session_123
 ```
 
 #### Choix du modèle LLM
 
 ```
-http://localhost:8080?model=openai
+https://localhost:8443?model=openai
 ```
 
 #### Combinaison de paramètres
 
 ```
-http://localhost:8080?sessionId=session_abc&model=local
+https://localhost:8443?sessionId=session_abc&model=local
 ```
 
 ## 🏗️ Architecture
@@ -60,7 +60,7 @@ http://localhost:8080?sessionId=session_abc&model=local
 Le frontend est servi par Nginx qui agit aussi comme reverse proxy :
 
 ```
-Navigateur → Nginx:8080 → [Fichiers HTML/CSS/JS]
+Navigateur → Nginx:8443 → [Fichiers HTML/CSS/JS]
                       → [Proxy /webhook/*] → n8n:5678
 ```
 
@@ -72,8 +72,6 @@ Le fichier `nginx.conf` dans ce dossier configure :
 - **Streaming** : Support des réponses en temps réel
 - **CORS** : Headers configurés pour permettre les appels cross-origin
 - **Health check** : Endpoint `/health` pour monitoring
-
-```
 
 ## 📋 Paramètres URL disponibles
 
@@ -106,7 +104,7 @@ webhookUrl: window.location.origin + '/webhook/665869c3-d79b-49e2-82b0-ef445d021
 ```
 
 Cela fonctionne automatiquement en :
-- **Développement** : `http://localhost:8443/webhook/...`
+- **Développement** : `https://localhost:8443/webhook/...`
 
 Si vous devez changer l'ID du webhook, modifiez uniquement la partie après `/webhook/`.
 
@@ -219,19 +217,19 @@ Le fichier `index.html` est totalement autoporté et contient :
 ### Support client standard
 
 ```
-http://localhost:8080?sessionId=sess_45678
+https://localhost:8443?sessionId=sess_45678
 ```
 
 ### Test avec modèle spécifique
 
 ```
-http://localhost:8080?sessionId=test_dev&model=local
+https://localhost:8443?sessionId=test_dev&model=local
 ```
 
 ### Session utilisateur authentifié
 
 ```
-http://localhost:8080?sessionId=user_${userId}&model=openai
+https://localhost:8443?sessionId=user_${userId}&model=openai
 ```
 
 ## 🎨 Personnalisation avancée
@@ -283,12 +281,3 @@ Ajustez les variables CSS :
 - Assurez-vous que toutes les couleurs utilisent la palette moderne
 - Videz le cache du navigateur après modification du CSS
 
----
-
-**Version** : 2.0  
-**Dernière mise à jour** : Octobre 2025  
-**Changements majeurs** : 
-- Design modernisé avec palette de couleurs contemporaine
-- Menu d'administration intégré
-- Suppression du branding spécifique
-- Amélioration des animations et transitions
