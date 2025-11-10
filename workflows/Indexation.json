@@ -54,7 +54,7 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1,
       "position": [
-        224,
+        396,
         0
       ],
       "id": "3076251d-f573-4b45-97ac-63e544408d3a",
@@ -68,37 +68,11 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        448,
+        864,
         0
       ],
       "id": "979db5e3-92a6-4254-9dd0-907ab5a256e0",
       "name": "Split pages"
-    },
-    {
-      "parameters": {
-        "mode": "insert",
-        "qdrantCollection": {
-          "__rl": true,
-          "value": "documents",
-          "mode": "list",
-          "cachedResultName": "documents"
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
-      "typeVersion": 1.3,
-      "position": [
-        1280,
-        0
-      ],
-      "id": "c76ebc9f-971a-4527-aab9-ff74d8daaebd",
-      "name": "Qdrant Vector Store",
-      "credentials": {
-        "qdrantApi": {
-          "id": "LaDuTFFjpVy4NOmb",
-          "name": "QdrantApi account"
-        }
-      }
     },
     {
       "parameters": {
@@ -107,7 +81,7 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
       "typeVersion": 1,
       "position": [
-        1248,
+        1752,
         224
       ],
       "id": "86bf83f8-8eaa-492e-8761-04a88e5163af",
@@ -134,8 +108,8 @@
               "leftValue": "={{ $json.output }}",
               "rightValue": "SKIP",
               "operator": {
-                "operation": "notEquals",
-                "type": "string"
+                "type": "string",
+                "operation": "notContains"
               }
             },
             {
@@ -155,58 +129,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1024,
+        1528,
         0
       ],
       "id": "c9a89967-941b-4d16-b049-d9c5fd5dd3e5",
       "name": "Filter Quality Content"
-    },
-    {
-      "parameters": {
-        "textSplittingMode": "custom",
-        "options": {
-          "metadata": {
-            "metadataValues": [
-              {
-                "name": "source_filename",
-                "value": "={{ $('Index file').item.json.Fichier.filename }}"
-              },
-              {
-                "name": "source_type",
-                "value": "={{ $('Index file').item.json.Fichier.mimetype }}"
-              },
-              {
-                "name": "page_number",
-                "value": "={{ $('Split pages').item.json.pageNumber || ($itemIndex + 1) }}"
-              },
-              {
-                "name": "content_length",
-                "value": "={{ $json.pageContent?.length || $json.text?.length || 0 }}"
-              },
-              {
-                "name": "chunk_id",
-                "value": "={{ $('Index file').item.json.Fichier.filename }}_page_{{ $('Split pages').item.json.pageNumber || ($itemIndex + 1) }}_chunk_{{ $itemIndex }}"
-              },
-              {
-                "name": "indexed_date",
-                "value": "={{ new Date().toISOString() }}"
-              },
-              {
-                "name": "document_title",
-                "value": "={{ $('Index file').item.json.Fichier.filename.replace('.pdf', '') }}"
-              }
-            ]
-          }
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-      "typeVersion": 1.1,
-      "position": [
-        1376,
-        224
-      ],
-      "id": "9a99b52e-c820-4f83-8e56-2daac8e7f172",
-      "name": "Enhanced Data Loader"
     },
     {
       "parameters": {
@@ -219,7 +146,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        672,
+        1168,
         0
       ],
       "id": "7b50ec4f-ae1c-4b52-8764-0aac61a3671e",
@@ -233,7 +160,7 @@
       "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
       "typeVersion": 1,
       "position": [
-        1456,
+        1960,
         432
       ],
       "id": "7ed11a42-b0fd-406e-8653-a7ddca5a50d1",
@@ -296,8 +223,8 @@
       "type": "@n8n/n8n-nodes-langchain.modelSelector",
       "typeVersion": 1,
       "position": [
-        688,
-        240
+        1160,
+        224
       ],
       "id": "325da776-80d9-496a-a7b1-89279192af35",
       "name": "Model Selector"
@@ -313,8 +240,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
       "typeVersion": 1,
       "position": [
-        608,
-        464
+        1176,
+        432
       ],
       "id": "c5fe438c-bd55-403d-b3d4-88f2561ae66f",
       "name": "Local Ollama Agent Model",
@@ -336,8 +263,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
       "typeVersion": 1,
       "position": [
-        768,
-        464
+        1304,
+        432
       ],
       "id": "d0e4d7f2-9403-4d00-a92a-c7f479382ea1",
       "name": "Remote Ollama Agent Model",
@@ -347,6 +274,245 @@
           "name": "Remote Ollama Account"
         }
       }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://playwright-mcp:3333/mcp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        296,
+        624
+      ],
+      "id": "aff72c1a-db57-41fc-b1c0-e7c702c9487b",
+      "name": "playwright_mcp"
+    },
+    {
+      "parameters": {
+        "formTitle": "Indexation d'Url",
+        "formDescription": "Formulaire de prise en compte d'une url à indexer (utilise OpenAI)",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Url",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        400
+      ],
+      "id": "ef4bac0a-d128-46a3-858b-d8f7f15c4aab",
+      "name": "Index Url",
+      "webhookId": "835f88c6-eaf7-46d7-b8db-9d00a971412b"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Index Url').item.json.Url }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Tu es un expert en extraction et structuration de contenu web en Français.\n\nInstructions :\n* Utilise l'outil playwright_mcp pour naviguer sur les pages web demandées\n* Extrait le contenu principal en évitant les éléments de navigation, publicités, cookies, headers et footers\n* Supprime les éléments répétitifs comme les menus, barres latérales et widgets\n* Corrige la mise en forme et les espaces inutiles\n* Supprime les lignes vides multiples\n* Garde uniquement le contenu informatif principal (articles, textes, descriptions)\n* Ignore les éléments interactifs (boutons, formulaires) sauf si pertinents\n* Structure le texte avec des titres markdown appropriés\n* Préserve la hiérarchie logique du contenu (H1, H2, H3...)\n* Extrait les liens importants en conservant leur contexte\n\nCritères de qualité :\n- Le contenu doit être informatif et cohérent\n- Minimum 50 caractères de contenu utile\n- Pas de texte répétitif ou de bruit\n- Préserve les informations essentielles (dates, auteurs, sources)\n- Maintient la lisibilité et la structure logique\n\nFormat de sortie :\nContenu web nettoyé et structuré en markdown et en Français, ou 'SKIP' si la page n'est pas accessible ou ne contient pas de contenu pertinent"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        224,
+        400
+      ],
+      "id": "5237db7e-2127-4718-b609-1fe936174bf4",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        356,
+        832
+      ],
+      "id": "22954643-bcf1-4124-89f5-e20f59eef5b3",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "RRGz5NBjE2jXvDeE",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"title\": \"Titre de la page Web\",\n\t\"content\": \"Contenu de la page web en markdown\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        424,
+        624
+      ],
+      "id": "d81a1583-8b66-4483-95ab-fd0bc67d6314",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        1784,
+        0
+      ],
+      "id": "c76ebc9f-971a-4527-aab9-ff74d8daaebd",
+      "name": "Documents Qdrant Vector Store",
+      "credentials": {
+        "qdrantApi": {
+          "id": "LaDuTFFjpVy4NOmb",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "web_documents",
+          "mode": "list",
+          "cachedResultName": "web_documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        800,
+        400
+      ],
+      "id": "816cccea-c541-440f-af92-3f9b91cd85bd",
+      "name": "Web Documents Qdrant Vector Store1",
+      "credentials": {
+        "qdrantApi": {
+          "id": "LaDuTFFjpVy4NOmb",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "source_filename",
+                "value": "={{ $('Index file').item.json.Fichier.filename }}"
+              },
+              {
+                "name": "source_type",
+                "value": "={{ $('Index file').item.json.Fichier.mimetype }}"
+              },
+              {
+                "name": "page_number",
+                "value": "={{ $('Split pages').item.json.pageNumber || ($itemIndex + 1) }}"
+              },
+              {
+                "name": "content_length",
+                "value": "={{ $json.pageContent?.length || $json.text?.length || 0 }}"
+              },
+              {
+                "name": "chunk_id",
+                "value": "={{ $('Index file').item.json.Fichier.filename }}_page_{{ $('Split pages').item.json.pageNumber || ($itemIndex + 1) }}_chunk_{{ $itemIndex }}"
+              },
+              {
+                "name": "indexed_date",
+                "value": "={{ new Date().toISOString() }}"
+              },
+              {
+                "name": "document_title",
+                "value": "={{ $('Index file').item.json.Fichier.filename.replace('.pdf', '') }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1880,
+        224
+      ],
+      "id": "9a99b52e-c820-4f83-8e56-2daac8e7f172",
+      "name": "Document Data Loader"
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.output.content }}",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "url",
+                "value": "={{ $('Index Url').item.json.Url }}"
+              },
+              {
+                "name": "title",
+                "value": "={{ $json.output.title }}"
+              },
+              {
+                "name": "scraped_at",
+                "value": "={{ new Date().toISOString() }}"
+              },
+              {
+                "name": "content_type",
+                "value": "markdown"
+              },
+              {
+                "name": "domain",
+                "value": "={{ new URL($('Index Url').item.json.Url).hostname }}"
+              },
+              {
+                "name": "content_length",
+                "value": "={{ $json.output.content.length() }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        792,
+        624
+      ],
+      "id": "a14ce718-b9a6-4ef3-a759-b0ae103caa52",
+      "name": "Web Document Data Loader"
     }
   ],
   "pinData": {},
@@ -388,19 +554,13 @@
       "ai_embedding": [
         [
           {
-            "node": "Qdrant Vector Store",
+            "node": "Documents Qdrant Vector Store",
             "type": "ai_embedding",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Enhanced Data Loader": {
-      "ai_document": [
-        [
+          },
           {
-            "node": "Qdrant Vector Store",
-            "type": "ai_document",
+            "node": "Web Documents Qdrant Vector Store1",
+            "type": "ai_embedding",
             "index": 0
           }
         ]
@@ -410,7 +570,7 @@
       "main": [
         [
           {
-            "node": "Qdrant Vector Store",
+            "node": "Documents Qdrant Vector Store",
             "type": "main",
             "index": 0
           }
@@ -432,7 +592,12 @@
       "ai_textSplitter": [
         [
           {
-            "node": "Enhanced Data Loader",
+            "node": "Document Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          },
+          {
+            "node": "Web Document Data Loader",
             "type": "ai_textSplitter",
             "index": 0
           }
@@ -471,14 +636,97 @@
           }
         ]
       ]
+    },
+    "Index Url": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "playwright_mcp": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Web Documents Qdrant Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Document Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Documents Qdrant Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Document Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Web Documents Qdrant Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "b2b1b2e7-9ca5-47a6-b3a7-1f57d9f81e1a",
+  "versionId": "81234978-0531-4bc9-a8f8-6932673d3273",
   "meta": {
+    "templateCredsSetupCompleted": true,
     "instanceId": "35e53b4e1c0deaab7d871949fef5124ac4432fe9906011927482989de82c5430"
   },
   "id": "lnZ6c49wc2TZHdlA",

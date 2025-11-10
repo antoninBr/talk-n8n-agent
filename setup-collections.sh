@@ -40,6 +40,31 @@ curl -X PUT "http://localhost:6333/collections/documents" \
 echo ""
 echo "✅ Collection 'documents' créée"
 
+# Créer la collection pour les documents
+echo "📋 Création de la collection 'web_documents'..."
+curl -X PUT "http://localhost:6333/collections/web_documents" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "vectors": {
+      "size": 768,
+      "distance": "Cosine"
+    },
+    "optimizers_config": {
+      "default_segment_number": 2,
+      "max_segment_size": 20000,
+      "memmap_threshold": 50000,
+      "indexing_threshold": 10000,
+      "flush_interval_sec": 30
+    },
+    "hnsw_config": {
+      "m": 16,
+      "ef_construct": 100,
+      "full_scan_threshold": 10000
+    }
+  }'
+echo ""
+echo "✅ Collection 'web_documents' créée"
+
 # Vérifier les collections
 echo "🔍 Vérification des collections..."
 curl -s http://localhost:6333/collections | jq '.'
