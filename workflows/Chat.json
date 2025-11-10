@@ -21,7 +21,7 @@
     },
     {
       "parameters": {
-        "model": "qwen2.5:1.5b",
+        "model": "qwen2.5:3b-instruct-q4_K_M",
         "options": {
           "temperature": 0.8,
           "topP": 0.9,
