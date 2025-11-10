@@ -21,32 +21,18 @@
     },
     {
       "parameters": {
+        "model": "qwen2.5:1.5b",
         "options": {
-          "systemMessage": "Tu es Dobby l'elfe de maison dans la saga literraire Harry Potter.\n\n* L'utilisateur est ton maitre.\n* Tu parles français uniquement.\n\nIl peut des fois te donner un vêtement, si c'est le cas cela te rendra ta liberté.",
-          "enableStreaming": true
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 2.2,
-      "position": [
-        208,
-        0
-      ],
-      "id": "2fc3d968-a0d6-461b-ba1c-c1873dd73438",
-      "name": "AI Agent"
-    },
-    {
-      "parameters": {
-        "model": "qwen2.5:0.5b",
-        "options": {
+          "temperature": 0.8,
+          "topP": 0.9,
           "keepAlive": "-1m"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
       "typeVersion": 1,
       "position": [
-        144,
-        240
+        224,
+        224
       ],
       "id": "878b834f-8afb-4391-a724-0bfe35be8c8d",
       "name": "Ollama Chat Model",
@@ -58,15 +44,94 @@
       }
     },
     {
-      "parameters": {},
+      "parameters": {
+        "endpointUrl": "http://playwright-mcp:3000/mcp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        432
+      ],
+      "id": "d69d4688-00d3-4842-8a04-1a03271f28c0",
+      "name": "MCP Client"
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        560,
+        432
+      ],
+      "id": "5010da90-1dfe-4425-a8b5-ee521ec907c8",
+      "name": "Embeddings Ollama",
+      "credentials": {
+        "ollamaApi": {
+          "id": "5wt6oxfMGxxl6UDg",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "recherche_documents",
+        "toolDescription": "Outil de recherche dans la base documentaire. Utilise cet outil pour chercher des informations pertinentes dans les documents PDF indexés. La recherche est basée sur la similarité sémantique. Les résultats incluent le contenu, le nom du fichier source, le numéro de page et l'ID du chunk. Utilise des mots-clés spécifiques et des phrases complètes pour de meilleurs résultats.",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        224
+      ],
+      "id": "a2984e5c-600e-4673-a0da-b90a0b67ef64",
+      "name": "recherche_documents",
+      "credentials": {
+        "qdrantApi": {
+          "id": "LaDuTFFjpVy4NOmb",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Tu es Dobby, l'elfe de maison loyal dans l'univers Harry Potter.\n\n**Personnalité et comportement :**\n- Tu parles à la troisième personne (\"Dobby pense que...\", \"Dobby va chercher...\")\n- Tu appelles l'utilisateur \"Maître\" ou \"Maîtresse\" avec respect\n- Tu es enthousiaste pour aider et chercher des informations\n- Tu parles français uniquement\n- Si on te donne un vêtement, tu deviens libre et joyeux\n\n**Outils disponibles :**\n- \"recherche_documents\" : Pour chercher dans les documents PDF indexés\n\n**Instructions importantes :**\n- Utilise TOUJOURS l'outil de recherche avant de répondre à une question factuelle\n- Cherche avec des mots-clés pertinents et des phrases spécifiques\n- Si tu ne trouves pas d'information, dis-le clairement\n- Cite toujours tes sources (nom du fichier et page)\n- Résume les informations trouvées de manière claire et structurée",
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        0
+      ],
+      "id": "2fc3d968-a0d6-461b-ba1c-c1873dd73438",
+      "name": "Dobby AI Agent"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        288,
-        240
+        352,
+        224
       ],
       "id": "90ae7123-43e2-4e41-851e-6da4760941ec",
-      "name": "Simple Memory"
+      "name": "Conversation Memory"
     }
   ],
   "pinData": {},
@@ -75,7 +140,7 @@
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "Dobby AI Agent",
             "type": "main",
             "index": 0
           }
@@ -86,18 +151,45 @@
       "ai_languageModel": [
         [
           {
-            "node": "AI Agent",
+            "node": "Dobby AI Agent",
             "type": "ai_languageModel",
             "index": 0
           }
         ]
       ]
     },
-    "Simple Memory": {
+    "MCP Client": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Embeddings Ollama": {
+      "ai_embedding": [
+        [
+          {
+            "node": "recherche_documents",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "recherche_documents": {
+      "ai_tool": [
+        [
+          {
+            "node": "Dobby AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversation Memory": {
       "ai_memory": [
         [
           {
-            "node": "AI Agent",
+            "node": "Dobby AI Agent",
             "type": "ai_memory",
             "index": 0
           }
@@ -109,7 +201,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "895e6ce4-e13b-414c-99fb-ace4b21d6ecc",
+  "versionId": "65039de6-bd49-4b9c-948b-289f3d092118",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "35e53b4e1c0deaab7d871949fef5124ac4432fe9906011927482989de82c5430"

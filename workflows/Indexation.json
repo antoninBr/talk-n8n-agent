@@ -1,0 +1,486 @@
+{
+  "name": "Indexation",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Indexation de fichiers",
+        "formDescription": "Formulaire de prise en compte d'un fichier pdf à indexer",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Fichier",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".pdf",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "model",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "local"
+                  },
+                  {
+                    "option": "remote"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "72bc2d44-cc4c-49d4-a59d-17a86e15002a",
+      "name": "Index file",
+      "webhookId": "59f9a7ae-be47-4760-8a79-a6602be58e2f"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "Fichier",
+        "options": {
+          "joinPages": false
+        }
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "3076251d-f573-4b45-97ac-63e544408d3a",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "979db5e3-92a6-4254-9dd0-907ab5a256e0",
+      "name": "Split pages"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        1280,
+        0
+      ],
+      "id": "c76ebc9f-971a-4527-aab9-ff74d8daaebd",
+      "name": "Qdrant Vector Store",
+      "credentials": {
+        "qdrantApi": {
+          "id": "LaDuTFFjpVy4NOmb",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        224
+      ],
+      "id": "86bf83f8-8eaa-492e-8761-04a88e5163af",
+      "name": "Embeddings Ollama",
+      "credentials": {
+        "ollamaApi": {
+          "id": "5wt6oxfMGxxl6UDg",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "content-filter",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "SKIP",
+              "operator": {
+                "operation": "notEquals",
+                "type": "string"
+              }
+            },
+            {
+              "id": "min-length",
+              "leftValue": "={{ $json.output.length }}",
+              "rightValue": 50,
+              "operator": {
+                "operation": "gte",
+                "type": "number"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        0
+      ],
+      "id": "c9a89967-941b-4d16-b049-d9c5fd5dd3e5",
+      "name": "Filter Quality Content"
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "source_filename",
+                "value": "={{ $('Index file').item.json.Fichier.filename }}"
+              },
+              {
+                "name": "source_type",
+                "value": "={{ $('Index file').item.json.Fichier.mimetype }}"
+              },
+              {
+                "name": "page_number",
+                "value": "={{ $('Split pages').item.json.pageNumber || ($itemIndex + 1) }}"
+              },
+              {
+                "name": "content_length",
+                "value": "={{ $json.pageContent?.length || $json.text?.length || 0 }}"
+              },
+              {
+                "name": "chunk_id",
+                "value": "={{ $('Index file').item.json.Fichier.filename }}_page_{{ $('Split pages').item.json.pageNumber || ($itemIndex + 1) }}_chunk_{{ $itemIndex }}"
+              },
+              {
+                "name": "indexed_date",
+                "value": "={{ new Date().toISOString() }}"
+              },
+              {
+                "name": "document_title",
+                "value": "={{ $('Index file').item.json.Fichier.filename.replace('.pdf', '') }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1376,
+        224
+      ],
+      "id": "9a99b52e-c820-4f83-8e56-2daac8e7f172",
+      "name": "Enhanced Data Loader"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "Tu es un expert en nettoyage et structuration de documents PDF.\n\nInstructions :\n* Supprime les numéros de page, headers, footers répétitifs\n* Corrige les mots coupés en fin de ligne\n* Supprime les lignes vides multiples\n* Garde uniquement le contenu informatif principal\n* Ignore les éléments de navigation ou publicitaires\n* Structure le texte avec des titres markdown appropriés\n* Préserve la structure logique du document\n\nCritères de qualité :\n- Le texte doit être informatif et cohérent\n- Minimum 50 caractères de contenu utile\n- Pas de texte répétitif ou de bruit\n\nFormat de sortie :\nTexte nettoyé et structuré en markdown, ou 'SKIP' si le contenu n'est pas pertinent"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        672,
+        0
+      ],
+      "id": "7b50ec4f-ae1c-4b52-8764-0aac61a3671e",
+      "name": "Clean Content Agent"
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        432
+      ],
+      "id": "7ed11a42-b0fd-406e-8653-a7ddca5a50d1",
+      "name": "Smart Text Chunker"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rule": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ac253c83-e230-4dc4-8321-26635c154859",
+                    "leftValue": "={{ $('Index file').item.json.model }}",
+                    "rightValue": "local",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "modelIndex": 2,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d6a99a37-231a-43a8-b8f4-d4c42b9ec441",
+                    "leftValue": "={{ $('Index file').item.json.model }}",
+                    "rightValue": "remote",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.modelSelector",
+      "typeVersion": 1,
+      "position": [
+        688,
+        240
+      ],
+      "id": "325da776-80d9-496a-a7b1-89279192af35",
+      "name": "Model Selector"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:3b-instruct-q4_K_M",
+        "options": {
+          "temperature": 0.4,
+          "keepAlive": "-1m"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        608,
+        464
+      ],
+      "id": "c5fe438c-bd55-403d-b3d4-88f2561ae66f",
+      "name": "Local Ollama Agent Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "5wt6oxfMGxxl6UDg",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:7b",
+        "options": {
+          "temperature": 0.4,
+          "keepAlive": "-1m"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        768,
+        464
+      ],
+      "id": "d0e4d7f2-9403-4d00-a92a-c7f479382ea1",
+      "name": "Remote Ollama Agent Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "fK7fLhnq71Tqrjv1",
+          "name": "Remote Ollama Account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Index file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Split pages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split pages": {
+      "main": [
+        [
+          {
+            "node": "Clean Content Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enhanced Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Quality Content": {
+      "main": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Content Agent": {
+      "main": [
+        [
+          {
+            "node": "Filter Quality Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Smart Text Chunker": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Enhanced Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Local Ollama Agent Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remote Ollama Agent Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Model Selector": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Clean Content Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b2b1b2e7-9ca5-47a6-b3a7-1f57d9f81e1a",
+  "meta": {
+    "instanceId": "35e53b4e1c0deaab7d871949fef5124ac4432fe9906011927482989de82c5430"
+  },
+  "id": "lnZ6c49wc2TZHdlA",
+  "tags": []
+}
