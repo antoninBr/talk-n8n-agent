@@ -25,9 +25,17 @@ curl -X PUT "http://localhost:6333/collections/documents" \
       "distance": "Cosine"
     },
     "optimizers_config": {
-      "default_segment_number": 2
+      "default_segment_number": 2,
+      "max_segment_size": 20000,
+      "memmap_threshold": 50000,
+      "indexing_threshold": 10000,
+      "flush_interval_sec": 30
     },
-    "replication_factor": 1
+    "hnsw_config": {
+      "m": 16,
+      "ef_construct": 100,
+      "full_scan_threshold": 10000
+    }
   }'
 echo ""
 echo "✅ Collection 'documents' créée"
