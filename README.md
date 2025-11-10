@@ -64,7 +64,7 @@ docker compose up -d
 - **⚙️ Interface n8n** : http://localhost:5678
 - **📊 Qdrant** : http://localhost:6333
 - **🦙 Ollama** : http://localhost:11435
-- **🎭 Playwright MCP** : http://localhost:3000
+- **🎭 Playwright MCP** : http://localhost:3333
 
 ### 4. Import des workflows (optionnel)
 
@@ -188,7 +188,7 @@ docker compose restart n8n
 ### Port déjà utilisé
 ```bash
 # Changer les ports dans docker-compose.yml
-# Par défaut: 8080 et 8443 (chat), 5678 (n8n), 3000 (playwright-mcp), 11435 (ollama)
+# Par défaut: 8080 et 8443 (chat), 5678 (n8n), 3333 (playwright-mcp), 11435 (ollama)
 ```
 
 ## 🤝 Contribution

@@ -142,85 +142,52 @@ services:
   playwright-mcp:
     build:
       dockerfile_inline: |
-        FROM mcr.microsoft.com/playwright:v1.50.0-noble
+        FROM node:20-slim
         
-        # Install Node.js and npm
+        # Install system dependencies including Playwright dependencies
         RUN apt-get update && apt-get install -y \
-            curl \
-            patch \
-            && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-            && apt-get install -y nodejs \
-            && apt-get clean \
-            && rm -rf /var/lib/apt/lists/*
+        wget \
+        gnupg \
+        ca-certificates \
+        fonts-liberation \
+        libasound2 \
+        libatk-bridge2.0-0 \
+        libatk1.0-0 \
+        libatspi2.0-0 \
+        libdrm2 \
+        libgtk-3-0 \
+        libnspr4 \
+        libnss3 \
+        libwayland-client0 \
+        libxcomposite1 \
+        libxdamage1 \
+        libxfixes3 \
+        libxrandr2 \
+        xdg-utils \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/*
         
         # Create app directory
         WORKDIR /app
         
-        # Install pnpm globally and set up global directories
-        # This is necessary to ensure pnpm can be used globally and to manage dependencies effectively
-        RUN mkdir -p /usr/lib/pnpm-global && \
-            npm install -g pnpm && \
-            pnpm config set global-bin-dir /usr/bin && \
-            pnpm config set global-dir /usr/lib/pnpm-global
-
-        # Create pnpmfile.js for dependency overrides (Automation principle)
-        RUN echo 'module.exports = { \
-          hooks: { \
-            readPackage(pkg) { \
-              console.log("Processing package:", pkg.name); \
-              if (pkg.dependencies) { \
-                if (pkg.dependencies["playwright-core"]) { \
-                  console.log("Forcing playwright-core to 1.52.0"); \
-                  pkg.dependencies["playwright-core"] = "1.52.0"; \
-                } \
-                if (pkg.dependencies["playwright"]) { \
-                  console.log("Forcing playwright to 1.52.0"); \
-                  pkg.dependencies["playwright"] = "1.52.0"; \
-                } \
-              } \
-              if (pkg.devDependencies) { \
-                if (pkg.devDependencies["playwright-core"]) { \
-                  console.log("Forcing dev playwright-core to 1.52.0"); \
-                  pkg.devDependencies["playwright-core"] = "1.52.0"; \
-                } \
-                if (pkg.devDependencies["playwright"]) { \
-                  console.log("Forcing dev playwright to 1.52.0"); \
-                  pkg.devDependencies["playwright"] = "1.52.0"; \
-                } \
-              } \
-              return pkg; \
-            } \
-          } \
-        }' > pnpmfile.js
-
-        # Configure pnpm to use the override file globally (Measurement principle)
-        RUN echo "Configuring pnpm to use override file globally..." && \
-            cp pnpmfile.js /usr/lib/pnpm-global/pnpmfile.js && \
-            pnpm config set global-pnpmfile /usr/lib/pnpm-global/pnpmfile.js
-
-        # Install Playwright MCP server
-        RUN pnpm install -g @playwright/mcp@0.0.32 --verbose
-
-        # Apply rebrowser patches to playwright-core
-        # This is necessary to ensure compatibility with the MCP server
-        # The path may vary based on the pnpm global directory structure
-        RUN npx rebrowser-patches@latest patch --packagePath /usr/lib/pnpm-global/5/.pnpm/@playwright+mcp@0.0.32_zod@3.25.76/node_modules/playwright-core   
-
-        # Create a simple startup script
-        RUN echo '#!/bin/bash\nnpx @playwright/mcp --no-sandbox --isolated --port 3000 --headless' > /app/start.sh \
-            && chmod +x /app/start.sh
+        # Clone and install playwright-mcp
+        RUN npm install -g @playwright/mcp
         
-        # Install browsers (Chrome is already included in the base image)
-        RUN npx playwright install chrome --with-deps
+        # Install Playwright browsers
+        RUN npx playwright install chromium --with-deps
         
-        EXPOSE 3000
+        # Create startup script
+        RUN echo '#!/bin/bash\nnpx @playwright/mcp --no-sandbox --isolated --port 3333 --allowed-hosts "*" --host 0.0.0.0 --headless' > /app/start.sh \
+        && chmod +x /app/start.sh
+        
+        EXPOSE 3333
         
         CMD ["/app/start.sh"]
     restart: always
     networks:
       - n8n-network
     ports:
-      - "3000:3000"
+      - "3333:3333"
     environment:
       # Playwright configuration
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
