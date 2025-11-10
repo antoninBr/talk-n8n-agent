@@ -211,6 +211,151 @@
 		}
 
 		/* ============================================
+		   Sélecteur de modèle
+		   ============================================ */
+		
+		.model-selector {
+			position: fixed;
+			top: 20px;
+			left: 50%;
+			transform: translateX(-50%);
+			z-index: 10000;
+			display: flex;
+			background: rgba(255, 255, 255, 0.95);
+			backdrop-filter: blur(10px);
+			border-radius: 25px;
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+			border: 1px solid rgba(255, 255, 255, 0.2);
+			overflow: hidden;
+		}
+
+		.model-btn {
+			background: transparent;
+			border: none;
+			padding: 12px 20px;
+			cursor: pointer;
+			font-size: 14px;
+			font-weight: 600;
+			transition: all 0.3s ease;
+			color: #6c757d;
+			position: relative;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			min-width: 120px;
+			justify-content: center;
+		}
+
+		.model-btn:first-child {
+			border-right: 1px solid rgba(0, 0, 0, 0.1);
+		}
+
+		.model-btn:hover {
+			color: #007acc;
+			background: rgba(0, 122, 204, 0.05);
+		}
+
+		.model-btn.active {
+			color: #007acc;
+			background: rgba(0, 122, 204, 0.1);
+		}
+
+		.model-btn.active::after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 60%;
+			height: 3px;
+			background: #007acc;
+			border-radius: 2px 2px 0 0;
+		}
+
+		.model-icon {
+			font-size: 16px;
+		}
+
+		.model-status {
+			position: absolute;
+			top: -4px;
+			right: -4px;
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			border: 2px solid white;
+		}
+
+		.model-status.local {
+			background: #28a745;
+			animation: pulse-local 2s infinite;
+		}
+
+		.model-status.remote {
+			background: #ffc107;
+			animation: pulse-remote 2s infinite;
+		}
+
+		@keyframes pulse-local {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0.6; }
+		}
+
+		@keyframes pulse-remote {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0.7; }
+		}
+
+		/* Notification de changement */
+		.model-notification {
+			position: fixed;
+			top: 80px;
+			left: 50%;
+			transform: translateX(-50%);
+			background: #007acc;
+			color: white;
+			padding: 12px 24px;
+			border-radius: 20px;
+			box-shadow: 0 4px 12px rgba(0, 122, 204, 0.3);
+			font-size: 14px;
+			font-weight: 600;
+			opacity: 0;
+			visibility: hidden;
+			transition: all 0.3s ease;
+			z-index: 10001;
+		}
+
+		.model-notification.show {
+			opacity: 1;
+			visibility: visible;
+			transform: translateX(-50%) translateY(10px);
+		}
+
+		/* Responsive */
+		@media (max-width: 768px) {
+			.model-selector {
+				top: 10px;
+				left: 10px;
+				right: 10px;
+				transform: none;
+				width: calc(100% - 20px);
+			}
+
+			.model-btn {
+				min-width: 100px;
+				padding: 10px 16px;
+				font-size: 13px;
+			}
+
+			.model-notification {
+				left: 10px;
+				right: 10px;
+				transform: none;
+				top: 70px;
+			}
+		}
+
+		/* ============================================
 		   Menu d'administration
 		   ============================================ */
 		
@@ -444,13 +589,70 @@
 		 * @returns {string} - Message pour la bannière
 		 */
 		function getSubtitleMessage(model) {
-			const isOpenAI = model.toLowerCase().includes('openai') || model.toLowerCase().includes('gpt');
-			const modelDisplay = model === 'local' ? 'Modèle local' : `Modèle: ${model}`;
+			const isRemote = model === 'remote';
+			const modelDisplay = model === 'local' ? '🖥️ Modèle local' : '☁️ Modèle distant';
 			
-			if (isOpenAI) {
-				return `${modelDisplay} ⚠️ Attention: données envoyées à OpenAI`;
+			if (isRemote) {
+				return `${modelDisplay} • Traitement externe`;
 			}
 			return `${modelDisplay} • Traitement sécurisé et confidentiel`;
+		}
+
+		/**
+		 * Met à jour les métadonnées du chat avec le nouveau modèle
+		 * @param {string} newModel - Le nouveau modèle sélectionné
+		 */
+		function updateChatModel(newModel) {
+			// Mettre à jour l'URL sans recharger la page
+			const url = new URL(window.location);
+			url.searchParams.set('model', newModel);
+			window.history.replaceState({}, '', url);
+			
+			// Recharger la page pour appliquer les changements
+			window.location.reload();
+		}
+
+		/**
+		 * Affiche une notification temporaire
+		 * @param {string} message - Message à afficher
+		 */
+		function showNotification(message) {
+			const notification = document.querySelector('.model-notification');
+			if (notification) {
+				notification.textContent = message;
+				notification.classList.add('show');
+				
+				setTimeout(() => {
+					notification.classList.remove('show');
+				}, 2000);
+			}
+		}
+
+		/**
+		 * Initialise les boutons de sélection de modèle
+		 */
+		function initModelSelector() {
+			const currentModel = getLlmModel();
+			const buttons = document.querySelectorAll('.model-btn');
+			
+			// Marquer le bouton actif
+			buttons.forEach(btn => {
+				const modelType = btn.dataset.model;
+				if (modelType === currentModel) {
+					btn.classList.add('active');
+				}
+				
+				// Gestionnaire de clic
+				btn.addEventListener('click', () => {
+					if (modelType !== currentModel) {
+						const modelName = modelType === 'local' ? 'Modèle local' : 'Modèle distant';
+						showNotification(`Passage au ${modelName}...`);
+						setTimeout(() => {
+							updateChatModel(modelType);
+						}, 500);
+					}
+				});
+			});
 		}
 
 		// Récupération des paramètres depuis l'URL
@@ -511,8 +713,12 @@
 			url: window.location.href
 		});
 
-		// Gestion du menu d'administration
+		// Gestion du menu d'administration et du sélecteur de modèle
 		document.addEventListener('DOMContentLoaded', () => {
+			// Initialiser le sélecteur de modèle
+			initModelSelector();
+			
+			// Gestion du menu d'administration
 			const menuToggle = document.querySelector('.menu-toggle');
 			const menuContent = document.querySelector('.menu-content');
 
@@ -538,6 +744,23 @@
 	</script>
 </head>
 <body>
+	<!-- Sélecteur de modèle -->
+	<div class="model-selector">
+		<button class="model-btn" data-model="local" title="Modèle local (sécurisé, privé)">
+			<span class="model-icon">🖥️</span>
+			<span>Local</span>
+			<span class="model-status local"></span>
+		</button>
+		<button class="model-btn" data-model="remote" title="Modèle distant (plus puissant)">
+			<span class="model-icon">☁️</span>
+			<span>Remote</span>
+			<span class="model-status remote"></span>
+		</button>
+	</div>
+
+	<!-- Notification de changement de modèle -->
+	<div class="model-notification"></div>
+
 	<!-- Menu d'administration RAG -->
 	<div class="admin-menu">
 		<button class="menu-toggle" aria-label="Menu administration" title="Menu administration">
