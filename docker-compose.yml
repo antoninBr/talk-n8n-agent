@@ -175,6 +175,7 @@ services:
         
         # Install Playwright browsers
         RUN npx playwright install chromium --with-deps
+        RUN npx playwright install chrome --with-deps
         
         # Create startup script
         RUN echo '#!/bin/bash\nnpx @playwright/mcp --no-sandbox --isolated --port 3333 --allowed-hosts "*" --host 0.0.0.0 --headless' > /app/start.sh \
