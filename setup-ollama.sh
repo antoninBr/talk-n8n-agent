@@ -49,7 +49,7 @@ print_success "Ollama est prêt !"
 # Modèles recommandés pour l'assistance utilisateur
 echo ""
 print_status "Modèles recommandés pour la gestion d'emails d'assistance :"
-echo "1. qwen2.5:3b: (Léger, rapide, français correct)"
+echo "1. qwen2.5:3b-instruct-q4_K_M (Léger, rapide, français correct et optimiser CPU)"
 echo "2. nomic-embed-text (Spécialement conçu pour l'embedding, très rapide sur CPU)"
 echo "3. granite3.2-vision:2b (Excellent pour 'extraction de documents)"
 echo ""
@@ -59,7 +59,7 @@ choice=${choice:-1}
 
 case $choice in
     1)
-        MODEL="qwen2.5:3b"
+        MODEL="qwen2.5:3b-instruct-q4_K_M"
         ;;
     2)
         MODEL="nomic-embed-text"
