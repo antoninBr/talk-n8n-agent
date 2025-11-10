@@ -246,7 +246,7 @@
 			justify-content: center;
 		}
 
-		.model-btn:first-child {
+		.model-btn:not(:last-child) {
 			border-right: 1px solid rgba(0, 0, 0, 0.1);
 		}
 
@@ -296,6 +296,11 @@
 			animation: pulse-remote 2s infinite;
 		}
 
+		.model-status.openai {
+			background: #10a37f;
+			animation: pulse-openai 2s infinite;
+		}
+
 		@keyframes pulse-local {
 			0%, 100% { opacity: 1; }
 			50% { opacity: 0.6; }
@@ -304,6 +309,11 @@
 		@keyframes pulse-remote {
 			0%, 100% { opacity: 1; }
 			50% { opacity: 0.7; }
+		}
+
+		@keyframes pulse-openai {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0.8; }
 		}
 
 		/* Notification de changement */
@@ -589,13 +599,16 @@
 		 * @returns {string} - Message pour la bannière
 		 */
 		function getSubtitleMessage(model) {
-			const isRemote = model === 'remote';
-			const modelDisplay = model === 'local' ? '🖥️ Modèle local' : '☁️ Modèle distant';
-			
-			if (isRemote) {
-				return `${modelDisplay} • Traitement externe`;
+			switch(model) {
+				case 'local':
+					return '🖥️ Modèle local • Traitement sécurisé et confidentiel';
+				case 'remote':
+					return '☁️ Modèle distant • Traitement externe';
+				case 'openai':
+					return '🤖 OpenAI GPT-4 • Intelligence artificielle avancée';
+				default:
+					return '🖥️ Modèle local • Traitement sécurisé et confidentiel';
 			}
-			return `${modelDisplay} • Traitement sécurisé et confidentiel`;
 		}
 
 		/**
@@ -645,7 +658,20 @@
 				// Gestionnaire de clic
 				btn.addEventListener('click', () => {
 					if (modelType !== currentModel) {
-						const modelName = modelType === 'local' ? 'Modèle local' : 'Modèle distant';
+						let modelName;
+						switch(modelType) {
+							case 'local':
+								modelName = 'Modèle local';
+								break;
+							case 'remote':
+								modelName = 'Modèle distant';
+								break;
+							case 'openai':
+								modelName = 'OpenAI GPT-4';
+								break;
+							default:
+								modelName = 'Modèle';
+						}
 						showNotification(`Passage au ${modelName}...`);
 						setTimeout(() => {
 							updateChatModel(modelType);
@@ -755,6 +781,11 @@
 			<span class="model-icon">☁️</span>
 			<span>Remote</span>
 			<span class="model-status remote"></span>
+		</button>
+		<button class="model-btn" data-model="openai" title="Modèle OpenAI (GPT-4)">
+			<span class="model-icon">🤖</span>
+			<span>OpenAI</span>
+			<span class="model-status openai"></span>
 		</button>
 	</div>
 
