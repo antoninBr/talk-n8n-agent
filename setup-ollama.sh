@@ -69,7 +69,7 @@ case $choice in
         ;;
     *)
         print_warning "Choix invalide, utilisation du modèle par défaut"
-        MODEL="qwen2.5:3b"
+        MODEL="qwen2.5:3b-instruct-q4_K_M"
         ;;
 esac
 
