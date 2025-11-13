@@ -13,22 +13,47 @@ Cette démonstration illustre comment créer un assistant IA intelligent en orch
 
 ## 🏗️ Architecture
 
+```mermaid
+graph TB
+    User[👤 Utilisateur] --> Chat[💬 Interface Chat]
+    Chat --> N8N[🔧 n8n Orchestrateur]
+    N8N --> PG[(🗄️ PostgreSQL)]
+    N8N --> Agent[🤖 AI Agent]
+    Agent --> Ollama[🧠 Ollama LLMs locaux]
+    Agent --> Ollama_Remote[☁️ Ollama LLMs distants]
+    Agent --> Qdrant[🔍 Qdrant Vector DB]
+    Agent --> MCP[🎭 Playwright MCP]
+    Agent --> API[🧠 OpenAI/GPT-4]
+
+    subgraph "🐳 Docker Compose Stack"
+        Chat
+        N8N
+        PG
+        Ollama
+        Qdrant
+        MCP
+        Agent
+    end
+    
+    style User fill:#e1f5fe
+    style Chat fill:#f3e5f5
+    style N8N fill:#e8f5e8
+    style Agent fill:#fff3e0
+    style Ollama fill:#fce4ec
+    style API fill:#fce4ec
+    style MCP fill:#fce4ec
+    style Qdrant fill:#f1f8e9
+    style PG fill:#e3f2fd
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Chat Web UI   │    │      n8n        │    │    Qdrant       │
-│   (Nginx:8443)  │◄──►│   (Port 5678)   │◄──►│  Vector Store   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                                │
-                       ┌─────────────────┐
-                       │   PostgreSQL    │
-                       │   (Stockage)    │
-                       └─────────────────┘
-                                │
-                       ┌─────────────────┐
-                       │     Ollama      │
-                       │  (IA locale)    │
-                       └─────────────────┘
-```
+
+**Composants principaux :**
+- **Interface Chat** : Frontend web moderne avec sélecteur de modèles (Local/Remote/OpenAI)
+- **n8n** : Orchestrateur central gérant les workflows d'IA
+- **AI Agent** : Logique métier avec capacités RAG et outils MCP
+- **Modèles IA** : Support Ollama local/distant + APIs externes (OpenAI)
+- **Playwright MCP** : Web scraping et automatisation navigateur
+- **Qdrant** : Base vectorielle pour la recherche sémantique
+- **PostgreSQL** : Persistance des données et sessions
 
 ## 🚀 Démarrage rapide
 
