@@ -34,7 +34,7 @@ Cette démonstration illustre comment créer un assistant IA intelligent en orch
 
 ### Prérequis
 
-- Docker & Docker Compose
+- Docker & Docker Compose (ou podman ❤️)
 - 8 Go de RAM minimum (recommandé: 16 Go)
 - 10 Go d'espace disque libre
 
@@ -208,7 +208,19 @@ MIT License - Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 **Présenté à Codeurs en Seine 2025**  
 Par [Antonin Brugnot](https://github.com/antoninBr)  
 
-🔗 **Liens utiles** :
-- [n8n Documentation](https://docs.n8n.io/)
-- [Qdrant Documentation](https://qdrant.tech/documentation/)
-- [Ollama Models](https://ollama.ai/library)
+
+**📚 Documentation principale :**
+- [n8n Documentation](https://docs.n8n.io/) - Documentation officielle de n8n
+- [Qdrant Documentation](https://qdrant.tech/documentation/) - Guide complet pour Qdrant Vector Store
+- [Ollama Models](https://ollama.ai/library) - Bibliothèque des modèles Ollama disponibles
+
+**🤖 IA et modèles :**
+- [Installation Ollama](https://ollama.com/install.sh) - Script d'installation automatique d'Ollama
+- [n8n Assistant GPT](https://chatgpt.com/g/g-SVatmGSdQ-n8n-assistant-by-nskha) - Assistant ChatGPT spécialisé pour n8n
+
+**🔧 Workflows et ressources :**
+- [n8n Workflows Community](https://n8n.io/workflows/) - Bibliothèque communautaire de workflows n8n
+- [Reveal.js Documentation](https://revealjs.com/) - Framework de présentation utilisé pour les slides
+
+**☁️ Cloud et déploiement :**
+- [Docker × Google Cloud Partnership](https://cloud.google.com/blog/products/serverless/cloud-run-and-docker-collaboration) - Partenariat pour simplifier le déploiement Cloud Run
