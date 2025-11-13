@@ -76,6 +76,24 @@
 				</section>
 
 				<section>
+					<h2>À quoi ressemble un workflow n8n ?</h2>
+					<div style="text-align: center;">
+						<img src="img/n8n-workflow-example.png" alt="Exemple de workflow n8n" style="max-width: 60%; border: 2px solid #444; border-radius: 8px;">
+					</div>
+					<ul style="margin-top: 1em;">
+						<li class="fragment"><strong>Trigger</strong> : Déclencheur (webhook, email, cron...)</li>
+						<li class="fragment"><strong>Nodes</strong> : Actions connectées visuellement</li>
+						<li class="fragment"><strong>Variables</strong> : Données partagées entre étapes</li>
+						<li class="fragment"><strong>Exécution</strong> : Flux automatisé de bout en bout</li>
+					</ul>
+					<aside class="notes">
+						Un workflow n8n, c'est une suite d'actions connectées visuellement. Ça commence par un trigger 
+						(webhook, email, planification), puis des nodes qui s'exécutent en séquence ou en parallèle, 
+						avec des variables qui circulent entre les étapes. Simple et puissant !
+					</aside>
+				</section>
+
+				<section>
 					<div style="text-align: center;">
 						<img src="img/war-vietnam.gif" alt="War meme" style="max-width: 70%; margin-bottom: 1em;">
 					</div>
@@ -162,6 +180,26 @@
 					</aside>
 				</section>
 
+				<section>
+					<h2>Assistant GPT</h2>
+					<div style="text-align: center;">
+						<img src="img/n8n-assistant-gpt.png" alt="n8n Assistant GPT" style="max-width: 50%; border: 2px solid #444; border-radius: 8px;">
+					</div>
+					<p style="margin-top: 1em;">
+						🔗 <a href="https://chatgpt.com/g/g-SVatmGSdQ-n8n-assistant-by-nskha" target="_blank" style="color: var(--ces-green);">n8n Assistant by nskha</a>
+					</p>
+					<ul>
+						<li class="fragment">Aide à la création de workflows</li>
+						<li class="fragment">Résolution de problèmes</li>
+						<li class="fragment">Bonnes pratiques</li>
+					</ul>
+					<aside class="notes">
+						Il existe un GPT officiel n8n Assistant créé par la communauté qui peut vous aider dans la création 
+						de workflows, fournir de la documentation interactive, résoudre vos problèmes techniques et partager 
+						les bonnes pratiques. Un excellent compagnon pour débuter avec n8n !
+					</aside>
+				</section>
+				
 				<section>
 					<div style="text-align: center;">
 						<img src="img/struggle.jpg" alt="Struggle meme" style="max-width: 70%; margin-bottom: 1em;">
@@ -292,6 +330,32 @@
 					</aside>
 				</section>
 
+
+
+				<section>
+					<h2>Qu'est-ce qu'Ollama ?</h2>
+					<div style="text-align: center; margin-bottom: 2em;">
+						<img src="img/ollama-logo.png" alt="Ollama Logo" style="max-width: 90px; background: white; padding: 10px; border-radius: 8px;">
+					</div>
+					<ul>
+						<li class="fragment"><strong>Docker pour l'IA</strong> : Conteneurise vos LLMs</li>
+						<li class="fragment"><strong>Installation simple</strong> : Une commande</li>
+						<li class="fragment"><strong>Local first</strong> : Vos données restent chez vous</li>
+						<li class="fragment"><strong>API compatible</strong> : OpenAI-like</li>
+					</ul>
+					<div class="fragment" style="margin-top: 1em; padding: 1em; background: rgba(0,0,0,0.2); border-radius: 8px;">
+						<code style="font-size: 0.7em;">
+							curl -fsSL https://ollama.com/install.sh | sh<br>
+							ollama run llama3.2
+						</code>
+					</div>
+					<aside class="notes">
+						Ollama, c'est un peu le Docker de l'IA : il vous permet de télécharger, installer et faire tourner 
+						des modèles comme Llama, Mistral ou Qwen en local facilement. Plus besoin de Python complexe, 
+						juste deux commandes et vous avez votre IA perso qui tourne !
+					</aside>
+				</section>
+
 				<section>
 					<h2>Intégration Ollama</h2>
 					<div style="padding: 1em; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 1em;">
@@ -345,6 +409,26 @@
 					<p style="font-size: 0.8em; font-style: italic;">
 						"Il faut faire confiance aux modèles distants…"
 					</p>
+				</section>
+
+				<section>
+					<h2>Le petit hic d'Ollama</h2>
+					<div style="text-align: center;">
+						<img src="img/doorstep.gif" alt="Meme about context size"
+							style="max-width: 65%; margin-bottom: 1em;">
+					</div>
+					<ul>
+						<li class="fragment"><strong>Taille de contexte limitée</strong> vs modèles SaaS</li>
+						<li class="fragment">8K-32K tokens (Ollama) vs 128K-2M tokens (GPT-4)</li>
+						<li class="fragment">Impact sur les conversations longues</li>
+						<li class="fragment">Trade-off : Contrôle vs Performance</li>
+					</ul>
+					<aside class="notes">
+						Le principal inconvénient d'Ollama par rapport aux modèles SaaS, c'est la taille du contexte. 
+						Là où GPT-4 Turbo gère 128K tokens et Claude jusqu'à 2M tokens, les modèles Ollama sont 
+						généralement limités à 8K-32K tokens. Ça peut poser problème pour les conversations très longues 
+						ou l'analyse de gros documents. Mais c'est le prix à payer pour garder le contrôle !
+					</aside>
 				</section>
 
 				<section>
