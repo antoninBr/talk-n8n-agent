@@ -738,17 +738,50 @@ models:
 					<h3>Démarrage de la stack</h3>
 					<pre><code class="hljs bash" data-trim>
 						# Lancement des services
-						./start.sh
-
-						./setup-ollama.sh
-						./setup-collections.sh
-						./import-n8n-data.sh
+						./start.sh --import --init-collections --setup-ollama
 						</code></pre>
 					<aside class="notes">
 						Maintenant, place à la démo ! On va démarrer le stack, configurer Ollama avec des modèles
 						locaux, et importer nos workflows.
 					</aside>
 				</section>
+
+				<section>
+					<h2>Mon setup Ollama</h2>
+					<div style="display: flex; justify-content: space-around; align-items: flex-start; gap: 2em;">
+						<div style="flex: 1; text-align: center;">
+							<h3>ASUS Zenbook</h3>
+							<div style="font-size: 2.1em; margin: 0.5em 0;">🖥️</div>
+							<ul style="font-size: 0.8em; text-align: left;">
+								<li>Ryzen 7</li>
+								<li>16 Go RAM</li>
+								<li>SSD</li>
+								<li>Radeon intégré 😢</li>
+							</ul>
+							<p style="font-size: 0.7em; color: #999; margin-top: 1em;">
+								<em>Modèles légers uniquement</em>
+							</p>
+						</div>
+						<div style="flex: 1; text-align: center;">
+							<h3>Battlestation</h3>
+							<img src="img/battlestation.jpg" alt="PC Gaming Setup" 
+								style="max-width: 250px; height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 1em;">
+							<ul style="font-size: 0.8em; text-align: left;">
+								<li>Ryzen 5</li>
+								<li>32 Go RAM</li>
+								<li>SSD NVMe</li>
+								<li>GeForce RTX 2060 Super (8 Go vRAM)</li>
+							</ul>
+						</div>
+					</div>
+					<aside class="notes">
+						Voici mon setup personnel pour Ollama : d'un côté mon portable ASUS Zenbook avec 16 Go de RAM 
+						et un Ryzen 7, mais hélas juste un chipset Radeon intégré qui limite aux petits modèles. 
+						De l'autre, ma battlestation gaming avec RTX 2060 Super et 8 Go de vRAM qui fait tourner 
+						des plus gros modèles sans problème !
+					</aside>
+				</section>
+
 
 				<section data-background="lightblue">
 					<h1>🎯 Démo en direct</h1>
@@ -757,6 +790,8 @@ models:
 						[Ici, faire la démonstration live des workflows]
 					</aside>
 				</section>
+
+
 			</section>
 
 			<!-- Section Sponsors -->
