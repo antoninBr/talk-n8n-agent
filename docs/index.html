@@ -749,7 +749,7 @@ models:
 				<section>
 					<h2>Mon setup Ollama</h2>
 					<div style="display: flex; justify-content: space-around; align-items: flex-start; gap: 2em;">
-						<div style="flex: 1; text-align: center;">
+						<div style="flex: 1; text-align: center; position: relative; min-height: 400px;">
 							<h3>ASUS Zenbook</h3>
 							<div style="font-size: 2.1em; margin: 0.5em 0;">🖥️</div>
 							<ul style="font-size: 0.8em; text-align: left;">
@@ -761,8 +761,18 @@ models:
 							<p style="font-size: 0.7em; color: #999; margin-top: 1em;">
 								<em>Modèles légers uniquement</em>
 							</p>
+							<!-- Modèles flottants pour Zenbook -->
+							<div class="fragment floating-model" data-fragment-index="1" style="position: absolute; top: -20px; left: 10%; animation: float 3s ease-in-out infinite;">
+								<span style="background: rgba(255,193,7,0.8); padding: 0.3em 0.6em; border-radius: 20px; font-size: 0.6em; color: #000; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">nomic-embed-text</span>
+							</div>
+							<div class="fragment floating-model" data-fragment-index="2" style="position: absolute; top: 60px; right: 5%; animation: float 4s ease-in-out infinite 0.5s;">
+								<span style="background: rgba(40,167,69,0.8); padding: 0.3em 0.6em; border-radius: 20px; font-size: 0.6em; color: #fff; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">qwen2.5:3b</span>
+							</div>
+							<div class="fragment floating-model" data-fragment-index="3" style="position: absolute; bottom: 20px; left: 20%; animation: float 3.5s ease-in-out infinite 1s;">
+								<span style="background: rgba(23,162,184,0.8); padding: 0.3em 0.6em; border-radius: 20px; font-size: 0.6em; color: #fff; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">phi3:mini</span>
+							</div>
 						</div>
-						<div style="flex: 1; text-align: center;">
+						<div style="flex: 1; text-align: center; position: relative; min-height: 400px;">
 							<h3>Battlestation</h3>
 							<img src="img/battlestation.jpg" alt="PC Gaming Setup" 
 								style="max-width: 250px; height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 1em;">
@@ -772,13 +782,59 @@ models:
 								<li>SSD NVMe</li>
 								<li>GeForce RTX 2060 Super (8 Go vRAM)</li>
 							</ul>
+							<!-- Modèles flottants pour Battlestation -->
+							<div class="fragment floating-model" data-fragment-index="4" style="position: absolute; top: -10px; left: 15%; animation: float 2.5s ease-in-out infinite;">
+								<span style="background: rgba(220,53,69,0.8); padding: 0.3em 0.6em; border-radius: 20px; font-size: 0.6em; color: #fff; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">llama3.2:8b</span>
+							</div>
+							<div class="fragment floating-model" data-fragment-index="5" style="position: absolute; top: 40px; right: 10%; animation: float 3.8s ease-in-out infinite 0.8s;">
+								<span style="background: rgba(111,66,193,0.8); padding: 0.3em 0.6em; border-radius: 20px; font-size: 0.6em; color: #fff; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">mistral:7b</span>
+							</div>
+							<div class="fragment floating-model" data-fragment-index="6" style="position: absolute; top: 80px; left: 5%; animation: float 4.2s ease-in-out infinite 1.2s;">
+								<span style="background: rgba(255,87,34,0.8); padding: 0.3em 0.6em; border-radius: 20px; font-size: 0.6em; color: #fff; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">qwen2.5:7b</span>
+							</div>
+							<div class="fragment floating-model" data-fragment-index="7" style="position: absolute; bottom: 10px; right: 15%; animation: float 3.2s ease-in-out infinite 1.5s;">
+								<span style="background: rgba(0,150,136,0.8); padding: 0.3em 0.6em; border-radius: 20px; font-size: 0.6em; color: #fff; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">qwen3:8b</span>
+							</div>
+							<div class="fragment floating-model" data-fragment-index="8" style="position: absolute; bottom: 40px; left: 25%; animation: float 3.7s ease-in-out infinite 2s;">
+								<span style="background: rgba(233,30,99,0.8); padding: 0.3em 0.6em; border-radius: 20px; font-size: 0.6em; color: #fff; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">gemma2:9b</span>
+							</div>
 						</div>
 					</div>
+
+					<style>
+						@keyframes float {
+							0%, 100% { 
+								transform: translateY(0px) rotate(0deg); 
+								opacity: 0.9;
+							}
+							25% { 
+								transform: translateY(-10px) rotate(2deg); 
+								opacity: 1;
+							}
+							50% { 
+								transform: translateY(-5px) rotate(-1deg); 
+								opacity: 0.8;
+							}
+							75% { 
+								transform: translateY(-8px) rotate(1deg); 
+								opacity: 1;
+							}
+						}
+						.floating-model {
+							z-index: 10;
+						}
+						.floating-model:hover {
+							animation-play-state: paused;
+							transform: scale(1.1);
+							transition: transform 0.2s ease;
+						}
+					</style>
+
 					<aside class="notes">
-						Voici mon setup personnel pour Ollama : d'un côté mon portable ASUS Zenbook avec 16 Go de RAM 
-						et un Ryzen 7, mais hélas juste un chipset Radeon intégré qui limite aux petits modèles. 
-						De l'autre, ma battlestation gaming avec RTX 2060 Super et 8 Go de vRAM qui fait tourner 
-						des plus gros modèles sans problème !
+						Voici mon setup personnel pour Ollama avec les modèles que chaque machine peut faire tourner ! 
+						D'un côté mon portable ASUS Zenbook limité aux petits modèles de 1-3B paramètres comme llama3.2:1b, 
+						qwen2.5:3b ou phi3:mini. De l'autre, ma battlestation gaming avec RTX 2060 Super qui gère 
+						confortablement les modèles 7-9B comme mistral:7b, codestral pour le code, ou gemma2:9b !
 					</aside>
 				</section>
 
