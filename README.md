@@ -59,6 +59,7 @@ graph TB
 
 ### Prérequis
 
+- Linux, macOS ou Windows avec WSL2
 - Docker & Docker Compose (ou podman ❤️)
 - 8 Go de RAM minimum (recommandé: 16 Go)
 - 10 Go d'espace disque libre
