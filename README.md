@@ -69,34 +69,42 @@ graph TB
 git clone https://github.com/antoninBr/talk-n8n-agent.git
 cd talk-n8n-agent
 
+# Creer un fichier .env à partir de l'exemple
+cp .env.example .env
+
 # Générer les clés et configuration
 ./generate-key.sh
 ```
 
-### 2. Lancer la stack complète
+### 2. Lancer la stack complète et initialiser
 
 ```bash
 # Démarrage automatique avec script
-./start.sh
-
-# OU démarrage manuel
-docker compose up -d
+./start.sh --import --init-collections --setup-ollama
 ```
 
 ### 3. Accéder aux services
 
-- **🎨 Chat Assistant** : https://localhost:8443 ou http://localhost:8080
+- **🎨 Chat Assistant** : https://localhost:8443
 - **⚙️ Interface n8n** : http://localhost:5678
 - **📊 Qdrant** : http://localhost:6333
 - **🦙 Ollama** : http://localhost:11435
 - **🎭 Playwright MCP** : http://localhost:3333
 
-### 4. Import des workflows (optionnel)
+### 4. Creer un compte administrateur n8n
 
-```bash
-# Importer les workflows n8n préconfigurés
-./import-n8n-data.sh
-```
+- Accédez à l'interface n8n (http://localhost:5678)
+- Créez un compte administrateur
+
+### 5. Modifications des credentials OpenAI et Ollama distant (optionnel)
+
+- Accédez à l'interface n8n (http://localhost:5678)
+- Mettez à jour les credentials pour OpenAI et Ollama distant selon vos besoins
+
+### 6. Enregistrer votre instance n8n (optionnel)
+
+- Dans l'interface n8n, allez dans "Settings" > "Instance"
+- Cliquez sur "Register Instance" pour enregistrer votre instance n8n et bénéficier des mises à jour et du support (gratuit pour les instances auto-hébergées)
 
 ## 📁 Structure du projet
 
@@ -115,11 +123,11 @@ docker compose up -d
 ### 💬 Assistant Chat
 - Streaming en temps réel
 - Gestion de sessions
-- Choix du modèle IA (local/distant)
+- Choix du modèle IA (local/distant/OpenAI)
 - Interface moderne et responsive
 
 ### 🧠 Système RAG
-- **Upload de documents** : PDF, TXT
+- **Upload de documents** : PDF seulement
 - **Web scraping** : Extraction automatique de contenu web
 - **Base vectorielle** : Stockage et recherche sémantique avec Qdrant
 - **Collections management** : Interface de gestion des données
@@ -155,14 +163,6 @@ Copiez `.env.example` vers `.env` et ajustez :
 POSTGRES_DB=n8n
 POSTGRES_USER=n8n
 POSTGRES_PASSWORD=n8n
-
-# n8n
-N8N_BASIC_AUTH_ACTIVE=true
-N8N_BASIC_AUTH_USER=admin
-N8N_BASIC_AUTH_PASSWORD=admin
-
-# Qdrant
-QDRANT_API_KEY=your-api-key-here
 ```
 
 ### Modèles IA supportés
@@ -173,6 +173,9 @@ QDRANT_API_KEY=your-api-key-here
 ## 🛠️ Scripts utiles
 
 ```bash
+# Démarrer la stack la première fois
+./start.sh --import --init-collections --setup-ollama
+
 # Démarrer la stack
 ./start.sh
 
@@ -182,11 +185,14 @@ QDRANT_API_KEY=your-api-key-here
 # Nettoyer complètement (attention: supprime les données)
 ./clean.sh
 
-# Configurer les collections Qdrant
+# Creation des collections Qdrant
 ./setup-collections.sh
 
-# Configurer Ollama avec modèles
+# Configurer Ollama avec les modèles
 ./setup-ollama.sh
+
+# Importer les workflows n8n
+./import-n8n-data.sh
 ```
 
 ## 📚 Documentation détaillée
@@ -207,7 +213,7 @@ docker compose restart n8n
 ```
 
 ### Problèmes de mémoire
-- Ollama nécessite minimum 4 Go de RAM
+- Ollama nécessite minimum 5 Go de RAM
 - Ajustez les modèles selon votre configuration
 
 ### Port déjà utilisé

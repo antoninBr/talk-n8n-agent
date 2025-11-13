@@ -24,10 +24,12 @@ print_error() {
 }
 
 # Vérifier si podman compose est disponible
-if command -v podman &> /dev/null; then
-    COMPOSE_CMD="podman compose"
-elif command -v docker &> /dev/null; then
-    COMPOSE_CMD="docker compose"
+if command -v podman compose &> /dev/null; then
+    CONTAINER_CMD="podman"
+    COMPOSE_SUBCMD="compose"
+elif command -v docker compose &> /dev/null; then
+    CONTAINER_CMD="docker"
+    COMPOSE_SUBCMD="compose"
     print_warning "Utilisation de docker au lieu de podman"
 else
     print_error "Ni podman compose ni docker compose ne sont disponibles !"
@@ -38,7 +40,7 @@ print_status "Configuration d'Ollama pour la gestion d'emails d'assistance..."
 
 # Vérifier qu'Ollama est démarré
 print_status "Vérification du statut d'Ollama..."
-if ! $COMPOSE_CMD ps | grep ollama | grep -q "Up"; then
+if ! $CONTAINER_CMD $COMPOSE_SUBCMD ps | grep ollama | grep -q "Up"; then
     print_error "Le conteneur Ollama n'est pas démarré !"
     print_status "Démarrez d'abord l'environnement avec : ./start.sh"
     exit 1
@@ -47,48 +49,96 @@ fi
 print_success "Ollama est prêt !"
 
 # Modèles recommandés pour l'assistance utilisateur
+MODELS="qwen2.5:3b-instruct-q4_K_M|nomic-embed-text|granite3.2-vision:2b"
+MODEL_DESCRIPTIONS="Léger, rapide, français correct et optimisé CPU|Spécialement conçu pour l'embedding, très rapide sur CPU|Excellent pour l'extraction de documents"
+
 echo ""
-print_status "Modèles recommandés pour la gestion d'emails d'assistance :"
-echo "1. qwen2.5:3b-instruct-q4_K_M (Léger, rapide, français correct et optimiser CPU)"
-echo "2. nomic-embed-text (Spécialement conçu pour l'embedding, très rapide sur CPU)"
-echo "3. granite3.2-vision:2b (Excellent pour 'extraction de documents)"
+print_status "Installation des modèles :"
+
+# Afficher la liste des modèles
+model_count=1
+IFS='|'
+set -- $MODELS
+for model in "$@"; do
+    description=$(echo "$MODEL_DESCRIPTIONS" | cut -d'|' -f$model_count)
+    echo "$model_count. $model ($description)"
+    model_count=$((model_count + 1))
+done
+unset IFS
+
+echo ""
+print_warning "⚠️  L'installation peut prendre plusieurs minutes selon votre connexion internet"
 echo ""
 
-read -p "Quel modèle voulez-vous installer ? (1-3, défaut: 1) " choice
-choice=${choice:-1}
+# Installation de tous les modèles
+FAILED_MODELS=""
+SUCCESSFUL_MODELS=""
+model_num=0
+total_models=$(echo "$MODELS" | tr '|' '\n' | wc -l)
 
-case $choice in
-    1)
-        MODEL="qwen2.5:3b-instruct-q4_K_M"
-        ;;
-    2)
-        MODEL="nomic-embed-text"
-        ;;
-    3)
-        MODEL="granite3.2-vision:2b"
-        ;;
-    *)
-        print_warning "Choix invalide, utilisation du modèle par défaut"
-        MODEL="qwen2.5:3b-instruct-q4_K_M"
-        ;;
-esac
-
-print_status "Installation du modèle $MODEL..."
-print_warning "⚠️  Cela peut prendre plusieurs minutes selon votre connexion internet"
-
-if $COMPOSE_CMD exec ollama ollama pull $MODEL; then
-    print_success "Modèle $MODEL installé avec succès !"
-
+IFS='|'
+set -- $MODELS
+for MODEL in "$@"; do
+    model_num=$((model_num + 1))
+    print_status "Installation du modèle $MODEL ($model_num/$total_models)..."
+    
+    if $CONTAINER_CMD $COMPOSE_SUBCMD exec ollama ollama pull "$MODEL"; then
+        print_success "Modèle $MODEL installé avec succès !"
+        if [ -z "$SUCCESSFUL_MODELS" ]; then
+            SUCCESSFUL_MODELS="$MODEL"
+        else
+            SUCCESSFUL_MODELS="$SUCCESSFUL_MODELS|$MODEL"
+        fi
+    else
+        print_error "Erreur lors de l'installation du modèle $MODEL"
+        if [ -z "$FAILED_MODELS" ]; then
+            FAILED_MODELS="$MODEL"
+        else
+            FAILED_MODELS="$FAILED_MODELS|$MODEL"
+        fi
+    fi
     echo ""
-    print_status "Test du modèle..."
-    $COMPOSE_CMD exec ollama ollama run $MODEL "Bonjour, peux-tu m'aider à rédiger une réponse professionnelle pour un email d'assistance ?"
+done
+unset IFS
+
+# Résumé de l'installation
+echo ""
+print_status "Résumé de l'installation :"
+
+if [ -n "$SUCCESSFUL_MODELS" ]; then
+    successful_count=$(echo "$SUCCESSFUL_MODELS" | tr '|' '\n' | wc -l)
+    print_success "Modèles installés avec succès ($successful_count) :"
+    IFS='|'
+    set -- $SUCCESSFUL_MODELS
+    for model in "$@"; do
+        echo "  ✅ $model"
+    done
+    unset IFS
+fi
+
+if [ -n "$FAILED_MODELS" ]; then
+    failed_count=$(echo "$FAILED_MODELS" | tr '|' '\n' | wc -l)
+    print_warning "Modèles ayant échoué ($failed_count) :"
+    IFS='|'
+    set -- $FAILED_MODELS
+    for model in "$@"; do
+        echo "  ❌ $model"
+    done
+    unset IFS
+fi
+
+echo ""
+if [ -n "$SUCCESSFUL_MODELS" ]; then
+    # Test avec le premier modèle installé
+    TEST_MODEL=$(echo "$SUCCESSFUL_MODELS" | cut -d'|' -f1)
+    print_status "Test du modèle $TEST_MODEL..."
+    $CONTAINER_CMD $COMPOSE_SUBCMD exec ollama ollama run "$TEST_MODEL" "Bonjour, peux-tu m'aider dans mon travail ?"
     
     echo ""
     print_success "Configuration Ollama terminée !"
-    print_status "Le modèle $MODEL est maintenant disponible sur http://localhost:11435"
+    print_status "Modèles disponibles sur http://localhost:11435"
     print_status "URL API Ollama : http://ollama:11434 (depuis n8n)"
-    
 else
-    print_error "Erreur lors de l'installation du modèle $MODEL"
+    print_error "Aucun modèle n'a pu être installé !"
     exit 1
 fi

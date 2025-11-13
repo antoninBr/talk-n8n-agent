@@ -27,9 +27,10 @@ print_error() {
 # Options
 IMPORT_DATA=false
 INIT_COLLECTIONS=false
+SETUP_OLLAMA=false
 
 # Parse des arguments
-while [[ $# -gt 0 ]]; do
+while [ $# -gt 0 ]; do
     case $1 in
         --import)
             IMPORT_DATA=true
@@ -39,12 +40,17 @@ while [[ $# -gt 0 ]]; do
             INIT_COLLECTIONS=true
             shift
             ;;
+        --setup-ollama)
+            SETUP_OLLAMA=true
+            shift
+            ;;
         -h|--help)
             echo "Usage: $0 [options]"
             echo "Options:"
-            echo "  --import    Import automatiquement les workflows et credentials après le démarrage"
+            echo "  --import            Import automatiquement les workflows et credentials après le démarrage"
             echo "  --init-collections  Initialiser les collections après le démarrage"
-            echo "  -h, --help  Affiche cette aide"
+            echo "  --setup-ollama      Installer automatiquement les modèles Ollama recommandés"
+            echo "  -h, --help          Affiche cette aide"
             exit 0
             ;;
         *)
@@ -86,12 +92,11 @@ if grep -q "changeme123!" .env; then
     echo "Mots de passe à changer :"
     echo "- POSTGRES_PASSWORD"
     echo "- POSTGRES_NON_ROOT_PASSWORD"
-    echo "- N8N_BASIC_AUTH_PASSWORD"
     echo "- N8N_ENCRYPTION_KEY"
     echo ""
-    read -p "Voulez-vous continuer quand même ? (y/N) " -r
+    read -p "Voulez-vous continuer quand même ? (y/N) " -r REPLY
     echo
-    if [ ! $REPLY =~ ^[Yy]$ ]; then
+    if [ "$REPLY" != "y" ] && [ "$REPLY" != "Y" ]; then
         exit 1
     fi
 fi
@@ -139,8 +144,24 @@ if [ $? -eq 0 ]; then
             print_warning "Script d'initialisation des collections non trouvé, initialisation manuelle nécessaire"
         fi
     fi
+
+    # Configuration d'Ollama si demandé
+    if [ "$SETUP_OLLAMA" = true ]; then
+        print_status "Configuration automatique d'Ollama..."
+        sleep 15  # Attendre qu'Ollama soit complètement démarré
+        
+        if [ -f "./setup-ollama.sh" ]; then
+            ./setup-ollama.sh
+        else
+            print_warning "Script de configuration Ollama non trouvé, configuration manuelle nécessaire"
+        fi
+    fi
+    
     echo ""
-    print_status "Pour configurer Ollama avec un modèle : ./setup-ollama.sh"
+    if [ "$SETUP_OLLAMA" != true ]; then
+        print_status "💡 Pour configurer Ollama automatiquement: ./start.sh --setup-ollama"
+        print_status "💡 Pour configurer Ollama manuellement: ./setup-ollama.sh"
+    fi
     print_status "Pour voir les logs n8n : $COMPOSE_CMD logs -f n8n"
     print_status "Pour arrêter : $COMPOSE_CMD stop"
 else
