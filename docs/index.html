@@ -445,6 +445,17 @@
 				</section>
 
 				<section>
+					<h2>Paramètres Ollama</h2>
+					<img src="img/ollama_params.png" alt="Paramètres Ollama pour customiser et finetuner un modèle"
+						style="max-width: 70%; border: 2px solid #444; border-radius: 8px;">
+					<aside class="notes">
+						Ollama dans n8n offre de nombreux paramètres pour personnaliser le comportement des modèles : 
+						contrôle de la créativité avec temperature/top_p/top_k, gestion du contexte, prompts système, 
+						et même des options de fine-tuning pour adapter le modèle à vos besoins spécifiques.
+					</aside>
+				</section>
+
+				<section>
 					<h2>Model Selector</h2>
 					<img src="img/model_selector.png" alt="Sélecteur de modèle dynamique dans n8n"
 						style="max-width: 40%; border: 2px solid #444;">
@@ -512,7 +523,44 @@
 				</section>
 
 				<section>
-					<img src="img/inception-meme.jpg" alt="Agent n8n utilisant Playwright MCP" style="max-width: 40%; border: 2px solid #444;">
+					<div style="text-align: center;">
+						<img src="img/inception-meme.jpg" alt="Agent n8n utilisant Playwright MCP pour naviguer sur n8n" 
+							class="fragment fade-out" data-fragment-index="1"
+							style="max-width: 70%; border: 2px solid #444; border-radius: 8px;">
+					</div>
+					<div class="fragment fade-in" data-fragment-index="2" 
+						style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+							width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 9999; 
+							display: flex; align-items: center; justify-content: center; 
+							backdrop-filter: blur(5px);">
+						<div style="text-align: center;">
+							<img src="img/inception-meme.jpg" alt="INCEPTION!" 
+								style="max-width: 70%; border: 2px solid #444; 
+								border-radius: 8px;
+								animation: zoomInception 4s ease-out;">
+							<audio id="inceptionAudio" preload="auto">
+								<source src="sounds/inception-style-movie-horn-80358.mp3" type="audio/mpeg">
+							</audio>
+						</div>
+					</div>
+
+					<style>
+						@keyframes zoomInception {
+							0% { 
+								transform: scale(0.1) rotate(0deg); 
+								opacity: 0; 
+							}
+							50% { 
+								transform: scale(1.2) rotate(180deg); 
+								opacity: 0.8; 
+							}
+							100% { 
+								transform: scale(1) rotate(360deg); 
+								opacity: 1; 
+							}
+						}
+					</style>
+
 				</section>
 
 				<section>
@@ -1039,6 +1087,19 @@ models:
 			},
 			// Learn about plugins: https://revealjs.com/plugins/
 			plugins: [RevealNotes, RevealMarkdown, RevealHighlight, RevealMermaid]
+		});
+
+		// Play inception sound only on the specific inception slide (really poorly done... my bad)
+		Reveal.addEventListener('fragmentshown', function(event) {
+			const currentSlide = Reveal.getCurrentSlide();
+			const isInceptionSlide = currentSlide.querySelector('img[alt="INCEPTION!"]') !== null;
+			if (event.fragment.getAttribute('data-fragment-index') === '1' && isInceptionSlide) {
+				const audio = document.getElementById('inceptionAudio');
+				if (audio) {
+					audio.currentTime = 0;
+					audio.play().catch(console.log);
+				}
+			}
 		});
 	</script>
 </body>
