@@ -218,10 +218,13 @@ docker compose restart n8n
 - Ajustez les modèles selon votre configuration
 
 ### Port déjà utilisé
+
 ```bash
-# Changer les ports dans docker-compose.yml
-# Par défaut: 8080 et 8443 (chat), 5678 (n8n), 3333 (playwright-mcp), 11435 (ollama)
+# Changer les ports expoés sur le l'host dans docker-compose.yml
+# Par défaut: 8080 et 8443 (chat), 3333 (playwright-mcp), 11435 (ollama)
 ```
+
+Pour le port 5678 (n8n), modifiez la variable d'environnement `N8N_PORT` dans `.env`.
 
 ## 🤝 Contribution
 
