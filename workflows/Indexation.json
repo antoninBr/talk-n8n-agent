@@ -614,7 +614,8 @@
             "duration_ms": "={{ $('Set clean content duration').item.json.duration_ms }}",
             "model": "={{ $('Index file').item.json.model }}",
             "source": "={{ $('Index file').item.json.Fichier.filename }} - page {{ $('Split pages').item.json.pageNumber || ($itemIndex + 1) }}",
-            "output": "={{ $('Clean Content').item.json.output }}"
+            "output": "={{ $('Clean Content').item.json.output }}",
+            "model_name": "={{\n  $('Index file').item.json.model === 'local' ? \n    \"qwen2.5:3b-instruct-q4_K_M\" :\n  $('Index file').item.json.model === 'remote' ? \n    \"qwen2.5:7b\" :\n  $('Index file').item.json.model === 'openai' ? \n    \"gpt-4o-mini\" : 'unknown'\n}}"
           },
           "matchingColumns": [],
           "schema": [
@@ -659,8 +660,8 @@
               "removed": false
             },
             {
-              "id": "execution_id",
-              "displayName": "execution_id",
+              "id": "model_name",
+              "displayName": "model_name",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -681,6 +682,16 @@
             {
               "id": "output",
               "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -751,7 +762,8 @@
             "duration_ms": "={{ $('Set web scraping duration').item.json.duration_ms }}",
             "model": "={{ $('Index Url').item.json.model }}",
             "source": "={{ $('Index Url').item.json.Url }}",
-            "output": "={{ JSON.stringify($('Web Scraping').item.json.output) }}"
+            "output": "={{ JSON.stringify($('Web Scraping').item.json.output) }}",
+            "model_name": "={{\n  $('Index Url').item.json.model === 'remote' ? \n    \"qwen2.5:7b\" :\n  $('Index Url').item.json.model === 'openai' ? \n    \"gpt-4o-mini\" : 'unknown'\n}}"
           },
           "matchingColumns": [],
           "schema": [
@@ -796,8 +808,8 @@
               "removed": false
             },
             {
-              "id": "execution_id",
-              "displayName": "execution_id",
+              "id": "model_name",
+              "displayName": "model_name",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -818,6 +830,16 @@
             {
               "id": "output",
               "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -901,7 +923,8 @@
             "duration_ms": "={{ $('Set web image analyse duration').item.json.duration_ms }}",
             "source": "={{ $('Analyse Image').item.json.imageFichier.filename }}",
             "model": "={{ $('Analyse Image').item.json.model }}",
-            "output": "={{ $('Analyse Image1').item.json.output }}"
+            "output": "={{ $('Analyse Image1').item.json.output }}",
+            "model_name": "={{ $('Analyse Image').item.json.model === 'local' ? \"granite3.2-vision:2b\" : $('Analyse Image').item.json.model === 'remote' ? \"granite3.2-vision:2b\" : $('Analyse Image').item.json.model === 'openai' ? \"gpt-4o-mini\" :   'unknown' }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -946,8 +969,8 @@
               "removed": false
             },
             {
-              "id": "execution_id",
-              "displayName": "execution_id",
+              "id": "model_name",
+              "displayName": "model_name",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -968,6 +991,16 @@
             {
               "id": "output",
               "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -1150,29 +1183,6 @@
     },
     {
       "parameters": {
-        "model": "granite3.2-vision:2b",
-        "options": {
-          "temperature": 0.4,
-          "keepAlive": "-1m"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
-      "typeVersion": 1,
-      "position": [
-        800,
-        1552
-      ],
-      "id": "f7587822-4d53-4606-874c-f0561a390425",
-      "name": "Remote Ollama Analyse Agent Model1",
-      "credentials": {
-        "ollamaApi": {
-          "id": "fK7fLhnq71Tqrjv1",
-          "name": "Remote Ollama Account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "promptType": "define",
         "text": "={{ $('Analyse Image').item.json.imageFichier.filename }}",
         "options": {
@@ -1268,6 +1278,29 @@
       ],
       "id": "14031bba-7a67-46a7-a1db-a1e8723c497b",
       "name": "Model Selector Web Scraping"
+    },
+    {
+      "parameters": {
+        "model": "granite3.2-vision:2b",
+        "options": {
+          "temperature": 0.4,
+          "keepAlive": "-1m"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        800,
+        1552
+      ],
+      "id": "f7587822-4d53-4606-874c-f0561a390425",
+      "name": "Remote Ollama Analyse Agent Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "fK7fLhnq71Tqrjv1",
+          "name": "Remote Ollama Account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -1626,17 +1659,6 @@
         ]
       ]
     },
-    "Remote Ollama Analyse Agent Model1": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Model Selector Analyse IMage",
-            "type": "ai_languageModel",
-            "index": 1
-          }
-        ]
-      ]
-    },
     "Analyse Image1": {
       "main": [
         [
@@ -1669,13 +1691,24 @@
           }
         ]
       ]
+    },
+    "Remote Ollama Analyse Agent Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector Analyse IMage",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "f8300bcb-ca2a-473b-ad0b-8dff5d1a28f3",
+  "versionId": "44093c18-c0b7-4048-a868-c2b8e16be1f5",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "35e53b4e1c0deaab7d871949fef5124ac4432fe9906011927482989de82c5430"

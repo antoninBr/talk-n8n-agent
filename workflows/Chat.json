@@ -26,7 +26,7 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
       "typeVersion": 1,
       "position": [
-        784,
+        928,
         432
       ],
       "id": "5010da90-1dfe-4425-a8b5-ee521ec907c8",
@@ -53,7 +53,7 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
       "typeVersion": 1.3,
       "position": [
-        560,
+        640,
         224
       ],
       "id": "a2984e5c-600e-4673-a0da-b90a0b67ef64",
@@ -75,7 +75,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2.2,
       "position": [
-        720,
+        712,
         0
       ],
       "id": "2fc3d968-a0d6-461b-ba1c-c1873dd73438",
@@ -93,7 +93,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
       "typeVersion": 1,
       "position": [
-        224,
+        240,
         432
       ],
       "id": "878b834f-8afb-4391-a724-0bfe35be8c8d",
@@ -120,7 +120,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
       "typeVersion": 1,
       "position": [
-        352,
+        368,
         432
       ],
       "id": "254d1b58-26a6-4065-ae39-315ee407b517",
@@ -214,7 +214,7 @@
       "type": "@n8n/n8n-nodes-langchain.modelSelector",
       "typeVersion": 1,
       "position": [
-        272,
+        224,
         224
       ],
       "id": "bf06bf7c-9d85-4210-8b45-a4f6d0f594f5",
@@ -232,7 +232,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        480,
+        512,
         432
       ],
       "id": "6a06b52c-1022-4859-a104-fee87ca67e6e",
@@ -259,7 +259,7 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
       "typeVersion": 1.3,
       "position": [
-        848,
+        928,
         224
       ],
       "id": "0b6d0687-1e2b-46c5-9cae-ffc633a5b10f",
@@ -279,11 +279,22 @@
       "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
       "typeVersion": 1.2,
       "position": [
-        1136,
+        1216,
         224
       ],
       "id": "b987ec1b-4c14-4806-865e-0df1d77aee57",
       "name": "playwright_mcp"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        224
+      ],
+      "id": "fcdf615c-549a-41cf-93ec-b774dc896827",
+      "name": "Simple Memory"
     }
   ],
   "pinData": {},
@@ -396,13 +407,24 @@
           }
         ]
       ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Dobby AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "54815847-74d6-42e9-94a3-113f47748cd2",
+  "versionId": "e66d72ef-61c5-4e1b-9b1f-ae672f792bbf",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "35e53b4e1c0deaab7d871949fef5124ac4432fe9906011927482989de82c5430"
