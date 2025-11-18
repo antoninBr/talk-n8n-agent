@@ -24,6 +24,9 @@
                   },
                   {
                     "option": "remote"
+                  },
+                  {
+                    "option": "openai"
                   }
                 ]
               },
@@ -37,7 +40,7 @@
       "typeVersion": 2.3,
       "position": [
         0,
-        0
+        208
       ],
       "id": "72bc2d44-cc4c-49d4-a59d-17a86e15002a",
       "name": "Index file",
@@ -54,8 +57,8 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1,
       "position": [
-        396,
-        0
+        224,
+        208
       ],
       "id": "3076251d-f573-4b45-97ac-63e544408d3a",
       "name": "Extract from File"
@@ -68,8 +71,8 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        864,
-        0
+        736,
+        208
       ],
       "id": "979db5e3-92a6-4254-9dd0-907ab5a256e0",
       "name": "Split pages"
@@ -81,8 +84,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
       "typeVersion": 1,
       "position": [
-        1752,
-        224
+        2960,
+        432
       ],
       "id": "86bf83f8-8eaa-492e-8761-04a88e5163af",
       "name": "Embeddings Ollama",
@@ -105,7 +108,7 @@
           "conditions": [
             {
               "id": "content-filter",
-              "leftValue": "={{ $json.output }}",
+              "leftValue": "={{ $('Clean Content').item.json.output }}",
               "rightValue": "SKIP",
               "operator": {
                 "type": "string",
@@ -114,11 +117,20 @@
             },
             {
               "id": "min-length",
-              "leftValue": "={{ $json.output.length }}",
+              "leftValue": "={{ $('Clean Content').item.json.output.length }}",
               "rightValue": 50,
               "operator": {
                 "operation": "gte",
                 "type": "number"
+              }
+            },
+            {
+              "id": "c0946734-9b31-4420-ad94-9ec3a844cbc6",
+              "leftValue": "={{ $('Clean Content').item.json.output }}",
+              "rightValue": "skip",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
               }
             }
           ],
@@ -129,28 +141,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1528,
-        0
+        2736,
+        208
       ],
       "id": "c9a89967-941b-4d16-b049-d9c5fd5dd3e5",
       "name": "Filter Quality Content"
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "={{ $json.text }}",
-        "options": {
-          "systemMessage": "Tu es un expert en nettoyage et structuration de documents PDF.\n\nInstructions :\n* Supprime les numéros de page, headers, footers répétitifs\n* Corrige les mots coupés en fin de ligne\n* Supprime les lignes vides multiples\n* Garde uniquement le contenu informatif principal\n* Ignore les éléments de navigation ou publicitaires\n* Structure le texte avec des titres markdown appropriés\n* Préserve la structure logique du document\n\nCritères de qualité :\n- Le texte doit être informatif et cohérent\n- Minimum 50 caractères de contenu utile\n- Pas de texte répétitif ou de bruit\n\nFormat de sortie :\nTexte nettoyé et structuré en markdown, ou 'SKIP' si le contenu n'est pas pertinent"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 3,
-      "position": [
-        1168,
-        0
-      ],
-      "id": "7b50ec4f-ae1c-4b52-8764-0aac61a3671e",
-      "name": "Clean Content Agent"
     },
     {
       "parameters": {
@@ -160,14 +155,15 @@
       "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
       "typeVersion": 1,
       "position": [
-        1960,
-        432
+        3168,
+        640
       ],
       "id": "7ed11a42-b0fd-406e-8653-a7ddca5a50d1",
       "name": "Smart Text Chunker"
     },
     {
       "parameters": {
+        "numberInputs": 3,
         "rules": {
           "rule": [
             {
@@ -216,6 +212,30 @@
                 ],
                 "combinator": "and"
               }
+            },
+            {
+              "modelIndex": 3,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "bef31ca0-40a7-4bfd-8900-eb4b858af3e7",
+                    "leftValue": "={{ $('Index file').item.json.model }}",
+                    "rightValue": "openai",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
             }
           ]
         }
@@ -223,7 +243,7 @@
       "type": "@n8n/n8n-nodes-langchain.modelSelector",
       "typeVersion": 1,
       "position": [
-        1160,
+        1504,
         224
       ],
       "id": "325da776-80d9-496a-a7b1-89279192af35",
@@ -240,7 +260,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
       "typeVersion": 1,
       "position": [
-        1176,
+        1456,
         432
       ],
       "id": "c5fe438c-bd55-403d-b3d4-88f2561ae66f",
@@ -263,7 +283,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
       "typeVersion": 1,
       "position": [
-        1304,
+        1584,
         432
       ],
       "id": "d0e4d7f2-9403-4d00-a92a-c7f479382ea1",
@@ -283,8 +303,8 @@
       "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
       "typeVersion": 1.2,
       "position": [
-        296,
-        624
+        736,
+        736
       ],
       "id": "aff72c1a-db57-41fc-b1c0-e7c702c9487b",
       "name": "playwright_mcp"
@@ -297,7 +317,22 @@
           "values": [
             {
               "fieldLabel": "Url",
+              "placeholder": "L'url de la page à indexer",
               "requiredField": true
+            },
+            {
+              "fieldLabel": "model",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "remote"
+                  },
+                  {
+                    "option": "openai"
+                  }
+                ]
+              }
             }
           ]
         },
@@ -307,29 +342,11 @@
       "typeVersion": 2.3,
       "position": [
         0,
-        400
+        608
       ],
       "id": "ef4bac0a-d128-46a3-858b-d8f7f15c4aab",
       "name": "Index Url",
       "webhookId": "835f88c6-eaf7-46d7-b8db-9d00a971412b"
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "={{ $('Index Url').item.json.Url }}",
-        "hasOutputParser": true,
-        "options": {
-          "systemMessage": "Tu es un expert en extraction et structuration de contenu web en Français.\n\nInstructions :\n* Utilise l'outil playwright_mcp pour naviguer sur les pages web demandées\n* Extrait le contenu principal en évitant les éléments de navigation, publicités, cookies, headers et footers\n* Supprime les éléments répétitifs comme les menus, barres latérales et widgets\n* Corrige la mise en forme et les espaces inutiles\n* Supprime les lignes vides multiples\n* Garde uniquement le contenu informatif principal (articles, textes, descriptions)\n* Ignore les éléments interactifs (boutons, formulaires) sauf si pertinents\n* Structure le texte avec des titres markdown appropriés\n* Préserve la hiérarchie logique du contenu (H1, H2, H3...)\n* Extrait les liens importants en conservant leur contexte\n\nCritères de qualité :\n- Le contenu doit être informatif et cohérent\n- Minimum 50 caractères de contenu utile\n- Pas de texte répétitif ou de bruit\n- Préserve les informations essentielles (dates, auteurs, sources)\n- Maintient la lisibilité et la structure logique\n\nFormat de sortie :\nContenu web nettoyé et structuré en markdown et en Français, ou 'SKIP' si la page n'est pas accessible ou ne contient pas de contenu pertinent"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 3,
-      "position": [
-        224,
-        400
-      ],
-      "id": "5237db7e-2127-4718-b609-1fe936174bf4",
-      "name": "AI Agent"
     },
     {
       "parameters": {
@@ -344,8 +361,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        356,
-        832
+        1712,
+        432
       ],
       "id": "22954643-bcf1-4124-89f5-e20f59eef5b3",
       "name": "OpenAI Chat Model",
@@ -364,8 +381,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        424,
-        624
+        864,
+        736
       ],
       "id": "d81a1583-8b66-4483-95ab-fd0bc67d6314",
       "name": "Structured Output Parser"
@@ -384,8 +401,8 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
       "typeVersion": 1.3,
       "position": [
-        1784,
-        0
+        2992,
+        208
       ],
       "id": "c76ebc9f-971a-4527-aab9-ff74d8daaebd",
       "name": "Documents Qdrant Vector Store",
@@ -410,8 +427,8 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
       "typeVersion": 1.3,
       "position": [
-        800,
-        400
+        1936,
+        608
       ],
       "id": "816cccea-c541-440f-af92-3f9b91cd85bd",
       "name": "Web Documents Qdrant Vector Store1",
@@ -424,6 +441,8 @@
     },
     {
       "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $('Clean Content').item.json.output }}",
         "textSplittingMode": "custom",
         "options": {
           "metadata": {
@@ -463,8 +482,8 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        1880,
-        224
+        3088,
+        432
       ],
       "id": "9a99b52e-c820-4f83-8e56-2daac8e7f172",
       "name": "Document Data Loader"
@@ -472,7 +491,7 @@
     {
       "parameters": {
         "jsonMode": "expressionData",
-        "jsonData": "={{ $json.output.content }}",
+        "jsonData": "={{ $('Web Scraping').item.json.output.content }}",
         "textSplittingMode": "custom",
         "options": {
           "metadata": {
@@ -483,7 +502,7 @@
               },
               {
                 "name": "title",
-                "value": "={{ $json.output.title }}"
+                "value": "={{ $('Web Scraping').item.json.output.title }}"
               },
               {
                 "name": "scraped_at",
@@ -499,7 +518,7 @@
               },
               {
                 "name": "content_length",
-                "value": "={{ $json.output.content.length() }}"
+                "value": "={{ $('Web Scraping').item.json.output.content.length() }}"
               }
             ]
           }
@@ -508,11 +527,747 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        792,
-        624
+        1920,
+        832
       ],
       "id": "a14ce718-b9a6-4ef3-a759-b0ae103caa52",
       "name": "Web Document Data Loader"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "Tu es un expert en nettoyage et structuration de documents PDF.\n\nInstructions :\n* Supprime les numéros de page, headers, footers répétitifs\n* Corrige les mots coupés en fin de ligne\n* Supprime les lignes vides multiples\n* Garde uniquement le contenu informatif principal\n* Ignore les éléments de navigation ou publicitaires\n* Structure le texte avec des titres markdown appropriés\n* Préserve la structure logique du document\n\nCritères de qualité :\n- Le texte doit être informatif et cohérent\n- Minimum 50 caractères de contenu utile\n- Pas de texte répétitif ou de bruit\n\nFormat de sortie :\nTexte nettoyé et structuré en markdown, ou 'SKIP' si le contenu n'est pas pertinent"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1520,
+        0
+      ],
+      "id": "7b50ec4f-ae1c-4b52-8764-0aac61a3671e",
+      "name": "Clean Content"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Index Url').item.json.Url }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Tu es un expert en extraction et structuration de contenu web en Français.\n\nInstructions :\n* Utilise l'outil playwright_mcp pour naviguer sur les pages web demandées\n* Extrait le contenu principal en évitant les éléments de navigation, publicités, cookies, headers et footers\n* Supprime les éléments répétitifs comme les menus, barres latérales et widgets\n* Corrige la mise en forme et les espaces inutiles\n* Supprime les lignes vides multiples\n* Garde uniquement le contenu informatif principal (articles, textes, descriptions)\n* Ignore les éléments interactifs (boutons, formulaires) sauf si pertinents\n* Structure le texte avec des titres markdown appropriés\n* Préserve la hiérarchie logique du contenu (H1, H2, H3...)\n* Extrait les liens importants en conservant leur contexte\n\nCritères de qualité :\n- Le contenu doit être informatif et cohérent\n- Minimum 50 caractères de contenu utile\n- Pas de texte répétitif ou de bruit\n- Préserve les informations essentielles (dates, auteurs, sources)\n- Maintient la lisibilité et la structure logique\n\nFormat de sortie :\nContenu web nettoyé et structuré en markdown et en Français, ou 'SKIP' si la page n'est pas accessible ou ne contient pas de contenu pertinent"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        672,
+        512
+      ],
+      "id": "5237db7e-2127-4718-b609-1fe936174bf4",
+      "name": "Web Scraping"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "$input.item.json.start_time = Date.now();\n\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        208
+      ],
+      "id": "4eeb885c-636f-4d24-8207-8e64a727a4b1",
+      "name": "Set clean content start_time"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "$input.item.json.duration_ms = Date.now() - $('Set clean content start_time').item.json.start_time;\n$input.item.json.agent_task = 'Clean Content';\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        208
+      ],
+      "id": "b432fc2f-c801-4b3a-8361-d0d8767c5bb0",
+      "name": "Set clean content duration"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "GxOSCX2gt0Mz40IU",
+          "mode": "list",
+          "cachedResultName": "ai_workflow_metrics",
+          "cachedResultUrl": "/projects/kIpFOLTWQHjPaM8F/datatables/GxOSCX2gt0Mz40IU"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "workflow_name": "={{ $workflow.name }}",
+            "execution_id": "={{ $execution.id }}",
+            "agent_task": "={{ $('Set clean content duration').item.json.agent_task }}",
+            "duration_ms": "={{ $('Set clean content duration').item.json.duration_ms }}",
+            "model": "={{ $('Index file').item.json.model }}",
+            "source": "={{ $('Index file').item.json.Fichier.filename }} - page {{ $('Split pages').item.json.pageNumber || ($itemIndex + 1) }}",
+            "output": "={{ $('Clean Content').item.json.output }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "workflow_name",
+              "displayName": "workflow_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "agent_task",
+              "displayName": "agent_task",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "duration_ms",
+              "displayName": "duration_ms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "model",
+              "displayName": "model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "optimizeBulk": true
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        2288,
+        288
+      ],
+      "id": "a08a27a9-3e9e-406a-9a98-69d6fb60b8ce",
+      "name": "Insert Clean Content Execution time"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "$input.item.json.start_time = Date.now();\n\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        608
+      ],
+      "id": "68a9eeb0-77ef-4c4a-a861-25f97eb62767",
+      "name": "Set web scraping start_time"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "$input.item.json.duration_ms = Date.now() - $('Set web scraping start_time').item.json.start_time;\n$input.item.json.agent_task = 'Web Scraping';\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        608
+      ],
+      "id": "bc3f6273-27d4-444d-ab68-8a1c9fd79427",
+      "name": "Set web scraping duration"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "GxOSCX2gt0Mz40IU",
+          "mode": "list",
+          "cachedResultName": "ai_workflow_metrics",
+          "cachedResultUrl": "/projects/kIpFOLTWQHjPaM8F/datatables/GxOSCX2gt0Mz40IU"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "workflow_name": "={{ $workflow.name }}",
+            "execution_id": "={{ $execution.id }}",
+            "agent_task": "={{ $('Set web scraping duration').item.json.agent_task }}",
+            "duration_ms": "={{ $('Set web scraping duration').item.json.duration_ms }}",
+            "model": "={{ $('Index Url').item.json.model }}",
+            "source": "={{ $('Index Url').item.json.Url }}",
+            "output": "={{ JSON.stringify($('Web Scraping').item.json.output) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "workflow_name",
+              "displayName": "workflow_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "agent_task",
+              "displayName": "agent_task",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "duration_ms",
+              "displayName": "duration_ms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "model",
+              "displayName": "model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "optimizeBulk": true
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        608
+      ],
+      "id": "950098b9-23ab-4149-b44f-0f758f22ac07",
+      "name": "Insert Web Scraping Execution time"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2512,
+        208
+      ],
+      "id": "27f23bb2-6920-4684-9955-1aff60a696b1",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "$input.item.json.start_time = Date.now();\n\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        1120
+      ],
+      "id": "63478afc-c04b-478f-b488-f363855e595f",
+      "name": "Set web image analyse start_time"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "$input.item.json.duration_ms = Date.now() - $('Set web image analyse start_time').item.json.start_time;\n$input.item.json.agent_task = 'Image Analyse';\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        1120
+      ],
+      "id": "c736dcff-002d-41dc-aa37-f7287877734b",
+      "name": "Set web image analyse duration"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "GxOSCX2gt0Mz40IU",
+          "mode": "list",
+          "cachedResultName": "ai_workflow_metrics",
+          "cachedResultUrl": "/projects/kIpFOLTWQHjPaM8F/datatables/GxOSCX2gt0Mz40IU"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "workflow_name": "={{ $workflow.name }}",
+            "execution_id": "={{ $execution.id }}",
+            "agent_task": "={{ $('Set web image analyse duration').item.json.agent_task }}",
+            "duration_ms": "={{ $('Set web image analyse duration').item.json.duration_ms }}",
+            "source": "={{ $('Analyse Image').item.json.imageFichier.filename }}",
+            "model": "={{ $('Analyse Image').item.json.model }}",
+            "output": "={{ $('Analyse Image1').item.json.output }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "workflow_name",
+              "displayName": "workflow_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "agent_task",
+              "displayName": "agent_task",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "duration_ms",
+              "displayName": "duration_ms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "model",
+              "displayName": "model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "optimizeBulk": true
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        1120
+      ],
+      "id": "03656a11-3370-4ba0-911f-bd46fc46e6ae",
+      "name": "Insert Image Analyse Execution time"
+    },
+    {
+      "parameters": {
+        "formTitle": "Analyse d'image",
+        "formDescription": "Analyse d'une image avec un modèle multimodal",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "imageFichier",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".jpg, .png",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "model",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "local"
+                  },
+                  {
+                    "option": "remote"
+                  },
+                  {
+                    "option": "openai"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        1120
+      ],
+      "id": "1936686c-9e97-4f65-94bc-a78514e5f408",
+      "name": "Analyse Image",
+      "webhookId": "84d1257d-f278-4575-9009-46040a80860f"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3,
+        "rules": {
+          "rule": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ac253c83-e230-4dc4-8321-26635c154859",
+                    "leftValue": "={{ $('Analyse Image').item.json.model }}",
+                    "rightValue": "local",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "modelIndex": 2,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d6a99a37-231a-43a8-b8f4-d4c42b9ec441",
+                    "leftValue": "={{ $('Analyse Image').item.json.model }}",
+                    "rightValue": "remote",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "modelIndex": 3,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "bef31ca0-40a7-4bfd-8900-eb4b858af3e7",
+                    "leftValue": "={{ $('Analyse Image').item.json.model }}",
+                    "rightValue": "openai",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.modelSelector",
+      "typeVersion": 1,
+      "position": [
+        656,
+        1344
+      ],
+      "id": "42ad19a3-262b-47ea-9b9d-99c83268085b",
+      "name": "Model Selector Analyse IMage"
+    },
+    {
+      "parameters": {
+        "model": "granite3.2-vision:2b",
+        "options": {
+          "temperature": 0.4,
+          "keepAlive": "-1m"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        672,
+        1552
+      ],
+      "id": "1e0af975-be93-4f64-b517-1f3031dc02fe",
+      "name": "Local Ollama Agent Analyse Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "5wt6oxfMGxxl6UDg",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "granite3.2-vision:2b",
+        "options": {
+          "temperature": 0.4,
+          "keepAlive": "-1m"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        800,
+        1552
+      ],
+      "id": "f7587822-4d53-4606-874c-f0561a390425",
+      "name": "Remote Ollama Analyse Agent Model1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "fK7fLhnq71Tqrjv1",
+          "name": "Remote Ollama Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Analyse Image').item.json.imageFichier.filename }}",
+        "options": {
+          "systemMessage": "Tu es un analyseur d'image.\n\n**Instructions:**\n* Décris moi ce que tu vois\n* Si l'image contient du texte essaie de l'extraire\n* Nettoie ce texte pour le rendre compréhensible\n\n\n\n",
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        672,
+        1120
+      ],
+      "id": "22fa5f16-e276-420a-88c1-c1685b98aff5",
+      "name": "Analyse Image1"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Analyse de l'image par le modele",
+        "completionMessage": "={{ $('Analyse Image1').item.json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [
+        2000,
+        1120
+      ],
+      "id": "355c8346-606d-4607-9225-b664f9a85ca9",
+      "name": "Form",
+      "webhookId": "ebd64356-65cf-4b30-ada1-156b3d5f003f"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rule": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d6a99a37-231a-43a8-b8f4-d4c42b9ec441",
+                    "leftValue": "={{ $('Index Url').item.json.model }}",
+                    "rightValue": "remote",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "modelIndex": 2,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "bef31ca0-40a7-4bfd-8900-eb4b858af3e7",
+                    "leftValue": "={{ $('Index Url').item.json.model }}",
+                    "rightValue": "openai",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.modelSelector",
+      "typeVersion": 1,
+      "position": [
+        448,
+        736
+      ],
+      "id": "14031bba-7a67-46a7-a1db-a1e8723c497b",
+      "name": "Model Selector Web Scraping"
     }
   ],
   "pinData": {},
@@ -543,7 +1298,7 @@
       "main": [
         [
           {
-            "node": "Clean Content Agent",
+            "node": "Set clean content start_time",
             "type": "main",
             "index": 0
           }
@@ -571,17 +1326,6 @@
         [
           {
             "node": "Documents Qdrant Vector Store",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Clean Content Agent": {
-      "main": [
-        [
-          {
-            "node": "Filter Quality Content",
             "type": "main",
             "index": 0
           }
@@ -622,6 +1366,11 @@
             "node": "Model Selector",
             "type": "ai_languageModel",
             "index": 1
+          },
+          {
+            "node": "Model Selector Web Scraping",
+            "type": "ai_languageModel",
+            "index": 0
           }
         ]
       ]
@@ -630,7 +1379,7 @@
       "ai_languageModel": [
         [
           {
-            "node": "Clean Content Agent",
+            "node": "Clean Content",
             "type": "ai_languageModel",
             "index": 0
           }
@@ -641,7 +1390,7 @@
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "Set web scraping start_time",
             "type": "main",
             "index": 0
           }
@@ -652,7 +1401,7 @@
       "ai_tool": [
         [
           {
-            "node": "AI Agent",
+            "node": "Web Scraping",
             "type": "ai_tool",
             "index": 0
           }
@@ -663,14 +1412,24 @@
       "ai_languageModel": [
         [
           {
-            "node": "AI Agent",
+            "node": "Structured Output Parser",
             "type": "ai_languageModel",
             "index": 0
           },
           {
-            "node": "Structured Output Parser",
+            "node": "Model Selector",
             "type": "ai_languageModel",
-            "index": 0
+            "index": 2
+          },
+          {
+            "node": "Model Selector Analyse IMage",
+            "type": "ai_languageModel",
+            "index": 2
+          },
+          {
+            "node": "Model Selector Web Scraping",
+            "type": "ai_languageModel",
+            "index": 1
           }
         ]
       ]
@@ -679,19 +1438,8 @@
       "ai_outputParser": [
         [
           {
-            "node": "AI Agent",
+            "node": "Web Scraping",
             "type": "ai_outputParser",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "AI Agent": {
-      "main": [
-        [
-          {
-            "node": "Web Documents Qdrant Vector Store1",
-            "type": "main",
             "index": 0
           }
         ]
@@ -718,13 +1466,216 @@
           }
         ]
       ]
+    },
+    "Clean Content": {
+      "main": [
+        [
+          {
+            "node": "Set clean content duration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Scraping": {
+      "main": [
+        [
+          {
+            "node": "Set web scraping duration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set clean content start_time": {
+      "main": [
+        [
+          {
+            "node": "Clean Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set clean content duration": {
+      "main": [
+        [
+          {
+            "node": "Insert Clean Content Execution time",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Clean Content Execution time": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Set web scraping start_time": {
+      "main": [
+        [
+          {
+            "node": "Web Scraping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set web scraping duration": {
+      "main": [
+        [
+          {
+            "node": "Insert Web Scraping Execution time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Web Scraping Execution time": {
+      "main": [
+        [
+          {
+            "node": "Web Documents Qdrant Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Filter Quality Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set web image analyse start_time": {
+      "main": [
+        [
+          {
+            "node": "Analyse Image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set web image analyse duration": {
+      "main": [
+        [
+          {
+            "node": "Insert Image Analyse Execution time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyse Image": {
+      "main": [
+        [
+          {
+            "node": "Set web image analyse start_time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Model Selector Analyse IMage": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analyse Image1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Local Ollama Agent Analyse Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector Analyse IMage",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remote Ollama Analyse Agent Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector Analyse IMage",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Analyse Image1": {
+      "main": [
+        [
+          {
+            "node": "Set web image analyse duration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Image Analyse Execution time": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Model Selector Web Scraping": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Web Scraping",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "81234978-0531-4bc9-a8f8-6932673d3273",
+  "versionId": "f8300bcb-ca2a-473b-ad0b-8dff5d1a28f3",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "35e53b4e1c0deaab7d871949fef5124ac4432fe9906011927482989de82c5430"
