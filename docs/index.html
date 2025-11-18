@@ -668,51 +668,21 @@
 
 				<section>
 					<h2>Docker compose : stack complet</h2>
-					<pre><code class="hljs yaml" data-trim data-line-numbers="|1-43|2-11|13-30|32-39|41-43">
+					<pre><code class="hljs yaml" data-trim>
 services:
   postgres:
     image: postgres:15
-    environment:
-      POSTGRES_DB: n8n
-      POSTGRES_USER: n8n
-      POSTGRES_PASSWORD: n8n
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
+    ...
   n8n:
     build: ./n8n
     environment:
-      - DB_TYPE=postgresdb
-      - DB_POSTGRESDB_HOST=postgres
-      - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_DATABASE=n8n
-      - DB_POSTGRESDB_USER=n8n
-      - DB_POSTGRESDB_PASSWORD=n8n
-      - N8N_HOST=localhost
-      - N8N_PORT=5678
-      - N8N_PROTOCOL=http
-    ports:
-      - "5678:5678"
-    volumes:
-      - n8n_data:/home/node/.n8n
+      ...
+    ...
     depends_on:
       - postgres
-
   ollama:
     image: ollama/ollama:latest
-    ports:
-      - "11435:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    environment:
-      - OLLAMA_HOST=0.0.0.0:11434
-
-volumes:
-  postgres_data:
-  n8n_data:
-  ollama_data:
+    ...
 					</code></pre>
 					<aside class="notes">
 						Stack complet avec PostgreSQL pour la persistence, n8n comme chef d'orchestre, et Ollama pour
@@ -722,25 +692,16 @@ volumes:
 
 				<section>
 					<h2>🐳 Docker Model Runner</h2>
-					<pre><code class="hljs yaml" data-trim data-line-numbers="|1-19|2-8|10-19">
+					<pre><code class="hljs yaml" data-trim>
 # Version avec Docker Model Runner (Docker Compose)
 services:
   n8n:
     build: ./n8n
-    ports:
-      - "5678:5678"
     models:
       - llm
-
 models:
   llm:
     model: ollama/llama3.2:3b
-    environment:
-      - OLLAMA_HOST=0.0.0.0:11434
-    ports:
-      - "11435:11434"
-    volumes:
-      - ollama_data:/root/.ollama
     runtime: ollama
 				</code></pre>
 					<aside class="notes">
