@@ -49,8 +49,8 @@ fi
 print_success "Ollama est prêt !"
 
 # Modèles recommandés pour l'assistance utilisateur
-MODELS="qwen2.5:3b-instruct-q4_K_M|nomic-embed-text|granite3.2-vision:2b"
-MODEL_DESCRIPTIONS="Léger, rapide, français correct et optimisé CPU|Spécialement conçu pour l'embedding, très rapide sur CPU|Excellent pour l'extraction de documents"
+MODELS="qwen2.5:0.5b|qwen2.5:3b-instruct-q4_K_M|nomic-embed-text|granite3.2-vision:2b"
+MODEL_DESCRIPTIONS="Tres léger, rapide, français correct et optimisé CPU|Moyennement léger, rapide, français correct et optimisé CPU|Spécialement conçu pour l'embedding, très rapide sur CPU|Excellent pour l'extraction de documents"
 
 echo ""
 print_status "Installation des modèles :"
