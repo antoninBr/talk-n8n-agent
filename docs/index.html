@@ -335,15 +335,20 @@
 				<section>
 					<h2>Qu'est-ce qu'Ollama ?</h2>
 					<div style="text-align: center; margin-bottom: 2em;">
-						<img src="img/ollama-logo.png" alt="Ollama Logo" style="max-width: 90px; background: white; padding: 10px; border-radius: 8px;">
+						<img src="img/serge.jpg" alt="Serge" 
+							class="fragment fade-out" data-fragment-index="1"
+							style="max-width: 240px; border-radius: 5%; border: 3px solid #444;">
+						<img src="img/ollama-logo.png" alt="Ollama Logo" 
+							class="fragment fade-in" data-fragment-index="2"
+							style="max-width: 90px; background: white; padding: 10px; border-radius: 8px;">
 					</div>
 					<ul>
-						<li class="fragment"><strong>Docker pour l'IA</strong> : Conteneurise vos LLMs</li>
-						<li class="fragment"><strong>Installation simple</strong> : Une commande</li>
-						<li class="fragment"><strong>Local first</strong> : Vos données restent chez vous</li>
-						<li class="fragment"><strong>API compatible</strong> : OpenAI-like</li>
+						<li class="fragment" data-fragment-index="3"><strong>Docker pour l'IA</strong> : Conteneurise vos LLMs</li>
+						<li class="fragment" data-fragment-index="4"><strong>Installation simple</strong> : Une commande</li>
+						<li class="fragment" data-fragment-index="5"><strong>Local first</strong> : Vos données restent chez vous</li>
+						<li class="fragment" data-fragment-index="6"><strong>API compatible</strong> : OpenAI-like</li>
 					</ul>
-					<div class="fragment" style="margin-top: 1em; padding: 1em; background: rgba(0,0,0,0.2); border-radius: 8px;">
+					<div class="fragment" data-fragment-index="7" style="margin-top: 1em; padding: 1em; background: rgba(0,0,0,0.2); border-radius: 8px;">
 						<code style="font-size: 0.7em;">
 							curl -fsSL https://ollama.com/install.sh | sh<br>
 							ollama run llama3.2
@@ -764,6 +769,9 @@ models:
 					<h2>⚠️ Limitations</h2>
 					<ul>
 						<li class="fragment">Docker Compose uniquement</li>
+						<div class="fragment" style="text-align: center; margin: 0.5em 0;">
+							<img src="img/podman.gif" alt="Podman sad" style="max-width: 200px;">
+						</div>
 						<li class="fragment">Fonctionnalité récente</li>
 						<li class="fragment">Documentation limitée</li>
 						<li class="fragment">Fallback classique recommandé</li>
