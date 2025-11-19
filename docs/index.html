@@ -487,6 +487,17 @@
 				</section>
 
 				<section>
+					<h2>Types de mémoire disponibles</h2>
+					<div style="text-align: center;">
+						<img src="img/memory.png" alt="Types de mémoire dans n8n : Chat Memory, Vector Store Memory, etc." 
+							style="max-width: 90%; border: 2px solid #444; border-radius: 8px;">
+					</div>
+					<aside class="notes">
+						Voici les différents types de mémoire disponibles dans n8n pour vos agents IA : Chat Memory pour les conversations, Vector Store Memory pour le RAG, et d'autres options selon vos besoins spécifiques.
+					</aside>
+				</section>
+
+				<section>
 					<h2>Outils disponibles</h2>
 					<ul>
 						<li class="fragment">Web & APIs</li>
@@ -503,6 +514,23 @@
 						communications Email/Slack/Teams, APIs diverses CRM/ERP/Cloud... et même d'autres agents IA
 						spécialisés. J'ai une conférence complète sur MCP pour approfondir :
 						github.com/antoninBr/talk-mcp
+					</aside>
+				</section>
+
+				<section>
+					<h2>MCP (Model Context Protocol)</h2>
+					<ul>
+						<li class="fragment">Protocole par Anthropic</li>
+						<li class="fragment">~1 an d'existence</li>
+						<li class="fragment">Standardise les outils pour agents IA</li>
+						<li class="fragment">Talk dédié disponible</li>
+					</ul>
+					<p class="fragment" style="margin-top: 2em; font-size: 0.8em; color: var(--ces-green);">
+						🔗 <em>github.com/antoninBr/talk-mcp</em>
+					</p>
+					<aside class="notes">
+						MCP est un protocole récent d'Anthropic qui standardise la façon dont les agents IA utilisent des outils externes. 
+						Encore jeune mais très prometteur pour l'écosystème. J'ai un talk complet dédié sur GitHub pour creuser le sujet !
 					</aside>
 				</section>
 
@@ -628,35 +656,35 @@
 							N8N --> Agent[🤖 AI Agent]
 							Agent --> Ollama[🧠 Ollama LLMs locaux]
 							Agent --> Ollama_Remote[🧠 Ollama LLMs distants]
-							Agent --> Qdrant[🔍 Qdrant Vector DB]
-							Agent --> MCP[🎭 Playwright MCP]
-							Agent --> API[🧠 OpenAI LLMs]
+							Agent --> VectorDB[🔍 Vector Stores]
+							Agent --> MCP[🎭 MCP Servers]
+							Agent --> API[🧠 LLMs SaaS]
 
 							subgraph "🐳 Docker Compose Stack"
 								Chat
 								N8N
 								PG
 								Ollama
-								Qdrant
+								VectorDB
 								MCP
 								Agent
 							end
 							
-							style User fill:#e1f5fe
-							style Chat fill:#f3e5f5
-							style N8N fill:#e8f5e8
-							style Agent fill:#fff3e0
-							style Ollama fill:#fce4ec
-							style API fill:#fce4ec
-							style MCP fill:#fce4ec
-							style Qdrant fill:#f1f8e9
-							style PG fill:#e3f2fd
+							style User fill:#4fc3f7,stroke:#01579b,stroke-width:2px,color:#000
+							style Chat fill:#ba68c8,stroke:#4a148c,stroke-width:2px,color:#000
+							style N8N fill:#81c784,stroke:#2e7d32,stroke-width:2px,color:#000
+							style Agent fill:#ffb74d,stroke:#ef6c00,stroke-width:2px,color:#000
+							style Ollama fill:#f06292,stroke:#c2185b,stroke-width:2px,color:#000
+							style API fill:#f06292,stroke:#c2185b,stroke-width:2px,color:#000
+							style MCP fill:#f06292,stroke:#c2185b,stroke-width:2px,color:#000
+							style VectorDB fill:#aed581,stroke:#689f38,stroke-width:2px,color:#000
+							style PG fill:#64b5f6,stroke:#1976d2,stroke-width:2px,color:#000
 					</pre>
 					</div>
 					<aside class="notes">
 						Architecture locale complète avec Docker Compose : interface chat, n8n comme orchestrateur, 
-						agent IA connecté à Ollama pour les LLMs et Qdrant pour la recherche vectorielle, 
-						le tout persisté en PostgreSQL.
+						agent IA connecté à Ollama pour les LLMs locaux, divers Vector Stores pour la recherche vectorielle, 
+						et plusieurs MCP Servers selon vos besoins, le tout persisté en PostgreSQL.
 					</aside>
 				</section>
 			</section>
@@ -763,19 +791,6 @@ models:
 				</section>
 
 				<section>
-					<h2>Demo time! 🎬</h2>
-					<h3>Démarrage de la stack</h3>
-					<pre><code class="hljs bash" data-trim>
-						# Lancement des services
-						./start.sh --import --init-collections --setup-ollama
-						</code></pre>
-					<aside class="notes">
-						Maintenant, place à la démo ! On va démarrer le stack, configurer Ollama avec des modèles
-						locaux, et importer nos workflows.
-					</aside>
-				</section>
-
-				<section>
 					<h2>Mon setup Ollama</h2>
 					<div style="display: flex; justify-content: space-around; align-items: flex-start; gap: 2em;">
 						<div style="flex: 1; text-align: center; position: relative; min-height: 400px;">
@@ -864,6 +879,19 @@ models:
 						D'un côté mon portable ASUS Zenbook limité aux petits modèles de 1-3B paramètres comme llama3.2:1b, 
 						qwen2.5:3b ou phi3:mini. De l'autre, ma battlestation gaming avec RTX 2060 Super qui gère 
 						confortablement les modèles 7-9B comme mistral:7b, codestral pour le code, ou gemma2:9b !
+					</aside>
+				</section>
+
+				<section>
+					<h2>Demo time! 🎬</h2>
+					<h3>Démarrage de la stack</h3>
+					<pre><code class="hljs bash" data-trim>
+						# Lancement des services
+						./start.sh --import --init-collections --setup-ollama
+						</code></pre>
+					<aside class="notes">
+						Maintenant, place à la démo ! On va démarrer le stack, configurer Ollama avec des modèles
+						locaux, et importer nos workflows.
 					</aside>
 				</section>
 
@@ -1017,8 +1045,17 @@ models:
 
 				<section>
 					<h2>Contact & Sources</h2>
+					<div style="display: flex; justify-content: space-around; align-items: center; margin: 2em 0;">
+						<div style="text-align: center;">
+							<img src="img/talk.svg" alt="QR Code Talk Sources" style="max-width: 240px; margin-bottom: 0.2em;">
+							<p style="font-size: 0.5em;">Sources & Code</p>
+						</div>
+						<div style="text-align: center;">
+							<img src="img/openfeedback.svg" alt="QR Code OpenFeedback" style="max-width: 240px; margin-bottom: 0.2em;">
+							<p style="font-size: 0.5em;">Feedback</p>
+						</div>
+					</div>
 					<p>📧 a.brugnot@groupeonepoint.com</p>
-					<p>🔗 GitHub : antoninBr/talk-n8n-agent</p>
 					<p>🏢 Onepoint - Nantes</p>
 				</section>
 			</section>
