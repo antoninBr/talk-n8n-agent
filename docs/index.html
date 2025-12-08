@@ -13,11 +13,11 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>IA locales ou distantes, outils, et un chef d'orchestre nommé n8n</title>
+	<title>Kereis Tech Day 2025 - IA locales ou distantes, outils, et un chef d'orchestre nommé n8n</title>
 
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
-	<link rel="stylesheet" href="dist/theme/codeurs-en-seine.css" id="theme">
+	<link rel="stylesheet" href="dist/theme/kereis.css" id="theme">
 
 	<!-- Theme used for syntax highlighted code -->
 	<link rel="stylesheet" href="plugin/highlight/monokai.css">
@@ -26,31 +26,28 @@
 <body>
 	<div class="reveal">
 		<div class="slides">
-			<!-- Slide d'introduction -->
-			<section>
+		<!-- Slide d'introduction - Kereis Tech Day 2025 -->
+		<section>
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2em; padding: 0 2em;">
-					<img src="img/codeurs-en-seine-avatar.svg" alt="Codeurs en Seine" 
-						style="max-width: 75px; height: auto; padding: 5px; border-radius: 4px;">
+					<img src="img/kereis-logo.png" alt="Kereis" 
+						style="max-width: 100px; height: auto; padding: 5px;">
 					<img src="img/onepoint-logo.svg" alt="Onepoint" 
-						style="max-width: 75px; height: auto; background: white; padding: 5px; border-radius: 4px;">
+						style="max-width: 100px; height: auto; background: white; padding: 5px; border-radius: 4px;">
 				</div>
-				<div style="text-align: center;">
-					<img src="img/title.jpg" alt="Logo"
-						style="max-width: 150px; width: 20vw; min-width: 100px; margin-bottom: 1em;">
+				
+				<h1>IA locales ou distantes, outils, et un chef d'orchestre nommé n8n</h1>
+				
+				<div style="background: rgba(0, 212, 255, 0.1); padding: 0.5em; border-radius: 15px; border: 1px solid var(--kereis-primary); margin: 2em 0;">
+					<p style="margin: 0; font-size: 1.2em;">
+						<strong style="color: var(--kereis-primary);">Antonin Brugnot</strong> - <em style="color: var(--kereis-secondary);">Onepoint</em>
+					</p>
+					<p style="margin-top: 0.5em; font-size: 0.5em; color: var(--kereis-primary); text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);">
+					<strong>10/12/2025</strong>
+				</p>
 				</div>
-				<h3>IA locales ou distantes, outils, et un chef d'orchestre nommé n8n</h3>
-				<p>
-					<small>Antonin Brugnot - Onepoint</small>
-				</p>
-				<p style="margin-top: 2em; font-size: 0.8em; color: var(--ces-green);">
-					<strong>📅 20 Novembre 2025 - Kindarena, Rouen</strong>
-				</p>
-				<aside class="notes">
-					Bonjour ! Aujourd'hui on va explorer comment orchestrer des agents IA avec n8n, une plateforme
-					d'automatisation simple et visuelle. On va connecter des modèles IA locaux avec Ollama ou distants,
-					et des outils grâce au protocole MCP. Une approche concrète pour créer des assistants IA vraiment
-					utiles… et maîtrisés.
-				</aside>
+				
+				
+				
 			</section>
 
 			<!-- Section 1: Présentation de n8n -->
@@ -202,7 +199,7 @@
 				
 				<section>
 					<div style="text-align: center;">
-						<img src="img/struggle.jpg" alt="Struggle meme" style="max-width: 70%; margin-bottom: 1em;">
+						<img src="img/struggle.jpg" alt="Struggle meme" style="max-width: 40%; margin-bottom: 1em;">
 					</div>
 				</section>
 
@@ -348,7 +345,7 @@
 						<li class="fragment" data-fragment-index="5"><strong>Local first</strong> : Vos données restent chez vous</li>
 						<li class="fragment" data-fragment-index="6"><strong>API compatible</strong> : OpenAI-like</li>
 					</ul>
-					<div class="fragment" data-fragment-index="7" style="margin-top: 1em; padding: 1em; background: rgba(0,0,0,0.2); border-radius: 8px;">
+					<div class="fragment" data-fragment-index="7" style="margin-top: 0.25em; padding: 0.5em; background: rgba(0,0,0,0.2); border-radius: 8px;">
 						<code style="font-size: 0.7em;">
 							curl -fsSL https://ollama.com/install.sh | sh<br>
 							ollama run llama3.2
@@ -462,8 +459,10 @@
 
 				<section>
 					<h2>Model Selector</h2>
+					<div style="text-align: center;">
 					<img src="img/model_selector.png" alt="Sélecteur de modèle dynamique dans n8n"
 						style="max-width: 40%; border: 2px solid #444;">
+						</div>
 					<ul>
 						<li class="fragment">Adaptation contextuelle</li>
 						<li class="fragment">Basculement automatique</li>
@@ -558,42 +557,8 @@
 				<section>
 					<div style="text-align: center;">
 						<img src="img/inception-meme.jpg" alt="Agent n8n utilisant Playwright MCP pour naviguer sur n8n" 
-							class="fragment fade-out" data-fragment-index="1"
-							style="max-width: 70%; border: 2px solid #444; border-radius: 8px;">
+							style="max-width: 40%; border: 2px solid #444; border-radius: 8px;">
 					</div>
-					<div class="fragment fade-in" data-fragment-index="2" 
-						style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-							width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 9999; 
-							display: flex; align-items: center; justify-content: center; 
-							backdrop-filter: blur(5px);">
-						<div style="text-align: center;">
-							<img src="img/inception-meme.jpg" alt="INCEPTION!" 
-								style="max-width: 70%; border: 2px solid #444; 
-								border-radius: 8px;
-								animation: zoomInception 4s ease-out;">
-							<audio id="inceptionAudio" preload="auto">
-								<source src="sounds/inception-style-movie-horn-80358.mp3" type="audio/mpeg">
-							</audio>
-						</div>
-					</div>
-
-					<style>
-						@keyframes zoomInception {
-							0% { 
-								transform: scale(0.1) rotate(0deg); 
-								opacity: 0; 
-							}
-							50% { 
-								transform: scale(1.2) rotate(180deg); 
-								opacity: 0.8; 
-							}
-							100% { 
-								transform: scale(1) rotate(360deg); 
-								opacity: 1; 
-							}
-						}
-					</style>
-
 				</section>
 
 				<section>
@@ -908,97 +873,6 @@ models:
 						locaux, et importer nos workflows.
 					</aside>
 				</section>
-
-
-				<section data-background="lightblue">
-					<h1>🎯 Démo en direct</h1>
-					<p>https://localhost:8443</p>
-					<aside class="notes">
-						[Ici, faire la démonstration live des workflows]
-					</aside>
-				</section>
-
-
-			</section>
-
-			<!-- Section Sponsors -->
-			<section>
-				<section>
-					<h1>🙏 Merci à nos sponsors</h1>
-					<p style="font-size: 0.8em;">Codeurs en Seine 2025 ne pourrait exister sans le soutien de nos partenaires</p>
-				</section>
-
-				<section>
-					<h2>Sponsors Platine & Or</h2>
-					<div class="sponsors-grid">
-						<div class="sponsor-logo">
-							<img src="img/sponsors/attineos.png" alt="Attineos">
-						</div>
-						<div class="sponsor-logo">
-							<img src="img/sponsors/bluesoft.png" alt="BlueSoft">
-						</div>
-						<div class="sponsor-logo">
-							<img src="img/sponsors/digit.png" alt="Digit">
-						</div>
-						<div class="sponsor-logo">
-							<img src="img/sponsors/leboncoin.png" alt="Le Bon Coin">
-						</div>
-						<div class="sponsor-logo">
-							<img src="img/sponsors/matmut.png" alt="Matmut">
-						</div>
-						<div class="sponsor-logo">
-							<img src="img/sponsors/sqli.png" alt="SQLI">
-						</div>
-					</div>
-					<aside class="notes">
-						Un grand merci à nos sponsors principaux qui rendent cet événement possible : Attineos, BlueSoft, Digit, Le Bon Coin, Matmut et SQLI.
-					</aside>
-				</section>
-
-				<section>
-					<h2>Sponsors Argent & Bronze</h2>
-					<div class="sponsors-grid">
-						<div class="sponsor-logo">
-							<img src="img/sponsors/imagile.png" alt="Imagile">
-						</div>
-						<div class="sponsor-logo">
-							<img src="img/sponsors/limops.png" alt="LimOps">
-						</div>
-						<div class="sponsor-logo">
-							<img src="img/sponsors/magnolia.png" alt="Magnolia">
-						</div>
-						<div class="sponsor-logo">
-							<img src="img/sponsors/proxiad.png" alt="Proxiad">
-						</div>
-						<div class="sponsor-logo">
-							<img src="img/sponsors/redlab.png" alt="REDLab">
-						</div>
-						<div class="sponsor-logo">
-							<img src="img/sponsors/wixiweb.png" alt="Wixiweb">
-						</div>
-					</div>
-					<aside class="notes">
-						Merci également à nos autres sponsors : Imagile, LimOps, Magnolia, Proxiad, REDLab et Wixiweb.
-					</aside>
-				</section>
-
-				<section>
-					<h2>Partenaires Institutionnels & Éducatifs</h2>
-					<div class="sponsors-grid">
-						<div class="sponsor-logo">
-							<img src="img/sponsors/metropole-rouen-normandie.png" alt="Métropole Rouen Normandie">
-						</div>
-						<div class="sponsor-logo">
-							<img src="img/sponsors/cesi.png" alt="CESI">
-						</div>
-						<div class="sponsor-logo">
-							<img src="img/sponsors/nfs.png" alt="Need For School">
-						</div>
-					</div>
-					<aside class="notes">
-						Enfin, merci à nos partenaires institutionnels et éducatifs : la Métropole Rouen Normandie, le CESI et Need For School. Rendez-vous le 20 novembre 2025 !
-					</aside>
-				</section>
 			</section>
 
 			<!-- Section 4: Conclusion et questions -->
@@ -1065,8 +939,8 @@ models:
 							<p style="font-size: 0.5em;">Sources & Code</p>
 						</div>
 						<div style="text-align: center;">
-							<img src="img/openfeedback.svg" alt="QR Code OpenFeedback" style="max-width: 240px; margin-bottom: 0.2em;">
-							<p style="font-size: 0.5em;">Feedback</p>
+							<img src="img/kereis_qrcode.png" alt="QR Code OpenFeedback" style="max-width: 240px; margin-bottom: 0.2em;">
+							<p style="font-size: 0.5em;">Tech Day</p>
 						</div>
 					</div>
 					<p>📧 a.brugnot@groupeonepoint.com</p>
@@ -1099,19 +973,6 @@ models:
 			},
 			// Learn about plugins: https://revealjs.com/plugins/
 			plugins: [RevealNotes, RevealMarkdown, RevealHighlight, RevealMermaid]
-		});
-
-		// Play inception sound only on the specific inception slide (really poorly done... my bad)
-		Reveal.addEventListener('fragmentshown', function(event) {
-			const currentSlide = Reveal.getCurrentSlide();
-			const isInceptionSlide = currentSlide.querySelector('img[alt="INCEPTION!"]') !== null;
-			if (event.fragment.getAttribute('data-fragment-index') === '1' && isInceptionSlide) {
-				const audio = document.getElementById('inceptionAudio');
-				if (audio) {
-					audio.currentTime = 0;
-					audio.play().catch(console.log);
-				}
-			}
 		});
 	</script>
 </body>
