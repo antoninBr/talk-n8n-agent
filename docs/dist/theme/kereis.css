@@ -50,7 +50,7 @@
 .reveal-viewport {
   background: var(--r-background-color);
   background-color: var(--r-background-color);
-  background-image: url('../img/kereis.jpg');
+  background-image: url('../img/kereis.png');
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
@@ -82,8 +82,6 @@
 
 /* BACKGROUND AVEC IMAGE KEREIS */
 .reveal .slides {
-  background-image: url('../img/kereis.jpg');
-  background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
