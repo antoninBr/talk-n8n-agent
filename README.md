@@ -1,6 +1,6 @@
 # 🎤 Talk n8n Agent - IA locales ou distantes, outils, et un chef d'orchestre nommé n8n
 
-Démo et présentation sur l'orchestration d'agents IA avec n8n.
+Comment faire bosser une IA avec vos outils du quotidien ? Dans cette conférence, on explore comment orchestrer des agents IA avec n8n, une plateforme d’automatisation simple et visuelle. On y connecte des modèles IA (locaux avec Ollama, ou distant) et des outils grâce au protocole MCP. Une approche concrète pour créer des assistants IA vraiment utiles… et maîtrisés. Venez, il y aura même une démo.
 
 ## 📝 À propos
 
