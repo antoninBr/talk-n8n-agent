@@ -241,7 +241,7 @@ MIT License - Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 ---
 
 **Présenté à Codeurs en Seine 2025**  
-Par [Antonin Brugnot](https://github.com/antoninBr)  
+Par [Antonin Brugnot](https://github.com/antoninBr) https://www.youtube.com/watch?v=8UMn9bxHX34
 
 
 **📚 Documentation principale :**
