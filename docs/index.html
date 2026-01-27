@@ -32,10 +32,10 @@
 						style="max-width: 100px; height: auto; background: white; padding: 5px; border-radius: 4px;">
 				</div>
 				
-				<h1>IA locales ou distantes, outils, et un chef d'orchestre nommé n8n</h1>
+				<h1 style="font-size: 1.6em; margin: 0.3em 0;">IA locales ou distantes, outils, et un chef d'orchestre nommé n8n</h1>
 				
-				<div style="background: rgba(0, 212, 255, 0.1); padding: 0.5em; border-radius: 15px; border: 1px solid; margin: 2em 0;">
-					<p style="margin: 0; font-size: 1.2em;">
+				<div style="background: rgba(0, 212, 255, 0.1); padding: 0.3em; border-radius: 15px; border: 1px solid; margin: 1em 0;">
+					<p style="margin: 0; font-size: 1em;">
 						<strong>Antonin Brugnot</strong> - <em>Onepoint</em>
 					</p>
 				</div>
@@ -48,16 +48,15 @@
 			<section>
 				<section>
 					<h1>🔧 Présentation de n8n</h1>
+					<h4>n-odematio-n</h4>
 				</section>
 
 				<section>
 					<h2>Pourquoi n8n ?</h2>
-					<ul>
-						<li class="fragment">Connecter vos outils du quotidien</li>
-						<li class="fragment">Interface visuelle intuitive</li>
+				<ul style="font-size: 0.85em;">
 						<li class="fragment">No-code/Low-code (Workflow visuel)</li>
 						<li class="fragment">Contrôle de vos données</li>
-						<li class="fragment">Open Source 🥨</li>
+						<li class="fragment">Open Source 🥨 et en constante évolution (2.4.6)</li>
 					</ul>
 					<aside class="notes">
 						n8n permet de connecter facilement tous vos outils : API, bases de données, services cloud.
@@ -69,9 +68,9 @@
 				<section>
 					<h2>À quoi ressemble un workflow n8n ?</h2>
 					<div style="text-align: center;">
-						<img src="img/n8n-workflow-example.png" alt="Exemple de workflow n8n" style="max-width: 65%; border: 2px solid #444; border-radius: 8px;">
-					</div>
-					<ul style="margin-top: 1em;">
+					<img src="img/n8n-workflow-example.png" alt="Exemple de workflow n8n" style="max-width: 55%; border: 2px solid #444; border-radius: 8px;">
+				</div>
+				<ul style="margin-top: 0.5em; font-size: 0.8em;">
 						<li class="fragment"><strong>Trigger</strong> : Déclencheur (webhook, email, cron...)</li>
 						<li class="fragment"><strong>Nodes</strong> : Actions connectées visuellement</li>
 						<li class="fragment"><strong>Variables</strong> : Données partagées entre étapes</li>
@@ -156,12 +155,12 @@
 				<section>
 					<h2>Milliers de templates</h2>
 					<div style="text-align: center;">
-						<img src="img/n8n-workflows.png" alt="Page des workflows n8n" style="max-width: 80%; border: 2px solid #444;">
-					</div>
-					<p style="margin-top: 1em;">
-						🔗 <a href="https://n8n.io/workflows/" target="_blank" style="color: var(--ces-green);">n8n.io/workflows/</a>
-					</p>
-					<p class="fragment" style="font-size: 0.8em; font-style: italic;">
+					<img src="img/n8n-workflows.png" alt="Page des workflows n8n" style="max-width: 65%; border: 2px solid #444;">
+				</div>
+				<p style="margin-top: 0.5em; font-size: 0.9em;">
+					🔗 <a href="https://n8n.io/workflows/" target="_blank" style="color: var(--ces-green);">n8n.io/workflows/</a>
+				</p>
+				<p class="fragment" style="font-size: 0.75em; font-style: italic;">
 						Prêts à importer et personnaliser !
 					</p>
 					<aside class="notes">
@@ -411,9 +410,9 @@
 					<h2>Le petit hic d'Ollama</h2>
 					<div style="text-align: center;">
 						<img src="img/doorstep.gif" alt="Meme about context size"
-							style="max-width: 65%; margin-bottom: 1em;">
-					</div>
-					<ul>
+						style="max-width: 50%; margin-bottom: 0.5em;">
+				</div>
+				<ul style="font-size: 0.8em;">
 						<li class="fragment"><strong>Taille de contexte limitée</strong> vs modèles SaaS</li>
 						<li class="fragment">8K-32K tokens (Ollama) vs 128K-2M tokens (GPT-4)</li>
 						<li class="fragment">Impact sur les conversations longues</li>
@@ -773,17 +772,17 @@ models:
 
 				<section>
 					<h2>Mon setup Ollama</h2>
-					<div style="display: flex; justify-content: space-around; align-items: flex-start; gap: 2em;">
-						<div style="flex: 1; text-align: center; position: relative; min-height: 400px;">
-							<h3>ASUS Zenbook</h3>
-							<div style="font-size: 2.1em; margin: 0.5em 0;">🖥️</div>
-							<ul style="font-size: 0.8em; text-align: left;">
-								<li>Ryzen 7</li>
-								<li>16 Go RAM</li>
-								<li>SSD</li>
-								<li>Radeon intégré 😢</li>
-							</ul>
-							<p style="font-size: 0.7em; color: #999; margin-top: 1em;">
+				<div style="display: flex; justify-content: space-around; align-items: flex-start; gap: 1.5em;">
+					<div style="flex: 1; text-align: center; position: relative; min-height: 350px;">
+						<h3 style="font-size: 1em;">ASUS Zenbook</h3>
+						<div style="font-size: 1.8em; margin: 0.3em 0;">🖥️</div>
+						<ul style="font-size: 0.65em; text-align: left;">
+							<li>Ryzen 7</li>
+							<li>16 Go RAM</li>
+							<li>SSD</li>
+							<li>Radeon intégré 😢</li>
+						</ul>
+						<p style="font-size: 0.6em; color: #999; margin-top: 0.5em;">
 								<em>Modèles légers uniquement</em>
 							</p>
 							<!-- Modèles flottants pour Zenbook -->
@@ -797,11 +796,11 @@ models:
 								<span style="background: rgba(23,162,184,0.8); padding: 0.3em 0.6em; border-radius: 20px; font-size: 0.6em; color: #fff; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">phi3:mini</span>
 							</div>
 						</div>
-						<div style="flex: 1; text-align: center; position: relative; min-height: 400px;">
-							<h3>Battlestation</h3>
-							<img src="img/battlestation.jpg" alt="PC Gaming Setup" 
-								style="max-width: 250px; height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 1em;">
-							<ul style="font-size: 0.8em; text-align: left;">
+					<div style="flex: 1; text-align: center; position: relative; min-height: 350px;">
+						<h3 style="font-size: 1em;">Battlestation</h3>
+						<img src="img/battlestation.jpg" alt="PC Gaming Setup" 
+							style="max-width: 180px; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 0.5em;">
+						<ul style="font-size: 0.65em; text-align: left;">
 								<li>Ryzen 5</li>
 								<li>32 Go RAM</li>
 								<li>SSD NVMe</li>
