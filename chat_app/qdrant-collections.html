@@ -4,44 +4,15 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Gestion Collections Qdrant</title>
+	<link href="./common.css" rel="stylesheet" />
 	<style>
-		/* Reset et style de base */
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
-
-		body {
-			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-			background: linear-gradient(135deg, #244D52 0%, #1a3739 100%);
-			min-height: 100vh;
-			padding: 2rem;
-		}
-
 		.container {
 			max-width: 1200px;
 			margin: 0 auto;
 		}
 
-		/* Header */
 		.header {
-			background: white;
-			border-radius: 12px;
-			padding: 2rem;
 			margin-bottom: 2rem;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-		}
-
-		.header h1 {
-			color: #244D52;
-			font-size: 2rem;
-			margin-bottom: 0.5rem;
-		}
-
-		.header p {
-			color: #6c757d;
-			font-size: 1rem;
 		}
 
 		/* Stats globales */
@@ -53,67 +24,43 @@
 		}
 
 		.stat-card {
-			background: white;
-			border-radius: 12px;
 			padding: 1.5rem;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 		}
 
 		.stat-card .label {
-			color: #6c757d;
+			color: #6f5535;
 			font-size: 0.875rem;
 			text-transform: uppercase;
 			letter-spacing: 0.5px;
 			margin-bottom: 0.5rem;
+			font-family: 'Cinzel', serif;
 		}
 
 		.stat-card .value {
-			color: #244D52;
+			color: #2f2016;
 			font-size: 2rem;
 			font-weight: 600;
 		}
 
 		/* Collections Table */
 		.collections-section {
-			background: white;
-			border-radius: 12px;
 			padding: 2rem;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 		}
 
 		.collections-section h2 {
-			color: #244D52;
+			color: #2f2016;
 			font-size: 1.5rem;
 			margin-bottom: 1.5rem;
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
+			font-family: 'Cinzel', serif;
 		}
 
 		.refresh-btn {
-			background: #244D52;
-			color: white;
-			border: none;
-			padding: 0.75rem 1.5rem;
-			border-radius: 8px;
-			cursor: pointer;
-			font-size: 0.875rem;
-			font-weight: 600;
-			transition: all 0.2s ease;
 			display: flex;
 			align-items: center;
 			gap: 0.5rem;
-		}
-
-		.refresh-btn:hover {
-			background: #1a3739;
-			transform: translateY(-2px);
-		}
-
-		.refresh-btn:disabled {
-			background: #adb5bd;
-			cursor: not-allowed;
-			transform: none;
 		}
 
 		.table-container {
@@ -126,32 +73,34 @@
 		}
 
 		thead {
-			background: #f8f9fa;
+			background: rgba(255, 248, 231, 0.74);
 		}
 
 		th {
 			padding: 1rem;
 			text-align: left;
-			color: #244D52;
+			color: #5c4325;
 			font-weight: 600;
 			font-size: 0.875rem;
 			text-transform: uppercase;
 			letter-spacing: 0.5px;
-			border-bottom: 2px solid #e9ecef;
+			border-bottom: 1px solid rgba(214, 179, 106, 0.3);
+			font-family: 'Cinzel', serif;
 		}
 
 		td {
 			padding: 1rem;
-			border-bottom: 1px solid #e9ecef;
+			border-bottom: 1px solid rgba(214, 179, 106, 0.26);
+			color: #2f2016;
 		}
 
 		tbody tr:hover {
-			background: #f8f9fa;
+			background: rgba(255, 248, 231, 0.52);
 		}
 
 		.collection-name {
 			font-weight: 600;
-			color: #244D52;
+			color: #5c1c12;
 		}
 
 		.status-badge {
@@ -163,13 +112,13 @@
 		}
 
 		.status-active {
-			background: #d4edda;
-			color: #155724;
+			background: rgba(63, 143, 83, 0.15);
+			color: #1f5e31;
 		}
 
 		.status-inactive {
-			background: #f8d7da;
-			color: #721c24;
+			background: rgba(182, 71, 48, 0.16);
+			color: #7d2215;
 		}
 
 		.action-buttons {
@@ -178,44 +127,38 @@
 		}
 
 		.btn {
-			padding: 0.5rem 1rem;
-			border: none;
-			border-radius: 6px;
-			cursor: pointer;
-			font-size: 0.875rem;
-			font-weight: 600;
-			transition: all 0.2s ease;
+			padding: 0.6rem 1rem;
 		}
 
 		.btn-create {
-			background: #51cf66;
-			color: white;
+			background: linear-gradient(135deg, #2f6f3f, #3f8f53);
+			color: #fff4d7;
 		}
 
 		.btn-create:hover {
-			background: #2f9e44;
+			background: linear-gradient(135deg, #2a6237, #3a814c);
 		}
 
 		.btn-recreate {
-			background: #E63559;
-			color: white;
+			background: linear-gradient(135deg, #7d2215, #b64730);
+			color: #fff4d7;
 		}
 
 		.btn-recreate:hover {
-			background: #c22949;
+			background: linear-gradient(135deg, #6f1e13, #a13f2b);
 		}
 
 		.btn-delete {
-			background: #dc3545;
-			color: white;
+			background: linear-gradient(135deg, #7d2215, #b64730);
+			color: #fff4d7;
 		}
 
 		.btn-delete:hover {
-			background: #bd2130;
+			background: linear-gradient(135deg, #6f1e13, #a13f2b);
 		}
 
 		.btn:disabled {
-			background: #adb5bd;
+			background: #a19174;
 			cursor: not-allowed;
 		}
 
@@ -224,8 +167,8 @@
 			display: inline-block;
 			width: 16px;
 			height: 16px;
-			border: 2px solid #f3f3f3;
-			border-top: 2px solid #244D52;
+			border: 2px solid rgba(214, 179, 106, 0.16);
+			border-top: 2px solid #9d7638;
 			border-radius: 50%;
 			animation: spin 1s linear infinite;
 		}
@@ -235,41 +178,11 @@
 			100% { transform: rotate(360deg); }
 		}
 
-		/* Messages */
-		.message {
-			padding: 1rem 1.5rem;
-			border-radius: 8px;
-			margin-bottom: 1rem;
-			display: none;
-		}
-
-		.message.show {
-			display: block;
-		}
-
-		.message-success {
-			background: #d4edda;
-			color: #155724;
-			border: 1px solid #c3e6cb;
-		}
-
-		.message-error {
-			background: #f8d7da;
-			color: #721c24;
-			border: 1px solid #f5c6cb;
-		}
-
-		.message-info {
-			background: #d1ecf1;
-			color: #0c5460;
-			border: 1px solid #bee5eb;
-		}
-
 		/* Empty state */
 		.empty-state {
 			text-align: center;
 			padding: 3rem;
-			color: #6c757d;
+			color: #6f5535;
 		}
 
 		.empty-state svg {
@@ -279,90 +192,9 @@
 			opacity: 0.5;
 		}
 
-		/* Back button */
-		.back-link {
-			display: inline-flex;
-			align-items: center;
-			gap: 0.5rem;
-			color: white;
-			text-decoration: none;
-			font-weight: 600;
-			margin-bottom: 1rem;
-			padding: 0.5rem 1rem;
-			background: rgba(255, 255, 255, 0.1);
-			border-radius: 8px;
-			transition: all 0.2s ease;
-		}
-
-		.back-link:hover {
-			background: rgba(255, 255, 255, 0.2);
-			transform: translateX(-4px);
-		}
-
 		/* Modal d'exploration */
-		.modal {
-			display: none;
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: rgba(0, 0, 0, 0.7);
-			z-index: 1000;
-			justify-content: center;
-			align-items: center;
-			padding: 2rem;
-		}
-
-		.modal.show {
-			display: flex;
-		}
-
-		.modal-content {
-			background: white;
-			border-radius: 12px;
-			max-width: 900px;
-			width: 100%;
-			max-height: 90vh;
-			overflow-y: auto;
-			box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-		}
-
-		.modal-header {
-			padding: 1.5rem 2rem;
-			border-bottom: 2px solid #E63559;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			position: sticky;
-			top: 0;
-			background: white;
-			z-index: 10;
-		}
-
 		.modal-header h3 {
-			color: #244D52;
-			font-size: 1.5rem;
 			margin: 0;
-		}
-
-		.modal-close {
-			background: none;
-			border: none;
-			font-size: 1.5rem;
-			cursor: pointer;
-			color: #6c757d;
-			padding: 0.5rem;
-			line-height: 1;
-			transition: color 0.2s ease;
-		}
-
-		.modal-close:hover {
-			color: #E63559;
-		}
-
-		.modal-body {
-			padding: 2rem;
 		}
 
 		.metadata-section {
@@ -370,12 +202,13 @@
 		}
 
 		.metadata-section h4 {
-			color: #244D52;
+			color: #2f2016;
 			font-size: 1.1rem;
 			margin-bottom: 1rem;
 			display: flex;
 			align-items: center;
 			gap: 0.5rem;
+			font-family: 'Cinzel', serif;
 		}
 
 		.metadata-grid {
@@ -385,14 +218,14 @@
 		}
 
 		.metadata-item {
-			background: #f8f9fa;
+			background: rgba(255, 248, 231, 0.72);
 			border-radius: 8px;
 			padding: 1rem;
-			border-left: 3px solid #E63559;
+			border-left: 3px solid #9d7638;
 		}
 
 		.metadata-item .key {
-			color: #6c757d;
+			color: #6f5535;
 			font-size: 0.75rem;
 			text-transform: uppercase;
 			letter-spacing: 0.5px;
@@ -400,13 +233,13 @@
 		}
 
 		.metadata-item .value {
-			color: #244D52;
+			color: #2f2016;
 			font-weight: 600;
 			word-break: break-word;
 		}
 
 		.metadata-item .count {
-			color: #6c757d;
+			color: #6f5535;
 			font-size: 0.75rem;
 			margin-top: 0.25rem;
 		}
@@ -416,15 +249,15 @@
 		}
 
 		.point-card {
-			background: #f8f9fa;
+			background: rgba(255, 248, 231, 0.72);
 			border-radius: 8px;
 			padding: 1rem;
 			margin-bottom: 1rem;
-			border: 1px solid #dee2e6;
+			border: 1px solid rgba(214, 179, 106, 0.25);
 		}
 
 		.point-card .point-id {
-			color: #6c757d;
+			color: #6f5535;
 			font-size: 0.75rem;
 			margin-bottom: 0.5rem;
 			font-family: monospace;
@@ -432,12 +265,12 @@
 
 		.point-card .point-payload {
 			font-size: 0.875rem;
-			color: #495057;
+			color: #2f2016;
 			line-height: 1.5;
 		}
 
 		.point-card .point-payload-key {
-			color: #E63559;
+			color: #8a3218;
 			font-weight: 600;
 			margin-right: 0.5rem;
 		}
@@ -445,24 +278,21 @@
 		.empty-metadata {
 			text-align: center;
 			padding: 2rem;
-			color: #6c757d;
+			color: #6f5535;
 		}
 
 		.btn-explore {
-			background: #244D52;
-			color: white;
+			background: linear-gradient(180deg, rgba(255, 248, 231, 0.9), rgba(232, 213, 175, 0.86));
+			border: 1px solid rgba(92, 67, 37, 0.2);
+			color: #5c4325;
 		}
 
 		.btn-explore:hover {
-			background: #1a3739;
+			background: rgba(255, 248, 231, 0.98);
 		}
 
 		/* Responsive */
 		@media (max-width: 768px) {
-			body {
-				padding: 1rem;
-			}
-
 			.header h1 {
 				font-size: 1.5rem;
 			}
@@ -480,43 +310,45 @@
 			}
 		}
 	</style>
+	<script src="./common.js"></script>
 </head>
-<body>
-	<div class="container">
-		<a href="/" class="back-link">
+<body class="hp-app hp-app--scroll">
+	<div class="container hp-shell">
+		<a href="/" class="hp-back-link">
 			← Retour à l'accueil
 		</a>
 
-		<div class="header">
-			<h1>🗄️ Gestion des Collections Qdrant</h1>
-			<p>Visualisez et gérez les collections de la base vectorielle</p>
+		<div class="header hp-panel hp-page-header">
+			<span class="hp-page-kicker">Reserve des archives vectorielles</span>
+			<h1 class="hp-page-title">🗄️ Gestion des Collections Qdrant</h1>
+			<p class="hp-page-subtitle">Visualisez et gérez les collections de la base vectorielle</p>
 		</div>
 
-		<div id="message" class="message"></div>
+		<div id="message" class="hp-message"></div>
 
 		<div class="stats" id="stats">
-			<div class="stat-card">
+			<div class="stat-card hp-panel">
 				<div class="label">Collections totales</div>
 				<div class="value" id="total-collections">-</div>
 			</div>
-			<div class="stat-card">
+			<div class="stat-card hp-panel">
 				<div class="label">Points totaux</div>
 				<div class="value" id="total-points">-</div>
 			</div>
-			<div class="stat-card">
+			<div class="stat-card hp-panel">
 				<div class="label">Taille totale</div>
 				<div class="value" id="total-size">-</div>
 			</div>
-			<div class="stat-card">
+			<div class="stat-card hp-panel">
 				<div class="label">Statut Qdrant</div>
 				<div class="value" id="qdrant-status">-</div>
 			</div>
 		</div>
 
-		<div class="collections-section">
+		<div class="collections-section hp-panel">
 			<h2>
 				Collections
-				<button class="refresh-btn" id="refresh-btn" onclick="loadCollections()">
+				<button class="refresh-btn hp-button hp-button--primary" id="refresh-btn" onclick="loadCollections()">
 					<span id="refresh-icon">🔄</span>
 					Actualiser
 				</button>
@@ -549,13 +381,13 @@
 	</div>
 
 	<!-- Modal d'exploration -->
-	<div id="explore-modal" class="modal">
-		<div class="modal-content">
-			<div class="modal-header">
+	<div id="explore-modal" class="modal hp-modal">
+		<div class="modal-content hp-modal__content">
+			<div class="modal-header hp-modal__header">
 				<h3>🔍 Exploration: <span id="modal-collection-name"></span></h3>
-				<button class="modal-close" onclick="closeExploreModal()">✕</button>
+				<button class="modal-close hp-modal__close" onclick="closeExploreModal()">✕</button>
 			</div>
-			<div class="modal-body" id="modal-body">
+			<div class="modal-body hp-modal__body" id="modal-body">
 				<div style="text-align: center; padding: 2rem;">
 					<div class="spinner"></div>
 					<p style="margin-top: 1rem; color: #6c757d;">Chargement des données...</p>
@@ -565,32 +397,22 @@
 	</div>
 
 	<script>
+		const { escapeHtml, formatBytes, showTimedMessage } = window.TalkAppCommon;
 		// Configuration de base
 		const QDRANT_URL = window.location.origin + '/qdrant';
-
-		// Formater la taille en bytes vers une unité lisible
-		function formatBytes(bytes) {
-			if (bytes === 0 || bytes === undefined || bytes === null) return '0 B';
-			
-			const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-			const k = 1024;
-			const i = Math.floor(Math.log(bytes) / Math.log(k));
-			const value = bytes / Math.pow(k, i);
-			
-			// Afficher 2 décimales pour MB et plus, sinon nombre entier
-			const formatted = i >= 2 ? value.toFixed(2) : Math.round(value);
-			
-			return `${formatted} ${units[i]}`;
-		}
 
 		// Afficher un message
 		function showMessage(text, type = 'info') {
 			const messageEl = document.getElementById('message');
-			messageEl.textContent = text;
-			messageEl.className = `message message-${type} show`;
-			setTimeout(() => {
-				messageEl.classList.remove('show');
-			}, 5000);
+			showTimedMessage({
+				element: messageEl,
+				text,
+				duration: 5000,
+				visibleClass: 'show',
+				baseClass: 'hp-message',
+				type,
+				typePrefix: 'message-',
+			});
 		}
 
 		// Charger les collections depuis Qdrant
@@ -717,18 +539,18 @@
 
 				return `
 					<tr>
-						<td class="collection-name">${col.name}</td>
+						<td class="collection-name">${escapeHtml(col.name)}</td>
 						<td>${col.points.toLocaleString('fr-FR')}</td>
 						<td>${sizeFormatted}</td>
-						<td>${vectorSize}</td>
-						<td>${distance}</td>
+						<td>${escapeHtml(vectorSize)}</td>
+						<td>${escapeHtml(distance)}</td>
 						<td><span class="status-badge ${statusClass}">${statusText}</span></td>
 						<td>
 							<div class="action-buttons">
-								<button class="btn btn-explore" onclick="exploreCollection('${col.name}')">
+								<button class="btn btn-explore hp-button hp-button--secondary" onclick="exploreCollection('${escapeHtml(col.name)}')">
 									🔍 Explorer
 								</button>
-								<button class="btn btn-recreate" onclick="clearCollection('${col.name}')">
+								<button class="btn btn-recreate hp-button hp-button--danger" onclick="clearCollection('${escapeHtml(col.name)}')">
 									🧹 Vider
 								</button>
 							</div>

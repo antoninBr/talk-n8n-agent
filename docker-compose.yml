@@ -20,12 +20,7 @@ services:
       retries: 10
 
   n8n:
-    build:
-      dockerfile_inline: |
-        FROM docker.n8n.io/n8nio/n8n
-        USER root
-        RUN npm install -g n8n-nodes-imap-ai@2.3.9 n8n-nodes-mcp@latest
-        USER node
+    image: docker.n8n.io/n8nio/n8n
     restart: always
     networks:
       - n8n-network
@@ -40,7 +35,6 @@ services:
       DB_POSTGRESDB_SCHEMA: public
       
       # Configuration générale
-      N8N_RUNNERS_ENABLED: true
       N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
 
       # Configuration pour reverse proxy nginx

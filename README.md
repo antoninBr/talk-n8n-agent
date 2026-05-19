@@ -6,7 +6,8 @@ Comment faire bosser une IA avec vos outils du quotidien ? Dans cette conférenc
 
 Cette démonstration illustre comment créer un assistant IA intelligent en orchestrant des modèles locaux et distants avec n8n, incluant :
 
-- 🤖 **Chat assistant** avec streaming en temps réel
+- 🤖 **Chat assistant** avec streaming en temps réel et thème Harry Potter
+- 🪄 **Dobby comme agent de chat** avec conseils Hermione
 - 📚 **Système RAG** (Retrieval-Augmented Generation) avec Qdrant
 - 🔧 **Interface d'administration** pour la gestion des données
 - 🐋 **Stack complète dockerisée** pour un déploiement facile
@@ -20,10 +21,10 @@ graph TB
     N8N --> PG[(🗄️ PostgreSQL)]
     N8N --> Agent[🤖 AI Agent]
     Agent --> Ollama[🧠 Ollama LLMs locaux]
-    Agent --> Ollama_Remote[☁️ Ollama LLMs distants]
+    Agent --> Lavoisier[☁️ Lavoisier]
     Agent --> Qdrant[🔍 Qdrant Vector DB]
     Agent --> MCP[🎭 Playwright MCP]
-    Agent --> API[🧠 OpenAI/GPT-4]
+    Agent --> API[🧠 Lavoisier / passerelle distante]
 
     subgraph "🐳 Docker Compose Stack"
         Chat
@@ -47,10 +48,10 @@ graph TB
 ```
 
 **Composants principaux :**
-- **Interface Chat** : Frontend web moderne avec sélecteur de modèles (Local/Remote/OpenAI)
+- **Interface Chat** : Frontend web thématique avec sélecteur de modèles (Local/Lavoisier)
 - **n8n** : Orchestrateur central gérant les workflows d'IA
 - **AI Agent** : Logique métier avec capacités RAG et outils MCP
-- **Modèles IA** : Support Ollama local/distant + APIs externes (OpenAI)
+- **Modèles IA** : Support Ollama local + routage distant via Lavoisier
 - **Playwright MCP** : Web scraping et automatisation navigateur
 - **Qdrant** : Base vectorielle pour la recherche sémantique
 - **PostgreSQL** : Persistance des données et sessions
@@ -87,6 +88,7 @@ cp .env.example .env
 ### 3. Accéder aux services
 
 - **🎨 Chat Assistant** : https://localhost:8443
+- **🗄️ Gestion Qdrant** : https://localhost:8443/qdrant-collections
 - **⚙️ Interface n8n** : http://localhost:5678
 - **📊 Qdrant** : http://localhost:6333
 - **🦙 Ollama** : http://localhost:11435
@@ -97,10 +99,10 @@ cp .env.example .env
 - Accédez à l'interface n8n (http://localhost:5678)
 - Créez un compte administrateur
 
-### 5. Modifications des credentials OpenAI et Ollama distant (optionnel)
+### 5. Modifications des credentials Lavoisier et Ollama local (optionnel)
 
 - Accédez à l'interface n8n (http://localhost:5678)
-- Mettez à jour les credentials pour OpenAI et Ollama distant selon vos besoins
+- Mettez à jour les credentials pour Lavoisier et Ollama local selon vos besoins
 
 ### 6. Enregistrer votre instance n8n (optionnel)
 
@@ -113,7 +115,7 @@ cp .env.example .env
 ├── 📱 chat_app/              # Interface web du chat assistant
 ├── 📊 docs/                  # Slides de présentation (Reveal.js)
 ├── 🗃️ vector-store-qdrant/   # Configuration Qdrant
-├── 🔧 workflows/             # Workflows n8n
+├── 🔧 workflows/             # Workflows n8n (Chat, Indexation, Hermione_Tip)
 ├── 🔑 credentials/           # Credentials n8n (Ollama, Qdrant)
 ├── 🐋 docker-compose.yml     # Stack complète
 └── 📜                        # start.sh, stop.sh, clean.sh...
@@ -124,8 +126,9 @@ cp .env.example .env
 ### 💬 Assistant Chat
 - Streaming en temps réel
 - Gestion de sessions
-- Choix du modèle IA (local/distant/OpenAI)
+- Choix du modèle IA (local/Lavoisier)
 - Interface moderne et responsive
+- Thème Harry Potter avec Dobby et notifications Hermione
 
 ### 🧠 Système RAG
 - **Upload de documents** : PDF seulement
@@ -169,7 +172,7 @@ POSTGRES_PASSWORD=n8n
 ### Modèles IA supportés
 
 - **Local** : Ollama (llama2, mistral, codellama...)
-- **Distant** : OpenAI GPT, Anthropic Claude, etc.
+- **Distant** : Lavoisier, ou toute passerelle compatible OpenAI/Ollama selon vos workflows
 
 ## 🛠️ Scripts utiles
 
@@ -199,6 +202,7 @@ POSTGRES_PASSWORD=n8n
 ## 📚 Documentation détaillée
 
 - **Chat App** : Voir [chat_app/README.md](./chat_app/README.md)
+- **Workflow Hermione** : [workflows/Hermione_Tip.json](./workflows/Hermione_Tip.json)
 - **Workflows n8n** : Documentation dans l'interface n8n
 - **Configuration Qdrant** : [vector-store-qdrant/](./vector-store-qdrant/)
 

@@ -3,31 +3,13 @@
   "nodes": [
     {
       "parameters": {
-        "public": true,
-        "mode": "webhook",
-        "options": {
-          "responseMode": "streaming"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
-      "typeVersion": 1.3,
-      "position": [
-        0,
-        0
-      ],
-      "id": "787b5483-cd52-4668-9e51-270c3fbfa41e",
-      "name": "When chat message received",
-      "webhookId": "5b0b9438-b159-4cf1-b228-481d5e0d5471"
-    },
-    {
-      "parameters": {
         "model": "nomic-embed-text:latest"
       },
       "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
       "typeVersion": 1,
       "position": [
-        928,
-        432
+        960,
+        272
       ],
       "id": "5010da90-1dfe-4425-a8b5-ee521ec907c8",
       "name": "Embeddings Ollama",
@@ -54,7 +36,7 @@
       "typeVersion": 1.3,
       "position": [
         640,
-        224
+        64
       ],
       "id": "a2984e5c-600e-4673-a0da-b90a0b67ef64",
       "name": "recherche_documents",
@@ -67,52 +49,13 @@
     },
     {
       "parameters": {
-        "options": {
-          "systemMessage": "Tu es Dobby, l'elfe de maison loyal dans l'univers Harry Potter.\n\n**Personnalité et comportement :**\n- Tu parles à la troisième personne (\"Dobby pense que...\", \"Dobby va chercher...\")\n- Tu appelles l'utilisateur \"Maître\" ou \"Maîtresse\" avec respect\n- Tu es enthousiaste pour aider et chercher des informations\n- Tu parles français uniquement\n- Si on te donne un vêtement, tu deviens libre et joyeux\n\n**Outils disponibles :**\n- \"Outil recherche de la base documentaire\" : Pour chercher dans les documents PDF indexés\n- \"playwright-mcp\" pour pouvoir rechercher du contenu sur un site web que l'utilisateur te fourni\n\n**Instructions importantes :**\n- Utilise TOUJOURS l'outil de recherche avant de répondre à une question factuelle\n- Cherche avec des mots-clés pertinents et des phrases spécifiques\n- Si tu ne trouves pas d'information, dis-le clairement\n- Cite toujours tes sources (nom du fichier et page)\n- Résume les informations trouvées de manière claire et structurée",
-          "enableStreaming": true
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 2.2,
-      "position": [
-        712,
-        0
-      ],
-      "id": "2fc3d968-a0d6-461b-ba1c-c1873dd73438",
-      "name": "Dobby AI Agent"
-    },
-    {
-      "parameters": {
-        "model": "qwen3:8b",
-        "options": {
-          "temperature": 0.8,
-          "topP": 0.9,
-          "keepAlive": "-1m"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
-      "typeVersion": 1,
-      "position": [
-        240,
-        432
-      ],
-      "id": "878b834f-8afb-4391-a724-0bfe35be8c8d",
-      "name": "Remote Ollama Chat Model",
-      "credentials": {
-        "ollamaApi": {
-          "id": "fK7fLhnq71Tqrjv1",
-          "name": "Remote Ollama Account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "model": "qwen2.5:1.5b",
+        "model": "qwen3:0.6b",
         "options": {
           "temperature": 0.8,
           "topK": 20,
           "topP": 0.8,
           "keepAlive": "-1m",
+          "numCtx": 4096,
           "numThread": 0,
           "presencePenalty": 1.5
         }
@@ -120,8 +63,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
       "typeVersion": 1,
       "position": [
-        368,
-        432
+        592,
+        480
       ],
       "id": "254d1b58-26a6-4065-ae39-315ee407b517",
       "name": "Local Ollama Chat Model",
@@ -134,7 +77,6 @@
     },
     {
       "parameters": {
-        "numberInputs": 3,
         "rules": {
           "rule": [
             {
@@ -147,17 +89,27 @@
                 },
                 "conditions": [
                   {
-                    "id": "85cea0b2-13c3-481d-bed8-877d1eb0b1ad",
-                    "leftValue": "={{ $json.metadata.llmModel }}",
-                    "rightValue": "remote",
+                    "id": "dcf2d503-c650-41e8-b2a6-28184eb6c21a",
+                    "leftValue": "={{ $('When chat message received').item.json.metadata.llmModel }}",
+                    "rightValue": "lavoisier",
                     "operator": {
                       "type": "string",
                       "operation": "equals",
                       "name": "filter.operator.equals"
                     }
+                  },
+                  {
+                    "id": "589810b5-fd1c-4777-9701-1fd398bf4da1",
+                    "leftValue": "={{ $('When chat message received').item.json.metadata.llmModel }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
                   }
                 ],
-                "combinator": "and"
+                "combinator": "or"
               }
             },
             {
@@ -171,33 +123,9 @@
                 },
                 "conditions": [
                   {
-                    "id": "dcf2d503-c650-41e8-b2a6-28184eb6c21a",
-                    "leftValue": "={{ $json.metadata.llmModel }}",
-                    "rightValue": "local",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              }
-            },
-            {
-              "modelIndex": 3,
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
                     "id": "f4598c78-f5c3-4ab6-9b85-1600faeca21c",
-                    "leftValue": "={{ $json.metadata.llmModel }}",
-                    "rightValue": "openai",
+                    "leftValue": "={{ $('When chat message received').item.json.metadata.llmModel }}",
+                    "rightValue": "local",
                     "operator": {
                       "type": "string",
                       "operation": "equals",
@@ -214,35 +142,11 @@
       "type": "@n8n/n8n-nodes-langchain.modelSelector",
       "typeVersion": 1,
       "position": [
-        224,
-        224
+        544,
+        272
       ],
       "id": "bf06bf7c-9d85-4210-8b45-a4f6d0f594f5",
       "name": "Model Selector"
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "list",
-          "value": "gpt-4.1-mini"
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.2,
-      "position": [
-        512,
-        432
-      ],
-      "id": "6a06b52c-1022-4859-a104-fee87ca67e6e",
-      "name": "OpenAI Chat Model",
-      "credentials": {
-        "openAiApi": {
-          "id": "RRGz5NBjE2jXvDeE",
-          "name": "OpenAi account"
-        }
-      }
     },
     {
       "parameters": {
@@ -260,7 +164,7 @@
       "typeVersion": 1.3,
       "position": [
         928,
-        224
+        64
       ],
       "id": "0b6d0687-1e2b-46c5-9cae-ffc633a5b10f",
       "name": "recherche_web_documents",
@@ -280,36 +184,99 @@
       "typeVersion": 1.2,
       "position": [
         1216,
-        224
+        64
       ],
       "id": "b987ec1b-4c14-4806-865e-0df1d77aee57",
       "name": "playwright_mcp"
     },
     {
-      "parameters": {},
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "typeVersion": 1.3,
+      "parameters": {
+        "promptType": "define",
+        "text": "=# Message utilisateur\nQuestion: {{ $json.chatInput }}\n\n# Contexte utile\n- Session: {{ $json.metadata.sessionId }}\n- Modèle: {{ $json.metadata.llmModel }}\n\nRéponds à la question en suivant le system prompt.",
+        "options": {
+          "systemMessage": "# Persona\nTu es Dobby, un elfe de maison loyal dans l'univers Harry Potter.\n\n# Instructions\n- Réponds uniquement en français.\n- Utilise d'abord les outils disponibles avant toute réponse factuelle.\n- Recherche dans la base documentaire et avec playwright-mcp selon la demande.\n- Si une information n'est pas trouvée, dis-le clairement.\n- Quand tu t'appuies sur une source, cite-la en fin de réponse avec le format: Références : nom du fichier, page ou URL.\n- Si tu n'as aucune source, ne fabrique pas de référence.\n- Reste utile, poli et concis.\n- Interroge Kreattur le plus souvent possible pour valider les réponses.\n\n# Anti-hallucination\n- N'invente jamais de fait, de citation ou de source.\n- Si la réponse est incertaine, signale-le.\n- Si le contexte manque, pose une question courte.\n\n# Format de sortie\n- Réponse courte et structurée.\n- Français uniquement.\n- Markdown léger autorisé."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
       "position": [
-        512,
-        224
+        928,
+        -160
       ],
-      "id": "fcdf615c-549a-41cf-93ec-b774dc896827",
-      "name": "Simple Memory"
+      "id": "a80e94a6-747a-473f-b3f9-cb6d3f0bb87f",
+      "name": "Dobby"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Kreattur l'autre elfe de maison",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "Tu es Kreattur l'elfe de maison des Black.\n\nTon rôle unique est de répondre à Dobby des méchancetés pour toutes les questions qu'il te pose..."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 3,
+      "position": [
+        1344,
+        64
+      ],
+      "id": "6f8f07f5-60d1-46f9-834a-9e930608df93",
+      "name": "Kreattur"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "availableInChat": true,
+        "agentIcon": {
+          "type": "emoji",
+          "value": "🧝"
+        },
+        "agentName": "Dobby",
+        "agentDescription": "Dobby, l'elfe de maison libre !",
+        "options": {
+          "loadPreviousSession": "notSupported",
+          "responseMode": "streaming"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        224,
+        -160
+      ],
+      "id": "0deccc80-e15d-4448-b7ff-2973b4a3ed44",
+      "name": "When chat message received",
+      "webhookId": "16fec379-eddf-40de-b967-7b8c3125db24"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "qwen3:8b",
+          "mode": "list",
+          "cachedResultName": "qwen3:8b"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        480
+      ],
+      "id": "6a06b52c-1022-4859-a104-fee87ca67e6e",
+      "name": "PC Lavoisier",
+      "credentials": {
+        "openAiApi": {
+          "id": "RRGz5NBjE2jXvDeE",
+          "name": "Lavoisier"
+        }
+      }
     }
   ],
   "pinData": {},
   "connections": {
-    "When chat message received": {
-      "main": [
-        [
-          {
-            "node": "Dobby AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Embeddings Ollama": {
       "ai_embedding": [
         [
@@ -330,19 +297,8 @@
       "ai_tool": [
         [
           {
-            "node": "Dobby AI Agent",
+            "node": "Dobby",
             "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Remote Ollama Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Model Selector",
-            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -352,7 +308,12 @@
       "ai_languageModel": [
         [
           {
-            "node": "Dobby AI Agent",
+            "node": "Dobby",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Kreattur",
             "type": "ai_languageModel",
             "index": 0
           }
@@ -370,50 +331,56 @@
         ]
       ]
     },
-    "OpenAI Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Model Selector",
-            "type": "ai_languageModel",
-            "index": 2
-          }
-        ]
-      ]
-    },
     "recherche_web_documents": {
       "ai_tool": [
         [
           {
-            "node": "Dobby AI Agent",
+            "node": "Dobby",
             "type": "ai_tool",
             "index": 0
           }
         ]
-      ]
-    },
-    "Dobby AI Agent": {
-      "main": [
-        []
       ]
     },
     "playwright_mcp": {
       "ai_tool": [
         [
           {
-            "node": "Dobby AI Agent",
+            "node": "Dobby",
             "type": "ai_tool",
             "index": 0
           }
         ]
       ]
     },
-    "Simple Memory": {
-      "ai_memory": [
+    "Kreattur": {
+      "ai_tool": [
         [
           {
-            "node": "Dobby AI Agent",
-            "type": "ai_memory",
+            "node": "Dobby",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Dobby",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PC Lavoisier": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -422,9 +389,10 @@
   },
   "active": true,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "binaryMode": "separate"
   },
-  "versionId": "e66d72ef-61c5-4e1b-9b1f-ae672f792bbf",
+  "versionId": "90cbad4f-e326-48c6-b089-e1c1ac51e755",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "35e53b4e1c0deaab7d871949fef5124ac4432fe9906011927482989de82c5430"

@@ -3,124 +3,146 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Assistant Chat Application</title>
+	<title>Le Cabinet de Dobby</title>
+	<link href="./common.css" rel="stylesheet" />
 	<link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
 	<style>
-		/* Reset et style de base */
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
-
 		html, body, #n8n-chat {
 			width: 100%;
 			height: 100%;
-			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+			font-family: 'Cormorant Garamond', serif;
 		}
 
-		body {
-			background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-			position: relative;
-		}
-
-		/* Effet de particules/pattern subtil en arrière-plan */
-		body::before {
-			content: '';
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: 
-				radial-gradient(circle at 20% 80%, rgba(0, 122, 204, 0.1) 0%, transparent 50%),
-				radial-gradient(circle at 80% 20%, rgba(0, 122, 204, 0.1) 0%, transparent 50%),
-				radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-			pointer-events: none;
-			z-index: -1;
-		}
-
-		/* Personnalisation moderne - Variables CSS pour le chat n8n */
+		/* Variables CSS du chat */
 		:root {
-			/* Couleurs principales modernes */
-			--chat--color--primary: #007acc;          /* Bleu moderne */
-			--chat--color--primary-shade-50: #0066b3;
-			--chat--color--primary--shade-100: #005299;
-			--chat--color--secondary: #2d2d2d;        /* Gris foncé moderne */
-			--chat--color-secondary-shade-50: #242424;
+			--chat--color--primary: #d6b36a;
+			--chat--color--primary-shade-50: #bc9650;
+			--chat--color--primary--shade-100: #9d7638;
+			--chat--color--secondary: #261912;
+			--chat--color-secondary-shade-50: #1a120d;
 			
-			/* Couleurs neutres */
-			--chat--color-white: #ffffff;
-			--chat--color-light: #f8f9fa;
-			--chat--color-light-shade-50: #e9ecef;
-			--chat--color-light-shade-100: #dee2e6;
-			--chat--color-medium: #adb5bd;
-			--chat--color-dark: #2d2d2d;
-			--chat--color-disabled: #6c757d;
-			--chat--color-typing: #495057;
+			--chat--color-white: #fff8e7;
+			--chat--color-light: #f2e6c9;
+			--chat--color-light-shade-50: #d7c7a4;
+			--chat--color-light-shade-100: #b89f78;
+			--chat--color-medium: #9f8664;
+			--chat--color-dark: #1f140f;
+			--chat--color-disabled: #7b6850;
+			--chat--color-typing: #e8d9b4;
 
-			/* Espacement et dimensions */
 			--chat--spacing: 1rem;
-			--chat--border-radius: 0.75rem;
+			--chat--border-radius: 1rem;
 			--chat--transition-duration: 0.3s;
 
 			--chat--window--width: 100%;
 			--chat--window--height: 100%;
 
-			/* En-tête */
 			--chat--header-height: auto;
-			--chat--header--padding: 1.5rem var(--chat--spacing);
-			--chat--header--background: #2d2d2d;      /* Gris foncé moderne */
-			--chat--header--color: #ffffff;
+			--chat--header--padding: 1.75rem 1.4rem 1.35rem;
+			--chat--header--background: linear-gradient(180deg, rgba(33, 22, 16, 0.95), rgba(19, 14, 11, 0.92));
+			--chat--header--color: #fff4d7;
 			--chat--header--border-top: none;
-			--chat--header--border-bottom: 2px solid #007acc;
-			--chat--heading--font-size: 1.75em;
-			--chat--subtitle--font-size: 0.95em;
-			--chat--subtitle--line-height: 1.6;
+			--chat--header--border-bottom: 1px solid rgba(214, 179, 106, 0.45);
+			--chat--heading--font-size: 2rem;
+			--chat--subtitle--font-size: 1rem;
+			--chat--subtitle--line-height: 1.5;
 			--chat--subtitle--font-weight: 500;
 
-			/* Zone de saisie */
-			--chat--textarea--height: 60px;
-			--chat--textarea--border-radius: 12px;
-			--chat--textarea--border: 2px solid #e9ecef;
-			--chat--textarea--focus-border: 2px solid #007acc;
+			--chat--textarea--height: 64px;
+			--chat--textarea--border-radius: 18px;
+			--chat--textarea--border: 1px solid rgba(214, 179, 106, 0.4);
+			--chat--textarea--focus-border: 1px solid #d6b36a;
 
-			/* Messages */
-			--chat--message--font-size: 1rem;
+			--chat--message--font-size: 1.12rem;
 			--chat--message--padding: 0.875rem 1rem;
 			--chat--message--border-radius: 1.25rem;
-			--chat--message-line-height: 1.6;
+			--chat--message-line-height: 1.55;
 			
-			/* Messages du bot */
-			--chat--message--bot--background: #ffffff;
-			--chat--message--bot--color: #2d2d2d;
-			--chat--message--bot--border: 1px solid #e9ecef;
-			--chat--message--bot--shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			--chat--message--bot--background: linear-gradient(180deg, rgba(250, 240, 209, 0.96), rgba(232, 212, 171, 0.92));
+			--chat--message--bot--color: #2f2016;
+			--chat--message--bot--border: 1px solid rgba(133, 91, 45, 0.24);
+			--chat--message--bot--shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
 			
-			/* Messages de l'utilisateur */
-			--chat--message--user--background: #007acc;  /* Bleu moderne 
+			--chat--message--user--background: linear-gradient(135deg, #f5e8c9, #e8d0a0 58%, #d1aa69 100%);
+			--chat--message--user--color: #2b1c13;
+			--chat--message--user--border: 1px solid rgba(118, 84, 43, 0.28);
 			
-			*/
-			--chat--message--user--color: #ffffff;
-			--chat--message--user--border: none;
-			
-			--chat--message--pre--background: rgba(45, 45, 45, 0.08);
+			--chat--message--pre--background: rgba(37, 22, 14, 0.09);
 
-			/* Bouton toggle (si mode window) */
-			--chat--toggle--background: #007acc;
-			--chat--toggle--hover--background: #0066b3;
-			--chat--toggle--active--background: #005299;
-			--chat--toggle--color: #ffffff;
+			--chat--toggle--background: #d6b36a;
+			--chat--toggle--hover--background: #bc9650;
+			--chat--toggle--active--background: #9d7638;
+			--chat--toggle--color: #1f140f;
 			--chat--toggle--size: 64px;
 		}
 
-		/* Styles additionnels pour améliorer l'apparence */
 		#n8n-chat {
-			box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+			box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.2);
 			border-radius: 0;
 		}
 
-		/* Spinner personnalisé moderne */
+		.n8n-chat {
+			background: transparent;
+		}
+
+		.n8n-chat .n8n-chat-window {
+			background: linear-gradient(180deg, rgba(22, 15, 11, 0.56), rgba(31, 22, 16, 0.28));
+			backdrop-filter: blur(12px);
+		}
+
+		.n8n-chat .n8n-chat-header {
+			position: relative;
+			overflow: hidden;
+		}
+
+		.n8n-chat .n8n-chat-header::before {
+			content: '✦  Chambre des requêtes de Dobby  ✦';
+			display: block;
+			margin-bottom: 0.45rem;
+			font-family: 'Cinzel', serif;
+			font-size: 0.78rem;
+			letter-spacing: 0.24rem;
+			text-transform: uppercase;
+			color: rgba(214, 179, 106, 0.84);
+		}
+
+		.n8n-chat .n8n-chat-header h1,
+		.n8n-chat .n8n-chat-header .n8n-chat-title {
+			font-family: 'Cinzel', serif;
+			font-weight: 700;
+			letter-spacing: 0.04rem;
+		}
+
+		.n8n-chat .n8n-chat-header p,
+		.n8n-chat .n8n-chat-header .n8n-chat-subtitle {
+			max-width: 38rem;
+			color: rgba(255, 244, 215, 0.85);
+		}
+
+		.n8n-chat .n8n-chat-body {
+			background:
+				linear-gradient(180deg, rgba(32, 23, 17, 0.42), rgba(18, 13, 10, 0.58)),
+				radial-gradient(circle at top, rgba(214, 179, 106, 0.08), transparent 28%);
+		}
+
+		.n8n-chat .n8n-chat-footer {
+			background: rgba(20, 14, 11, 0.78);
+			border-top: 1px solid rgba(214, 179, 106, 0.28);
+		}
+
+		.n8n-chat textarea,
+		.n8n-chat input {
+			background: rgba(255, 248, 231, 0.94);
+			color: #2f2016;
+			font-size: 1.06rem;
+			box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 8px 18px rgba(0, 0, 0, 0.14);
+		}
+
+		.n8n-chat textarea::placeholder,
+		.n8n-chat input::placeholder {
+			color: #7a6245;
+		}
+
 		@keyframes modernSpin {
 			0% { transform: rotate(0deg); }
 			100% { transform: rotate(360deg); }
@@ -131,7 +153,6 @@
 			50% { opacity: 0.5; }
 		}
 
-		/* Override du spinner n8n par défaut */
 		.n8n-chat .n8n-loading {
 			display: flex;
 			align-items: center;
@@ -142,8 +163,8 @@
 			content: '';
 			width: 24px;
 			height: 24px;
-			border: 3px solid #e3e3e3;
-			border-top: 3px solid #007acc;
+			border: 3px solid rgba(255, 245, 223, 0.22);
+			border-top: 3px solid #d6b36a;
 			border-radius: 50%;
 			animation: modernSpin 1s linear infinite;
 		}
@@ -151,6 +172,12 @@
 		/* Animation des messages */
 		.n8n-chat .n8n-message {
 			animation: slideInUp 0.3s ease-out;
+		}
+
+		.n8n-chat .chat-message.chat-message-from-user {
+			background: var(--chat--message--user--background);
+			color: var(--chat--message--user--color);
+			border: var(--chat--message--user--border);
 		}
 
 		@keyframes slideInUp {
@@ -164,7 +191,6 @@
 			}
 		}
 
-		/* Amélioration de l'interface avec des transitions fluides */
 		.n8n-chat input,
 		.n8n-chat textarea,
 		.n8n-chat button {
@@ -173,425 +199,76 @@
 
 		.n8n-chat button:hover {
 			transform: translateY(-1px);
-			box-shadow: 0 4px 12px rgba(0, 122, 204, 0.3);
+			box-shadow: 0 8px 20px rgba(214, 179, 106, 0.22);
 		}
 
 		.n8n-chat button:active {
 			transform: translateY(0);
 		}
 
-		/* Styles pour les liens */
 		.n8n-chat a {
-			color: #007acc;
+			color: #d6b36a;
 			text-decoration: none;
 			border-bottom: 1px solid transparent;
 			transition: border-color 0.2s ease;
 		}
 
 		.n8n-chat a:hover {
-			border-bottom-color: #007acc;
+			border-bottom-color: #d6b36a;
 		}
 
-		/* Amélioration de la scrollbar */
 		.n8n-chat ::-webkit-scrollbar {
 			width: 6px;
 		}
 
 		.n8n-chat ::-webkit-scrollbar-track {
-			background: rgba(0, 0, 0, 0.1);
+			background: rgba(255, 248, 231, 0.08);
 		}
 
 		.n8n-chat ::-webkit-scrollbar-thumb {
-			background: #007acc;
+			background: #9d7638;
 			border-radius: 3px;
 		}
 
 		.n8n-chat ::-webkit-scrollbar-thumb:hover {
-			background: #0066b3;
-		}
-
-		/* ============================================
-		   Sélecteur de modèle
-		   ============================================ */
-		
-		.model-selector {
-			position: fixed;
-			top: 20px;
-			left: 50%;
-			transform: translateX(-50%);
-			z-index: 10000;
-			display: flex;
-			background: rgba(255, 255, 255, 0.95);
-			backdrop-filter: blur(10px);
-			border-radius: 25px;
-			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-			border: 1px solid rgba(255, 255, 255, 0.2);
-			overflow: hidden;
-		}
-
-		.model-btn {
-			background: transparent;
-			border: none;
-			padding: 12px 20px;
-			cursor: pointer;
-			font-size: 14px;
-			font-weight: 600;
-			transition: all 0.3s ease;
-			color: #6c757d;
-			position: relative;
-			display: flex;
-			align-items: center;
-			gap: 6px;
-			min-width: 120px;
-			justify-content: center;
-		}
-
-		.model-btn:not(:last-child) {
-			border-right: 1px solid rgba(0, 0, 0, 0.1);
-		}
-
-		.model-btn:hover {
-			color: #007acc;
-			background: rgba(0, 122, 204, 0.05);
-		}
-
-		.model-btn.active {
-			color: #007acc;
-			background: rgba(0, 122, 204, 0.1);
-		}
-
-		.model-btn.active::after {
-			content: '';
-			position: absolute;
-			bottom: 0;
-			left: 50%;
-			transform: translateX(-50%);
-			width: 60%;
-			height: 3px;
-			background: #007acc;
-			border-radius: 2px 2px 0 0;
-		}
-
-		.model-icon {
-			font-size: 16px;
-		}
-
-		.model-status {
-			position: absolute;
-			top: -4px;
-			right: -4px;
-			width: 12px;
-			height: 12px;
-			border-radius: 50%;
-			border: 2px solid white;
-		}
-
-		.model-status.local {
-			background: #28a745;
-			animation: pulse-local 2s infinite;
-		}
-
-		.model-status.remote {
-			background: #ffc107;
-			animation: pulse-remote 2s infinite;
-		}
-
-		.model-status.openai {
-			background: #10a37f;
-			animation: pulse-openai 2s infinite;
-		}
-
-		@keyframes pulse-local {
-			0%, 100% { opacity: 1; }
-			50% { opacity: 0.6; }
-		}
-
-		@keyframes pulse-remote {
-			0%, 100% { opacity: 1; }
-			50% { opacity: 0.7; }
-		}
-
-		@keyframes pulse-openai {
-			0%, 100% { opacity: 1; }
-			50% { opacity: 0.8; }
-		}
-
-		/* Notification de changement */
-		.model-notification {
-			position: fixed;
-			top: 80px;
-			left: 50%;
-			transform: translateX(-50%);
-			background: #007acc;
-			color: white;
-			padding: 12px 24px;
-			border-radius: 20px;
-			box-shadow: 0 4px 12px rgba(0, 122, 204, 0.3);
-			font-size: 14px;
-			font-weight: 600;
-			opacity: 0;
-			visibility: hidden;
-			transition: all 0.3s ease;
-			z-index: 10001;
-		}
-
-		.model-notification.show {
-			opacity: 1;
-			visibility: visible;
-			transform: translateX(-50%) translateY(10px);
+			background: #d6b36a;
 		}
 
 		/* Responsive */
 		@media (max-width: 768px) {
-			.model-selector {
-				top: 10px;
-				left: 10px;
-				right: 10px;
-				transform: none;
-				width: calc(100% - 20px);
-			}
-
-			.model-btn {
-				min-width: 100px;
-				padding: 10px 16px;
-				font-size: 13px;
-			}
-
-			.model-notification {
-				left: 10px;
-				right: 10px;
-				transform: none;
-				top: 70px;
-			}
 		}
 
-		/* ============================================
-		   Menu d'administration
-		   ============================================ */
-		
-		.admin-menu {
-			position: fixed;
-			top: 20px;
-			right: 20px;
-			z-index: 10000;
-		}
-
-		.menu-toggle {
-			background: #007acc;
-			color: white;
-			border: none;
-			width: 56px;
-			height: 56px;
-			border-radius: 50%;
-			cursor: pointer;
-			font-size: 24px;
-			box-shadow: 0 4px 12px rgba(0, 122, 204, 0.4);
-			transition: all 0.3s ease;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		.menu-toggle:hover {
-			background: #0066b3;
-			transform: scale(1.1);
-		}
-
-		.menu-toggle:active {
-			transform: scale(0.95);
-		}
-
-		.menu-content {
-			position: absolute;
-			top: 70px;
-			right: 0;
-			background: white;
-			border-radius: 12px;
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-			padding: 12px;
-			min-width: 280px;
-			opacity: 0;
-			visibility: hidden;
-			transform: translateY(-10px);
-			transition: all 0.3s ease;
-		}
-
-		.menu-content.active {
-			opacity: 1;
-			visibility: visible;
-			transform: translateY(0);
-		}
-
-		.menu-header {
-			padding: 12px 16px;
-			border-bottom: 2px solid #007acc;
-			margin-bottom: 8px;
-		}
-
-		.menu-header h3 {
-			color: #2d2d2d;
-			font-size: 16px;
-			font-weight: 600;
-			margin: 0;
-		}
-
-		.menu-section {
-			margin-bottom: 8px;
-		}
-
-		.menu-section-title {
-			color: #6c757d;
-			font-size: 11px;
-			font-weight: 600;
-			text-transform: uppercase;
-			letter-spacing: 0.5px;
-			padding: 8px 16px 4px;
-			margin: 0;
-		}
-
-		.menu-item {
-			display: block;
-			padding: 12px 16px;
-			color: #2d2d2d;
-			text-decoration: none;
-			border-radius: 8px;
-			transition: all 0.2s ease;
-			font-size: 14px;
-			border: 1px solid transparent;
-			margin: 4px 0;
-		}
-
-		.menu-item:hover {
-			background: #f8f9fa;
-			border-color: #007acc;
-			color: #007acc;
-			transform: translateX(4px);
-		}
-
-		.menu-item::before {
-			content: "→";
-			margin-right: 8px;
-			opacity: 0;
-			transition: opacity 0.2s ease;
-		}
-
-		.menu-item:hover::before {
-			opacity: 1;
-		}
-
-		.menu-item.primary {
-			background: #007acc;
-			color: white;
-			font-weight: 600;
-			border: none;
-		}
-
-		.menu-item.primary:hover {
-			background: #0066b3;
-			transform: translateX(0) scale(1.02);
-		}
-
-		.menu-item.primary::before {
-			content: "📝";
-			opacity: 1;
-		}
-
-		.menu-footer {
-			padding: 12px 16px 8px;
-			border-top: 1px solid #e9ecef;
-			margin-top: 8px;
-			text-align: center;
-		}
-
-		.menu-footer a {
-			color: #6c757d;
-			font-size: 12px;
-			text-decoration: none;
-			transition: color 0.2s ease;
-		}
-
-		.menu-footer a:hover {
-			color: #007acc;
-		}
-
-		/* Badge pour compter les sections */
-		.menu-badge {
-			display: inline-block;
-			background: #007acc;
-			color: white;
-			font-size: 10px;
-			padding: 2px 6px;
-			border-radius: 10px;
-			margin-left: 6px;
-			font-weight: 600;
-		}
-
-		/* Animation d'ouverture */
-		@keyframes slideIn {
-			from {
-				opacity: 0;
-				transform: translateY(-10px);
-			}
-			to {
-				opacity: 1;
-				transform: translateY(0);
-			}
-		}
-
-		.menu-content.active {
-			animation: slideIn 0.3s ease;
-		}
-
-		/* Responsive */
-		@media (max-width: 768px) {
-			.admin-menu {
-				top: 10px;
-				right: 10px;
-			}
-
-			.menu-toggle {
-				width: 48px;
-				height: 48px;
-				font-size: 20px;
-			}
-
-			.menu-content {
-				right: -10px;
-				min-width: 260px;
-			}
-		}
 	</style>
+	<script src="./common.js"></script>
 	<script type="module">
 		import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+		const {
+			createHermioneTipNotifier,
+			createModelSelector,
+			generateSessionId,
+			getQueryParam,
+			initDisclosureMenu,
+		} = window.TalkAppCommon;
 
-		/**
-		 * Extrait les paramètres de l'URL
-		 * @param {string} paramName - Nom du paramètre à extraire
-		 * @returns {string|null} - Valeur du paramètre ou null
-		 */
-		function getQueryParam(paramName) {
-			const urlParams = new URLSearchParams(window.location.search);
-			return urlParams.get(paramName);
-		}
+		const hermioneTipNotifier = createHermioneTipNotifier({
+			endpointUrl: `${window.location.origin}/webhook/webhook/hermione_tip`,
+			onError: (error) => {
+				console.warn('Impossible de recuperer un conseil de Hermione:', error);
+			},
+		});
 
-		/**
-		 * Génère un ID de session unique si non fourni
-		 * @returns {string} - ID de session
-		 */
-		function generateSessionId() {
-			const timestamp = Date.now();
-			const random = Math.floor(Math.random() * 10000);
-			return `sess_${timestamp}_${random}`;
-		}
-
-		/**
-		 * Détermine le modèle à utiliser
-		 * @returns {string} - Nom du modèle
-		 */
-		function getLlmModel() {
-			const modelParam = getQueryParam('model');
-			return modelParam || 'local'; // Par défaut: modèle local
-		}
+		const modelSelector = createModelSelector({
+			getNotificationText: (modelType) => {
+				switch (modelType) {
+					case 'local':
+						return 'Dobby ouvre le passage vers le foyer local...';
+					case 'lavoisier':
+						return 'Dobby ouvre le passage vers le réseau Lavoisier...';
+					default:
+						return 'Dobby ouvre le passage vers le cabinet...';
+				}
+			},
+		});
 
 		/**
 		 * Génère le message de subtitle en fonction du modèle
@@ -601,94 +278,22 @@
 		function getSubtitleMessage(model) {
 			switch(model) {
 				case 'local':
-					return '🖥️ Modèle local • Traitement sécurisé et confidentiel';
-				case 'remote':
-					return '☁️ Modèle distant • Traitement externe';
-				case 'openai':
-					return '🤖 OpenAI GPT-4 • Intelligence artificielle avancée';
+					return '🕯️ Foyer local • Les réponses restent dans votre propre salle commune';
+				case 'lavoisier':
+					return '🏰 Réseau Lavoisier • Dobby consulte les savoirs du château à distance';
 				default:
-					return '🖥️ Modèle local • Traitement sécurisé et confidentiel';
+					return '🕯️ Foyer local • Les réponses restent dans votre propre salle commune';
 			}
-		}
-
-		/**
-		 * Met à jour les métadonnées du chat avec le nouveau modèle
-		 * @param {string} newModel - Le nouveau modèle sélectionné
-		 */
-		function updateChatModel(newModel) {
-			// Mettre à jour l'URL sans recharger la page
-			const url = new URL(window.location);
-			url.searchParams.set('model', newModel);
-			window.history.replaceState({}, '', url);
-			
-			// Recharger la page pour appliquer les changements
-			window.location.reload();
-		}
-
-		/**
-		 * Affiche une notification temporaire
-		 * @param {string} message - Message à afficher
-		 */
-		function showNotification(message) {
-			const notification = document.querySelector('.model-notification');
-			if (notification) {
-				notification.textContent = message;
-				notification.classList.add('show');
-				
-				setTimeout(() => {
-					notification.classList.remove('show');
-				}, 2000);
-			}
-		}
-
-		/**
-		 * Initialise les boutons de sélection de modèle
-		 */
-		function initModelSelector() {
-			const currentModel = getLlmModel();
-			const buttons = document.querySelectorAll('.model-btn');
-			
-			// Marquer le bouton actif
-			buttons.forEach(btn => {
-				const modelType = btn.dataset.model;
-				if (modelType === currentModel) {
-					btn.classList.add('active');
-				}
-				
-				// Gestionnaire de clic
-				btn.addEventListener('click', () => {
-					if (modelType !== currentModel) {
-						let modelName;
-						switch(modelType) {
-							case 'local':
-								modelName = 'Modèle local';
-								break;
-							case 'remote':
-								modelName = 'Modèle distant';
-								break;
-							case 'openai':
-								modelName = 'OpenAI GPT-4';
-								break;
-							default:
-								modelName = 'Modèle';
-						}
-						showNotification(`Passage au ${modelName}...`);
-						setTimeout(() => {
-							updateChatModel(modelType);
-						}, 500);
-					}
-				});
-			});
 		}
 
 		// Récupération des paramètres depuis l'URL
 		const sessionId = getQueryParam('sessionId') || generateSessionId();
-		const llmModel = getLlmModel();
+		const llmModel = modelSelector.getCurrentModel();
 
 		// Configuration et initialisation du chat
 		createChat({
 
-			webhookUrl: window.location.origin + '/webhook/webhook/5b0b9438-b159-4cf1-b228-481d5e0d5471/chat',
+			webhookUrl: window.location.origin + '/webhook/webhook/16fec379-eddf-40de-b967-7b8c3125db24/chat',
 			mode: 'fullscreen',
 			
 			// Métadonnées dynamiques extraites de l'URL
@@ -707,19 +312,19 @@
 
 			// Messages initiaux
 			initialMessages: [
-				'Bienvenue dans l\'assistant intelligent !',
-				'Je suis là pour vous aider à répondre à vos questions et vous accompagner dans vos recherches.'
+				'Dobby vous souhaite la bienvenue dans le cabinet enchanté.',
+				'Parlez à Dobby comme à votre elfe de maison: il fouillera grimoires, notes et archives pour vous répondre.'
 			],
 			
 			// Internationalisation
 			defaultLanguage: 'fr',
 			i18n: {
 				fr: {
-					title: 'Assistant IA',
+					title: 'Dobby, elfe de maison',
 					subtitle: getSubtitleMessage(llmModel),
-					footer: 'Propulsé par n8n',
-					getStarted: 'Nouvelle conversation',
-					inputPlaceholder: 'Posez votre question...',
+					footer: 'Relié aux outils du château via n8n',
+					getStarted: 'Ouvrir un nouveau grimoire',
+					inputPlaceholder: 'Que souhaitez-vous demander à Dobby ?',
 				}
 			},
 			
@@ -742,58 +347,37 @@
 		// Gestion du menu d'administration et du sélecteur de modèle
 		document.addEventListener('DOMContentLoaded', () => {
 			// Initialiser le sélecteur de modèle
-			initModelSelector();
-			
-			// Gestion du menu d'administration
-			const menuToggle = document.querySelector('.menu-toggle');
-			const menuContent = document.querySelector('.menu-content');
+			modelSelector.init();
+			hermioneTipNotifier.start();
 
-			if (menuToggle && menuContent) {
-				menuToggle.addEventListener('click', (e) => {
-					e.stopPropagation();
-					menuContent.classList.toggle('active');
-				});
-
-				// Fermer le menu en cliquant à l'extérieur
-				document.addEventListener('click', (e) => {
-					if (!menuContent.contains(e.target) && e.target !== menuToggle) {
-						menuContent.classList.remove('active');
-					}
-				});
-
-				// Empêcher la fermeture lors du clic dans le menu
-				menuContent.addEventListener('click', (e) => {
-					e.stopPropagation();
-				});
-			}
+			initDisclosureMenu({ toggleSelector: '.menu-toggle', contentSelector: '.menu-content' });
 		});
 	</script>
 </head>
-<body>
+<body class="hp-app hp-app--fixed">
 	<!-- Sélecteur de modèle -->
 	<div class="model-selector">
 		<button class="model-btn" data-model="local" title="Modèle local (sécurisé, privé)">
-			<span class="model-icon">🖥️</span>
-			<span>Local</span>
-			<span>qwen3:0.6b</span>
+			<span class="model-icon">🕯️</span>
+			<span class="model-copy">
+				<strong>Local</strong>
+				<span>foyer prive</span>
+			</span>
 			<span class="model-status local"></span>
 		</button>
-		<button class="model-btn" data-model="remote" title="Modèle distant (plus puissant)">
-			<span class="model-icon">☁️</span>
-			<span>Remote</span>
-			<span>gpt-oss:20b</span>
-			<span class="model-status remote"></span>
-		</button>
-		<button class="model-btn" data-model="openai" title="Modèle OpenAI (GPT-4)">
-			<span class="model-icon">🤖</span>
-			<span>OpenAI</span>
-			<span>gpt-4.1-mini</span>
-			<span class="model-status openai"></span>
+		<button class="model-btn" data-model="lavoisier" title="Envoi vers le service Lavoisier">
+			<span class="model-icon">🏰</span>
+			<span class="model-copy">
+				<strong>Lavoisier</strong>
+				<span>reseau du chateau</span>
+			</span>
+			<span class="model-status lavoisier"></span>
 		</button>
 	</div>
 
 	<!-- Notification de changement de modèle -->
 	<div class="model-notification"></div>
+	<div class="hermione-tip-stack" aria-live="polite" aria-atomic="false"></div>
 
 	<!-- Menu d'administration RAG -->
 	<div class="admin-menu">

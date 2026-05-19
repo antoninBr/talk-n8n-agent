@@ -1,15 +1,18 @@
-# Assistant IA - Interface de Chat
+# Le Cabinet de Dobby - Interface de Chat
 
-Page web minimaliste et autoportée pour l'assistant IA via n8n, servie par Nginx.
+Page web autoportée pour l'assistant IA via n8n, avec une DA Harry Potter et des notifications Hermione.
 
 ## 🎨 Caractéristiques
 
-- **Design moderne** : Interface épurée avec palette de couleurs contemporaine
+- **Design Harry Potter** : interface parchemin, dorures et panneaux thématiques
 - **Mode plein écran** : Expérience utilisateur immersive
 - **Paramètres dynamiques** : Extraction depuis l'URL
 - **Streaming activé** : Réponses en temps réel
+- **Dobby comme agent de chat** : messages d'accueil et ton de l'assistant adaptés
+- **Notifications Hermione** : conseils récupérés depuis un endpoint dédié
 - **Menu d'administration** : Accès rapide aux outils de gestion
 - **Nginx intégré** : Serveur web + reverse proxy vers n8n
+- **Fichiers partagés** : thème et helpers centralisés dans [common.css](./common.css) et [common.js](./common.js)
 
 ## 🚀 Utilisation
 
@@ -46,7 +49,11 @@ https://localhost:8443?sessionId=ma_session_123
 #### Choix du modèle LLM
 
 ```
-https://localhost:8443?model=openai
+https://localhost:8443?model=local
+```
+
+```
+https://localhost:8443?model=lavoisier
 ```
 
 #### Combinaison de paramètres
@@ -78,7 +85,7 @@ Le fichier `nginx.conf` dans ce dossier configure :
 | Paramètre | Description | Exemple | Par défaut |
 |-----------|-------------|---------|------------|
 | `sessionId` | Identifiant unique de session | `sess_abc123` | Généré automatiquement |
-| `model` | Modèle LLM à utiliser | `local`, `openai` | `local` |
+| `model` | Modèle LLM à utiliser | `local`, `lavoisier` | `local` |
 
 ## 🔧 Configuration
 
@@ -110,12 +117,12 @@ Si vous devez changer l'ID du webhook, modifiez uniquement la partie après `/we
 
 ### Personnaliser les couleurs
 
-Les variables CSS sont définies dans le bloc `:root`. Exemples :
+Les variables CSS sont définies dans [common.css](./common.css). Exemples :
 
 ```css
---chat--color--primary: #007acc;      /* Bleu moderne */
---chat--color--secondary: #2d2d2d;    /* Gris foncé moderne */
---chat--header--background: #2d2d2d;  /* Fond de l'en-tête */
+--hp-gold: #d6b36a;
+--hp-burgundy: #5c1c12;
+--hp-ink: #2f2016;
 ```
 
 ### Modifier les messages initiaux
@@ -124,8 +131,8 @@ Messages d'accueil actuels :
 
 ```javascript
 initialMessages: [
-	'Bienvenue dans l\'assistant intelligent !',
-	'Je suis là pour vous aider à répondre à vos questions et vous accompagner dans vos recherches.'
+	'Dobby vous souhaite la bienvenue dans le cabinet enchanté.',
+	'Parlez à Dobby comme à votre elfe de maison: il fouillera grimoires, notes et archives pour vous répondre.'
 ],
 ```
 
@@ -144,7 +151,7 @@ Le chat envoie automatiquement ces métadonnées :
 ```javascript
 {
 	sessionId: "sess_1234567890_123",  // Depuis URL ou généré
-	llmModel: "gpt-4",                 // Depuis URL ou "default"
+	llmModel: "local",                // Depuis URL ou "lavoisier"
 	userAgent: "Mozilla/5.0...",       // Navigateur de l'utilisateur
 	timestamp: "2025-10-21T10:30:00.000Z"  // Date/heure
 }
@@ -163,10 +170,10 @@ const model = $json.metadata.llmModel;
 const userMessage = $json.chatInput;
 
 // Utiliser le modèle choisi
-if (model === 'gpt-4') {
-	// Logique pour GPT-4
-} else if (model === 'claude-3') {
-	// Logique pour Claude-3
+if (model === 'local') {
+	// Logique pour le traitement local
+} else if (model === 'lavoisier') {
+	// Logique pour l'envoi vers Lavoisier
 }
 ```
 
@@ -177,7 +184,7 @@ Ouvrez la console du navigateur (F12) pour voir les logs :
 ```
 🔧 Configuration du chat: {
   sessionId: "sess_1234567890_123",
-  llmModel: "gpt-4",
+	llmModel: "lavoisier",
   url: "file:///.../index.html?sessionId=..."
 }
 ```
@@ -190,18 +197,11 @@ Ouvrez la console du navigateur (F12) pour voir les logs :
 
 ## 🛠️ Structure du fichier
 
-Le fichier `index.html` est totalement autoporté et contient :
+Le fichier `index.html` reste autoporté pour la logique métier, mais il s'appuie désormais sur des fichiers communs :
 
 1. **HTML structure** : Minimal, uniquement l'essentiel
-2. **CSS personnalisé** : 
-   - Variables CSS pour un design moderne
-   - Animations et transitions fluides
-   - Menu d'administration intégré
-3. **JavaScript** : 
-   - Extraction des paramètres URL
-   - Configuration du chat
-   - Gestion du menu d'administration
-   - Initialisation automatique
+2. **CSS partagé** : [common.css](./common.css) pour le thème et les composants communs
+3. **JavaScript partagé** : [common.js](./common.js) pour les helpers, le sélecteur de modèle et Hermione
 
 ## 🔐 Sécurité
 
@@ -229,7 +229,7 @@ https://localhost:8443?sessionId=test_dev&model=local
 ### Session utilisateur authentifié
 
 ```
-https://localhost:8443?sessionId=user_${userId}&model=openai
+https://localhost:8443?sessionId=user_${userId}&model=lavoisier
 ```
 
 ## 🎨 Personnalisation avancée
@@ -277,7 +277,7 @@ Ajustez les variables CSS :
 
 ### Le style n'est pas cohérent
 
-- Vérifiez les variables CSS dans le bloc `:root`
+- Vérifiez les variables CSS dans [common.css](./common.css)
 - Assurez-vous que toutes les couleurs utilisent la palette moderne
 - Videz le cache du navigateur après modification du CSS
 

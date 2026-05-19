@@ -1,0 +1,248 @@
+{
+  "name": "Hermione Tip",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "hermione_tip",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "b3817359-2847-4a44-983c-8d420643c666",
+      "name": "Webhook",
+      "webhookId": "3a5876a8-9463-4331-a3ac-a27f76768bcd"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# Contexte\n- Timestamp: {{ $now.toISO() }}\n\n# Consigne\nDonne une courte info utile sur l'univers Harry Potter.",
+        "options": {
+          "systemMessage": "# Persona\nTu es Hermione Granger, brillante, précise et amicale.\n\n# Instructions\n- Donne une petite info sur l'univers Harry Potter.\n- Réponds uniquement en français.\n- Garde un ton naturel et chaleureux.\n- Une seule idée par réponse.\n\n# Anti-hallucination\n- N'invente pas de détails.\n- Reste sur des faits simples et connus.\n- Si le fait est incertain, évite-le.\n\n# Format de sortie\n- Une ou deux phrases.\n- Pas de Markdown.\n- Pas d'emoji."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "82997a8f-d9d0-4195-9e69-9bcf55bb8e49",
+      "name": "Hermione"
+    },
+    {
+      "parameters": {
+        "model": "qwen3:0.6b",
+        "options": {
+          "temperature": 0.8,
+          "topK": 20,
+          "topP": 0.8,
+          "keepAlive": "-1m",
+          "numCtx": 4096,
+          "numThread": 0,
+          "presencePenalty": 1.5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        336,
+        432
+      ],
+      "id": "9edccce4-8ed6-4a57-bd51-6e23fdf32d23",
+      "name": "Local Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "5wt6oxfMGxxl6UDg",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rule": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "dcf2d503-c650-41e8-b2a6-28184eb6c21a",
+                    "leftValue": "={{ $('Webhook').item.json.metadata.llmModel }}",
+                    "rightValue": "lavoisier",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  },
+                  {
+                    "id": "589810b5-fd1c-4777-9701-1fd398bf4da1",
+                    "leftValue": "={{ $('Webhook').item.json.metadata.llmModel }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "or"
+              }
+            },
+            {
+              "modelIndex": 2,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f4598c78-f5c3-4ab6-9b85-1600faeca21c",
+                    "leftValue": "={{ $('Webhook').item.json.metadata.llmModel }}",
+                    "rightValue": "local",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.modelSelector",
+      "typeVersion": 1,
+      "position": [
+        192,
+        224
+      ],
+      "id": "c645a910-c778-4620-ad85-51022d9403fb",
+      "name": "Model Selector"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "qwen3:8b",
+          "mode": "list",
+          "cachedResultName": "qwen3:8b"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        432
+      ],
+      "id": "d4ef6252-f9bf-4613-86fa-d02923a6dd35",
+      "name": "PC Lavoisier",
+      "credentials": {
+        "openAiApi": {
+          "id": "RRGz5NBjE2jXvDeE",
+          "name": "Lavoisier"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        560,
+        0
+      ],
+      "id": "e78b0296-4164-46d7-8303-93ab296ed992",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Hermione",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Local Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "PC Lavoisier": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Model Selector": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Hermione",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hermione": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9bb4586c-3510-4fdd-99fa-071cc190ebac",
+  "meta": {
+    "instanceId": "35e53b4e1c0deaab7d871949fef5124ac4432fe9906011927482989de82c5430"
+  },
+  "id": "KwBCePwRrCi4eGpY",
+  "tags": []
+}

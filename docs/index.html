@@ -17,7 +17,7 @@
 
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
-	<link rel="stylesheet" href="dist/theme/epitech.css" id="theme">
+	<link rel="stylesheet" href="dist/theme/white.css" id="theme">
 
 	<!-- Theme used for syntax highlighted code -->
 	<link rel="stylesheet" href="plugin/highlight/monokai.css">
@@ -26,8 +26,11 @@
 <body>
 	<div class="reveal">
 		<div class="slides">
-		<section data-background-image="img/epitech_first_slide.png" data-background-size="contain" data-background-position="center">
-		</section>
+			<section>
+				<img src="img/title.jpg" alt="Logo n8n" style="max-width: 180px; width: 28%; min-width: 120px; margin-bottom: 1.1rem; border-radius: 8px;">
+				<h1 style="font-size: 1.75rem; line-height: 1.2; max-width: 30ch; margin: 0 auto;">IA locales ou distantes, outils, et un chef d'orchestre nommé n8n</h1>
+				<p style="margin-top: 1.2rem; font-size: 1rem; opacity: 0.8;">19 mai 2026</p>
+			</section>
 
 			<!-- Section 1: Présentation de n8n -->
 			<section>
@@ -41,7 +44,7 @@
 				<ul style="font-size: 0.85em;">
 						<li class="fragment">No-code/Low-code (Workflow visuel)</li>
 						<li class="fragment">Automatisation accessible même aux non-développeurs</li>
-						<li class="fragment">Open Source 🥨 et en constante évolution (2.6.3)</li>
+						<li class="fragment">Open Source 🥨 et en constante évolution (2.20.8)</li>
 					</ul>
 					<aside class="notes">
 						n8n permet de connecter facilement tous vos outils : API, bases de données, services cloud.
@@ -139,8 +142,7 @@
 						<li class="fragment">Automatisation email</li>
 						<li class="fragment">Synchronisation de données</li>
 						<li class="fragment">Rapports automatiques</li>
-						<li class="fragment">Notifications intelligentes (IoT)</li>
-						<li class="fragment">Outils internes</li>
+						<li class="fragment">...</li>
 					</ul>
 					<aside class="notes">
 						Les cas d'usage vont de la simple automatisation d'emails à la création d'outils internes
@@ -200,12 +202,6 @@
 						de workflows, fournir de la documentation interactive, résoudre vos problèmes techniques et partager 
 						les bonnes pratiques. Un excellent compagnon pour débuter avec n8n !
 					</aside>
-				</section>
-				
-				<section>
-					<div style="text-align: center;">
-						<img src="img/struggle.jpg" alt="Struggle meme" style="max-width: 40%; margin-bottom: 1em;">
-					</div>
 				</section>
 
 			</section>
@@ -648,17 +644,70 @@
 				</section>
 
 				<section>
-					<h2>Securité</h2>
+					<h2>Sécurité</h2>
 					<img src="img/guardrails.gif" alt="Guardrails"
 						style="max-width: 100%; border: 2px solid #444;" />
-						<div>
-						<ul>
+						<div style="text-align: left;">
+						<ul style="font-size: 0.9em;">
 							<li>Noeud Guardrails (entrée/sortie)</li>
-							<li>Pas dans la démo...</li>
+							<li class="fragment">Modèles de guardrails disponibles:</li>
+							<ul  class="fragment" style="font-size: 0.85em; margin-top: 0.5em;">
+								<li>Llama Guard (modèle local open-source)</li>
+								<li>granite3-guardian (pareil)</li>
+							</ul>
+							<li class="fragment">Exécution locale possible sans API externe</li>
+							<li class="fragment">Contrôle complet sur vos données sensibles</li>
 						</ul>
 						</div>
 				</section>
 
+				<section>
+					<h2>Human In Loop</h2>
+				<div style="text-align: left;">
+					<ul style="font-size: 0.9em;">
+						<li class="fragment">Pause et approbation manuelle dans le workflow</li>
+						<li class="fragment">L'IA demande validation avant d'exécuter une action</li>
+						<li class="fragment">Améliore la confiance et la contrôlabilité</li>
+						<li class="fragment">Outils disponibles:</li>
+						<ul  class="fragment" style="font-size: 0.85em; margin-top: 0.5em;">
+							<li>Wait for webhook</li>
+							<li>Human in the loop node</li>
+							<li>Email de notification</li>
+						</ul>
+					</ul>
+				</div>
+				<aside class="notes">
+					Human In Loop permet de mettre en pause un workflow et d'attendre une approbation manuelle avant de continuer.
+					C'est crucial pour les décisions importantes où vous voulez garder le contrôle humain.
+					N8n propose plusieurs outils pour implémenter cela : webhook, node dédié, ou notifications par email.
+					Cela améliore la confiance dans les systèmes d'IA en garantissant que les actions critiques sont approuvées.
+				</aside>
+				</section>
+
+				<section>
+					<h2>Evaluations</h2>
+					<div style="text-align: left;">
+						<ul style="font-size: 0.9em;">
+							<li class="fragment">Évaluation de la qualité des réponses de l'IA</li>
+							<li class="fragment">Mesure des performances du workflow</li>
+							<li class="fragment">Light Evaluations pour tests simples</li>
+							<li class="fragment">Cas d'usage:</li>
+							<ul  class="fragment" style="font-size: 0.85em; margin-top: 0.5em;">
+								<li>Validation de la pertinence des réponses</li>
+								<li>Détection des hallucinations</li>
+								<li>Suivi de la qualité en production</li>
+								<li>A/B testing des prompts</li>
+							</ul>
+						</ul>
+					</div>
+					<aside class="notes">
+						Les évaluations permettent de mesurer et d'améliorer la qualité des réponses de votre agent IA.
+						N8n propose les Light Evaluations pour des tests simples et rapides.
+						Cela permet de valider que votre agent fonctionne correctement avant de le mettre en production.
+						Consultez: https://docs.n8n.io/advanced-ai/evaluations/light-evaluations/
+					</aside>
+				</section>
+				
 				<section>
 					<h2>Architecture complète</h2>
 					<div class="mermaid"><pre>
@@ -699,6 +748,78 @@
 						agent IA connecté à Ollama pour les LLMs locaux, divers Vector Stores pour la recherche vectorielle, 
 						et plusieurs MCP Servers selon vos besoins, le tout persisté en PostgreSQL.
 					</aside>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h1>Pro Tips</h1>
+				</section>
+				<section>
+					<h2>Faites le ménage</h2>
+					<img src="img/cleanup.gif" alt="Meme about cleaning" style="max-width: 25%; margin-bottom: 1em;">
+					<ul>
+						<li class="fragment">Nettoyez les bases mémoire des agents</li>
+						<li class="fragment">Nettoyez les anciennes exécutions de workflows</li>
+						<li class="fragment">Nettoyez les bases vectorielles</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Monitoring</h2>
+					<img src="img/monitor.gif" alt="Meme about monitoring" style="max-width: 40%; margin-bottom: 1em;">
+					<ul>
+						<li class="fragment">Endpoint /metrics Prometheus</li>
+						<li class="fragment">Dashboard Grafana</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Déploiement</h2>
+					<ul>
+						<li class="fragment">Docker Compose pour la simplicité</li>
+						<li class="fragment">Kubernetes pour la scalabilité</li>
+						<li class="fragment">Cloud Run pour le serverless</li>
+					</ul>
+					<p class="fragment" style="margin-top: 1em; font-size: 0.8em; color: var(--ces-green);">
+						🔗 <a href="https://cloud.google.com/blog/products/serverless/cloud-run-and-docker-collaboration" target="_blank">Partenariat Docker × Google Cloud</a>
+					</p>
+				</section>
+				<section>
+					<h2>Retry sur appels aux API (génération/autre)</h2>
+						<img src="img/retry.gif" alt="Meme about retrying" style="max-width: 25%;">
+					<ul>
+							<li class="fragment">Gérer les erreurs transitoires</li>
+							<li class="fragment">Éviter les échecs de workflow</li>
+							<li class="fragment">Améliorer la résilience globale</li>
+						</ul>
+				</section>
+				<section>
+					<h2>Gestion des erreurs</h2>
+						<ul>
+							<li class="fragment">Gestion par des Workflows</li>
+							<li class="fragment">Critiques vs sans impact</li>
+							<li class="fragment">Fallbacks intelligents</li>
+						</ul>
+				</section>
+				<section>
+					<h2>LiteLLM : proxy frontal pour Ollama</h2>
+					<ul>
+						<li class="fragment">Authentification centralisée</li>
+						<li class="fragment">Rate limiting et quotas</li>
+						<li class="fragment">Logs et métriques détaillés</li>
+						<li class="fragment">Cache de réponses</li>
+					</ul>
+					<p class="fragment" style="margin-top: 1em; font-size: 0.8em; color: var(--ces-green);">
+						💡 Déployer LiteLLM devant Ollama pour une expérience prête pour la production
+					</p>
+				</section>
+				<section>
+					<h2>Git, workflows et prompts</h2>
+					<ul>
+						<li class="fragment">Versionne les workflows n8n en JSON dans Git.</li>
+						<li class="fragment">Sors les prompts system/user dans des fichiers dédiés.</li>
+						<li class="fragment">Réimporte, teste, ajuste: boucle courte.</li>
+						<li class="fragment">Optimise avec l'IA, garde des garde-fous.</li>
+					</ul>
 				</section>
 			</section>
 			<!-- Section 3: Démo live -->
@@ -754,45 +875,19 @@ models:
 				</section>
 
 				<section>
-					<h2>✨ Avantages</h2>
+					<h2>Docker + Cloud Run: c'est maintenant</h2>
 					<ul>
-						<li class="fragment">Syntaxe simplifiée</li>
-						<li class="fragment">Liaison automatique n8n ↔ modèle</li>
-						<li class="fragment">Configuration centralisée</li>
+						<li class="fragment">Déploiement de conteneurs IA déjà opérationnel.</li>
+						<li class="fragment">Scale automatique et facturation à l'usage.</li>
+						<li class="fragment">Très bon fit pour des démos et POC qui doivent tenir la charge.</li>
 					</ul>
-					<aside class="notes">
-						Les avantages du Docker Model Runner : syntaxe plus claire, liaison automatique entre n8n et les
-						modèles, toute la config au même endroit, et déploiement en une seule commande.
-					</aside>
-				</section>
-
-				<section>
-					<h2>⚠️ Limitations</h2>
-					<ul>
-						<li class="fragment">Docker Compose uniquement</li>
-						<div class="fragment" style="text-align: center; margin: 0.5em 0;">
-							<img src="img/podman.gif" alt="Podman sad" style="max-width: 200px;">
-						</div>
-						<li class="fragment">Fonctionnalité récente</li>
-						<li class="fragment">Documentation limitée</li>
-					</ul>
-					<aside class="notes">
-						Attention aux limitations : pas encore compatible Podman, fonctionnalité récente donc
-						potentiellement instable, peu de documentation disponible. Pour la production, préférez la
-						configuration classique avec services séparés.
-					</aside>
-				</section>
-
-				<section>
-					<h2>L'avenir ? Docker + Google Cloud Run</h2>
 					<p class="fragment" style="margin-top: 1em; font-size: 0.8em; color: var(--ces-green);">
 						🔗 <a href="https://cloud.google.com/blog/products/serverless/cloud-run-and-docker-collaboration" target="_blank">Partenariat Docker × Google Cloud</a>
 					</p>
 					<aside class="notes">
-						Docker et Google Cloud s'associent pour simplifier le déploiement vers Cloud Run. 
-						Imaginez : votre stack n8n + Ollama déployée en quelques commandes, avec scaling automatique 
-						des modèles selon la charge, facturation à l'usage uniquement, et infrastructure totalement managée. 
-						L'avenir du déploiement d'agents IA !
+						Ce n'est plus une projection: c'est utilisable maintenant.
+						Le message clé: conteneurs IA + serverless = mise en prod plus rapide,
+						scale natif, coût corrélé à l'usage.
 					</aside>
 				</section>
 
@@ -800,7 +895,8 @@ models:
 					<h2>Les workflows</h2>
 					<ul>
 						<li class="fragment">🗂️ <strong>Indexation.json</strong> : Traitement de documents</li>
-						<li class="fragment">💬 <strong>Chat.json</strong> : Chatbot avec RAG</li>
+						<li class="fragment">💬 <strong>Chat.json</strong> : Chatbot (Dobby) avec RAG</li>
+						<li class="fragment">🧠 <strong>Hermione_Tip.json</strong> : Les conseils d'Hermione</li>
 					</ul>
 				</section>
 
@@ -946,7 +1042,7 @@ models:
 				</section>
 
 				<section>
-					<h3 class="r-fit-text">Merci EPITECH</h3>
+					<h3 class="r-fit-text">Merci</h3>
 					<h3 class="r-fit-text">Questions ? 🤔</h3>
 					<p class="fragment">Merci pour votre attention !</p>
 				</section>
