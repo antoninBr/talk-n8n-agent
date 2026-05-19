@@ -284,8 +284,8 @@
 							</ul>
 						</div>
 					</div>
-					<div class="fragment" style="margin-top: 2em; padding: 1em; background: rgba(0,0,0,0.2); border-radius: 8px;">
-						<code style="font-size: 0.7em;">
+					<div class="fragment" style="margin-top: 1em; padding: 0.5em; background: rgba(0,0,0,0.2); border-radius: 8px;">
+						<code style="font-size: 0.5em;">
 							System: "Tu es un expert technique qui répond de manière claire et précise."<br>
 							User: "Explique comment {{ $json.technology }} fonctionne en {{ $json.level }} phrases."
 						</code>
@@ -337,7 +337,7 @@
 					<div style="text-align: center; margin-bottom: 2em;">
 						<img src="img/serge.jpg" alt="Serge" 
 							class="fragment fade-out" data-fragment-index="1"
-							style="max-width: 240px; border-radius: 5%; border: 3px solid #444;">
+							style="max-width: 220px; border-radius: 5%; border: 3px solid #444;">
 						<img src="img/ollama-logo.png" alt="Ollama Logo" 
 							class="fragment fade-in" data-fragment-index="2"
 							style="max-width: 90px; background: white; padding: 10px; border-radius: 8px;">
@@ -348,8 +348,8 @@
 						<li class="fragment" data-fragment-index="5"><strong>Local first</strong> : Vos données restent chez vous</li>
 						<li class="fragment" data-fragment-index="6"><strong>API compatible</strong> : OpenAI-like</li>
 					</ul>
-					<div class="fragment" data-fragment-index="7" style="margin-top: 0.25em; padding: 0.5em; background: rgba(0,0,0,0.2); border-radius: 8px;">
-						<code style="font-size: 0.7em;">
+					<div class="fragment" data-fragment-index="7" style="margin-top: 0.10em; padding: 0.2em; background: rgba(0,0,0,0.2); border-radius: 8px;">
+						<code style="font-size: 0.4em;">
 							curl -fsSL https://ollama.com/install.sh | sh ⚠️<br>
 							ollama run llama3.2
 						</code>
@@ -790,6 +790,15 @@
 							<li class="fragment">Gérer les erreurs transitoires</li>
 							<li class="fragment">Éviter les échecs de workflow</li>
 							<li class="fragment">Améliorer la résilience globale</li>
+						</ul>
+				</section>
+				<section>
+					<h2>Le debugger est votre (meilleur) ami</h2>
+					<img src="img/bff.gif" alt="Meme about friendship" style="max-width: 50%;">
+						<ul>
+							<li class="fragment">Comprendre les Workflows en erreur</li>
+							<li class="fragment">Reprendre l'éxecutino de ces workflows</li>
+							<li class="fragment">Option de pinData : avoir les variables d'un précédent workflow</li>
 						</ul>
 				</section>
 				<section>
